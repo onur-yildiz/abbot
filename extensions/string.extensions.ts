@@ -11,14 +11,14 @@ Object.defineProperty(String.prototype, 'toBold', {
   writable: true,
   configurable: true,
 })
-Object.defineProperty(String.prototype, 'toBold', {
+Object.defineProperty(String.prototype, 'toCodeBg', {
   value: function toCodeBg() {
     return `\`\`\`${this}\`\`\``
   },
   writable: true,
   configurable: true,
 })
-Object.defineProperty(String.prototype, 'toBold', {
+Object.defineProperty(String.prototype, 'toSpoiler', {
   value: function toSpoiler() {
     return `\|\|${this}\|\|`
   },
