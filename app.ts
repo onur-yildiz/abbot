@@ -80,7 +80,7 @@ client.on('message', async (message: Message) => {
         break
 
       default:
-        message.channel.send(TEST_COMMAND_NOT_VALID)
+        message.channel.send(TEST_COMMAND_NOT_VALID.toBold())
         break
     }
   }
@@ -116,10 +116,10 @@ export const execute = async (message: Message, serverQueue: QueueContract) => {
   const args = message.content.split(' ')
 
   const voiceChannel = message.member.voice.channel
-  if (!voiceChannel) return message.channel.send(JOIN_CHANNEL_PLAY)
+  if (!voiceChannel) return message.channel.send(JOIN_CHANNEL_PLAY.toBold())
   const permissions = voiceChannel.permissionsFor(message.client.user)
   if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
-    return message.channel.send(PERMISSIONS_PLAY)
+    return message.channel.send(PERMISSIONS_PLAY.toBold())
   }
 
   try {
@@ -148,7 +148,10 @@ export const execute = async (message: Message, serverQueue: QueueContract) => {
         serverQueue.textChannel = message.channel
       serverQueue.songs.push(song)
       console.log(serverQueue.songs)
-      return message.channel.send(`${song.title} has been added to the queue!`)
+      return message.channel.send(
+        `${song.title}`.toBold().toCodeBg() +
+          `has been added to the queue!`.toBold()
+      )
     }
 
     const queueContract: QueueContract = {
@@ -169,7 +172,7 @@ export const execute = async (message: Message, serverQueue: QueueContract) => {
   } catch (err) {
     console.log(err)
     queue.delete(message.guild.id)
-    return message.channel.send(err)
+    return message.channel.send(err.toBold())
   }
 }
 
@@ -189,13 +192,15 @@ export const play = (guild: Guild, song: Song) => {
     })
     .on('error', (error) => console.error(error))
   dispatcher.setVolumeLogarithmic(serverQueue.volume / 5)
-  serverQueue.textChannel.send(`Playing: **${song.title}**`)
+  serverQueue.textChannel.send(
+    `Playing:`.toBold() + `${song.title}`.toBold().toCodeBg()
+  )
 }
 
 export const skip = (message, serverQueue) => {
   const error = checkAvailability(message)
-  if (error) return message.channel.send(error)
-  if (!serverQueue) return message.channel.send(QUEUE_EMPTY_SKIP)
+  if (error) return message.channel.send(error.toBold())
+  if (!serverQueue) return message.channel.send(QUEUE_EMPTY_SKIP.toBold())
   serverQueue.connection.dispatcher.end()
 }
 
@@ -204,17 +209,17 @@ export const clear = (
   serverQueue: QueueContract
 ): Promise<Message> => {
   const error = checkAvailability(message)
-  if (error) return message.channel.send(error)
+  if (error) return message.channel.send(error.toBold())
   if (serverQueue.songs.length == 0)
-    return message.channel.send(QUEUE_EMPTY_CLEAR)
+    return message.channel.send(QUEUE_EMPTY_CLEAR.toBold())
 
   serverQueue.songs = []
-  return message.channel.send(QUEUE_EMPTY)
+  return message.channel.send(QUEUE_EMPTY.toBold())
 }
 
 export const leave = (message: Message, serverQueue: QueueContract) => {
   const error = checkAvailability(message)
-  if (error) return message.channel.send(error)
+  if (error) return message.channel.send(error.toBold())
 
   serverQueue.songs = []
   serverQueue.connection.dispatcher.end()
@@ -225,17 +230,17 @@ export const showQueue = (
   serverQueue: QueueContract
 ): Promise<Message> => {
   const error = checkAvailability(message)
-  if (error) return message.channel.send(error)
+  if (error) return message.channel.send(error.toBold())
   if (serverQueue.songs.length == 0)
-    return message.channel.send(QUEUE_EMPTY.toUpperCase())
+    return message.channel.send(QUEUE_EMPTY.toBold())
 
   let queue = ''
   serverQueue.songs.forEach((song) => (queue += `${song.title}\n`))
-  message.channel.send(queue)
+  message.channel.send(queue.toCodeBg())
 }
 
 export const soundHorn = (message: Message, serverQueue: QueueContract) => {
   const error = checkAvailability(message)
-  if (error) return message.channel.send(error)
+  if (error) return message.channel.send(error.toBold())
   //...
 }
