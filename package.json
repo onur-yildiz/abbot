@@ -23,6 +23,14 @@
     "start": "nodemon --config nodemon.json ./app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onur-yildiz/abbot.git"
+  },
+  "author": "Onur Yıldız",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/onur-yildiz/abbot/issues"
+  },
+  "homepage": "https://github.com/onur-yildiz/abbot#readme"
 }
