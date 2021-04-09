@@ -1,246 +1,122 @@
 import {
+  Collection,
+  Command,
+  Cooldowns,
   DMChannel,
-  Guild,
   Message,
   NewsChannel,
+  QueueContract,
   TextChannel,
-  VoiceChannel,
-  VoiceConnection,
-  Client,
-} from 'discord.js'
+} from "discord.js";
 
-import Discord from 'discord.js'
-import ytdl from 'ytdl-core'
-import ytsr from 'ytsr'
+import Discord from "discord.js";
+import fs from "fs";
+import "ffmpeg";
 
-import {
-  BOT_NOT_IN_CHANNEL,
-  JOIN_CHANNEL_GENERIC,
-  JOIN_CHANNEL_PLAY,
-  PERMISSIONS_PLAY,
-  QUEUE_EMPTY,
-  QUEUE_EMPTY_CLEAR,
-  QUEUE_EMPTY_SKIP,
-  TEST_COMMAND_NOT_VALID,
-} from './constants/messages'
-import './extensions/string.extensions'
+import { TEST_EXECUTION_ERROR } from "./constants/messages";
+import { getCommandName } from "./util/getCommandName";
+import { getCommandContent } from "./util/getCommandContent";
+import { greetUserInVoiceChannel } from "./bot-functions/greetUserInVoiceChannel";
+import "./extensions/string";
 
-require('dotenv').config()
-const prefix = process.env.PREFIX
-const token = process.env.TOKEN
+require("dotenv").config();
+const prefix = process.env.PREFIX;
+const token = process.env.TOKEN;
 
-const client: Client = new Discord.Client()
-client.login(token)
+const client = new Discord.Client();
 
-client.once('ready', () => {
-  console.log('Ready!')
-})
+export const commands = new Discord.Collection<string, Command>();
 
-client.once('reconnecting', () => {
-  console.log('Reconnecting...')
-})
+const commandFolders = fs.readdirSync("./commands");
+for (const folder of commandFolders) {
+  const commandFiles = fs
+    .readdirSync(`./commands/${folder}`)
+    .filter((file) => file.endsWith(".ts"));
+  for (const file of commandFiles) {
+    const command = require(`./commands/${folder}/${file.slice(0, -3)}`);
+    commands.set(command.name, command);
+  }
+}
+const cooldowns: Cooldowns = new Discord.Collection<
+  string,
+  Collection<string, number>
+>();
 
-client.once('disconnect', () => {
-  console.log('Disconnected.')
-})
+client.login(token);
 
-client.on('message', async (message: Message) => {
-  if (message.author.bot) return
-  if (!message.content.startsWith(prefix)) return
+client.once("ready", () => {
+  console.log("Ready!");
+});
 
-  const regex = new RegExp(`^[${prefix}](.*?)(?=\\s|$)`)
-  const serverQueue: QueueContract = queue.get(message.guild.id)
-  if (regex.test(message.content)) {
-    const command: string = regex.exec(message.content)[1]
+client.once("reconnecting", () => {
+  console.log("Reconnecting...");
+});
 
-    switch (command) {
-      case 'play':
-      case 'p':
-        execute(message, serverQueue)
-        break
-      case 'skip':
-      case 's':
-        skip(message, serverQueue)
-        break
-      case 'clear':
-      case 'c':
-        clear(message, serverQueue)
-        break
-      case 'leave':
-      case 'l':
-        leave(message, serverQueue)
-        break
-      case 'queue':
-      case 'q':
-        showQueue(message, serverQueue)
-        break
-      case 'horn':
-      case 'h':
-        soundHorn(message, serverQueue)
-        break
+client.once("disconnect", () => {
+  console.log("Disconnected.");
+});
 
-      default:
-        message.channel.send(TEST_COMMAND_NOT_VALID.toBold())
-        break
+client.on("voiceStateUpdate", greetUserInVoiceChannel);
+
+client.on("message", async (message: Message) => {
+  if (message.author.bot) return;
+  if (!message.content.startsWith(prefix)) return;
+
+  const commandName = getCommandName(message.content);
+  const commandContent = getCommandContent(message.content);
+
+  const command =
+    commands.get(commandName) ||
+    commands.find((cmd) => cmd.aliases.includes(commandName));
+  if (command == null) return;
+
+  if (command.guildOnly && message.channel.type === "dm")
+    return message.reply("I can't execute that command inside DMs!");
+
+  if (command.permissions != null) {
+    const authorPerms = (<TextChannel | NewsChannel>(
+      message.channel
+    )).permissionsFor(message.author);
+    if (!authorPerms || !authorPerms.any(command.permissions)) {
+      return message.reply("You can not do this!");
     }
   }
-})
 
-export interface Song {
-  title: string
-  url: string
-}
+  if (command.args && commandContent == "")
+    return message.channel.send(
+      `You didn't provide any arguments, ${message.author}!`
+    );
 
-export interface QueueContract {
-  textChannel: TextChannel | DMChannel | NewsChannel
-  voiceChannel: VoiceChannel
-  connection: VoiceConnection
-  songs: Array<Song>
-  volume: number
-  playing: boolean
-}
-
-export const queue: Map<string, QueueContract> = new Map()
-
-export const checkAvailability = (message: Message): string | null => {
-  if (!message.guild.voice) return BOT_NOT_IN_CHANNEL
-  if (
-    !message.member.voice.channel ||
-    message.member.voice.channel.id != message.guild.voice.channel.id
-  )
-    return JOIN_CHANNEL_GENERIC
-  return null
-}
-
-export const execute = async (message: Message, serverQueue: QueueContract) => {
-  const args = message.content.split(' ')
-
-  const voiceChannel = message.member.voice.channel
-  if (!voiceChannel) return message.channel.send(JOIN_CHANNEL_PLAY.toBold())
-  const permissions = voiceChannel.permissionsFor(message.client.user)
-  if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
-    return message.channel.send(PERMISSIONS_PLAY.toBold())
+  if (!cooldowns.has(command.name)) {
+    cooldowns.set(command.name, new Discord.Collection());
   }
+
+  const now = Date.now();
+  const timestamps = cooldowns.get(command.name);
+  const cooldownAmount = (command.cooldown || 3) * 1000;
+
+  if (timestamps.has(message.author.id)) {
+    const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+
+    if (now < expirationTime) {
+      const timeLeft = (expirationTime - now) / 1000;
+      return message.reply(
+        `please wait ${Math.ceil(timeLeft).toFixed(0)}` +
+          ` more second(s) before reusing the \`${command.name}\` command.`
+      );
+    }
+  }
+  timestamps.set(message.author.id, now);
+  setTimeout(() => {
+    timestamps.delete(message.author.id);
+  }, cooldownAmount);
 
   try {
-    let song: Song
-    if (args.length < 2) {
-      const songInfo: ytdl.videoInfo = await ytdl.getInfo(args[1])
-      song = {
-        title: songInfo.videoDetails.title,
-        url: songInfo.videoDetails.video_url,
-      }
-    } else {
-      const searchQuery = args.slice(1).join(' ')
-      const filters = await ytsr.getFilters(searchQuery)
-      const filter = filters.get('Type').get('Video')
-      const songInfo: ytsr.Result = await ytsr(filter.url, {
-        limit: 1,
-      })
-      song = {
-        title: (<ytsr.Video>songInfo.items[0]).title,
-        url: (<ytsr.Video>songInfo.items[0]).url,
-      }
-    }
-
-    if (serverQueue) {
-      if (serverQueue.textChannel != message.channel)
-        serverQueue.textChannel = message.channel
-      serverQueue.songs.push(song)
-      console.log(serverQueue.songs)
-      return message.channel.send(
-        `${song.title}`.toBold().toCodeBg() +
-          `has been added to the queue!`.toBold()
-      )
-    }
-
-    const queueContract: QueueContract = {
-      textChannel: message.channel,
-      voiceChannel: voiceChannel,
-      connection: null,
-      songs: [],
-      volume: 5,
-      playing: true,
-    }
-
-    queue.set(message.guild.id, queueContract)
-    queueContract.songs.push(song)
-
-    let connection = await voiceChannel.join()
-    queueContract.connection = connection
-    play(message.guild, queueContract.songs[0])
-  } catch (err) {
-    console.log(err)
-    queue.delete(message.guild.id)
-    return message.channel.send(err.toBold())
+    command.execute(message);
+  } catch (error) {
+    console.error(error);
+    message.reply(TEST_EXECUTION_ERROR.toBold());
   }
-}
+});
 
-export const play = (guild: Guild, song: Song) => {
-  const serverQueue: QueueContract = queue.get(guild.id)
-  if (!song) {
-    serverQueue.voiceChannel.leave()
-    queue.delete(guild.id)
-    return
-  }
-
-  const dispatcher = serverQueue.connection
-    .play(ytdl(song.url))
-    .on('finish', () => {
-      serverQueue.songs.shift()
-      play(guild, serverQueue.songs[0])
-    })
-    .on('error', (error) => console.error(error))
-  dispatcher.setVolumeLogarithmic(serverQueue.volume / 5)
-  serverQueue.textChannel.send(
-    `Playing:`.toBold() + `${song.title}`.toBold().toCodeBg()
-  )
-}
-
-export const skip = (message, serverQueue) => {
-  const error = checkAvailability(message)
-  if (error) return message.channel.send(error.toBold())
-  if (!serverQueue) return message.channel.send(QUEUE_EMPTY_SKIP.toBold())
-  serverQueue.connection.dispatcher.end()
-}
-
-export const clear = (
-  message: Message,
-  serverQueue: QueueContract
-): Promise<Message> => {
-  const error = checkAvailability(message)
-  if (error) return message.channel.send(error.toBold())
-  if (serverQueue.songs.length == 0)
-    return message.channel.send(QUEUE_EMPTY_CLEAR.toBold())
-
-  serverQueue.songs = []
-  return message.channel.send(QUEUE_EMPTY.toBold())
-}
-
-export const leave = (message: Message, serverQueue: QueueContract) => {
-  const error = checkAvailability(message)
-  if (error) return message.channel.send(error.toBold())
-
-  serverQueue.songs = []
-  serverQueue.connection.dispatcher.end()
-}
-
-export const showQueue = (
-  message: Message,
-  serverQueue: QueueContract
-): Promise<Message> => {
-  const error = checkAvailability(message)
-  if (error) return message.channel.send(error.toBold())
-  if (serverQueue.songs.length == 0)
-    return message.channel.send(QUEUE_EMPTY.toBold())
-
-  let queue = ''
-  serverQueue.songs.forEach((song) => (queue += `${song.title}\n`))
-  message.channel.send(queue.toCodeBg())
-}
-
-export const soundHorn = (message: Message, serverQueue: QueueContract) => {
-  const error = checkAvailability(message)
-  if (error) return message.channel.send(error.toBold())
-  //...
-}
+export const guildContracts: Map<string, QueueContract> = new Map();
