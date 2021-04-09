@@ -2,7 +2,7 @@ import { Command, Message } from "discord.js";
 import ytdl from "ytdl-core";
 import ytsr from "ytsr";
 import { TEST_COMMAND_NOT_VALID } from "../../constants/messages";
-import { checkAvailability } from "../../util/checkAvailability";
+import { checkUserInAChannel } from "../../util/checkUserInAChannel";
 import { connect } from "../../util/connect";
 import { getCommandContent } from "../../util/getCommandContent";
 import { getOrInitQueue } from "../../util/getOrInitQueue";
@@ -14,7 +14,7 @@ export = <Command>{
   usage: " [URL || query]",
   guildOnly: true,
   execute: async function execute(message: Message) {
-    const error = checkAvailability(message);
+    const error = checkUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());
 
     const commandContent = getCommandContent(message.content);

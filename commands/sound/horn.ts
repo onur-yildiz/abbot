@@ -3,7 +3,7 @@ import {
   TEST_COMMAND_NOT_VALID,
   TEST_EXECUTION_ERROR,
 } from "../../constants/messages";
-import { checkAvailability } from "../../util/checkAvailability";
+import { checkUserInAChannel } from "../../util/checkUserInAChannel";
 import { connect } from "../../util/connect";
 import { getCommandContent } from "../../util/getCommandContent";
 import { getOrInitQueue } from "../../util/getOrInitQueue";
@@ -15,7 +15,7 @@ export = <Command>{
   usage: "[audioName]",
   guildOnly: true,
   async execute(message: Message) {
-    const error = checkAvailability(message);
+    const error = checkUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());
 
     const commandContent = getCommandContent(message.content);
