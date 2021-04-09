@@ -1,6 +1,12 @@
 node_modules
 dist
+Procfile
 
-.env
+# excluded in public repo
+bot-functions
+assets
+
+util/pickAudioPath.ts
+
 .vscode
 .prettierrc
