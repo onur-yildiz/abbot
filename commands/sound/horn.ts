@@ -30,7 +30,9 @@ export = <Command>{
         `I am already playing music.\nYou have to clear song queue to play audio.`.toBold()
       );
 
-    //const audioPath = pickAudioPath() //! excluded in github. implement your own.
+    // TODOimplement your own.
+    //! excluded in public repo.
+    //const audioPath = pickAudioPath()
     const audioPath = "https://www.youtube.com/watch?v=PRc2vx4xTVM";
 
     try {
