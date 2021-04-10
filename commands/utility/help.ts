@@ -1,3 +1,4 @@
+import fs from "fs";
 import { Command, Message } from "discord.js";
 import { commands } from "../../app";
 import { getCommandContent } from "../../util/getCommandContent";
@@ -5,7 +6,7 @@ import { getCommandContent } from "../../util/getCommandContent";
 export = <Command>{
   name: "help",
   description: "List all of my commands or info about a specific command.",
-  aliases: ["commands"],
+  aliases: ["commands", "hlp"],
   guildOnly: false,
   usage: "",
   cooldown: 5,
@@ -14,14 +15,26 @@ export = <Command>{
     const data = [];
     const commandContent = getCommandContent(message.content);
 
+    const commandsByCat = new Map<string, string[]>();
+    const commandCategories = fs.readdirSync("./commands");
+    for (const category of commandCategories) {
+      const categoryCommands = fs
+        .readdirSync(`./commands/${category}`)
+        .filter((file) => file.endsWith(".ts"))
+        .map((file) => file.slice(0, -3));
+      commandsByCat.set(category, categoryCommands);
+    }
+
     if (commandContent == "") {
       data.push("Here's a list of all my commands:");
-      data.push(
-        commands
-          .map((command) => command.name)
-          .join(", ")
-          .toInlineCodeBg()
-      );
+
+      commandsByCat.forEach((commands, category) => {
+        const categorySection =
+          `${category}:` + "\n" + commands.join(", ").toInlineCodeBg();
+
+        data.push(categorySection);
+      });
+
       data.push(
         `\nYou can send \`${prefix}help [command]\` to get info on a specific command!`
       );
@@ -29,7 +42,7 @@ export = <Command>{
       try {
         await message.author.send(data, { split: true });
         if (message.channel.type === "dm") return;
-        message.reply("I've sent you a DM with all my commands!");
+        return message.reply("I've sent you a DM with all my commands!");
       } catch (error) {
         console.error(
           `Could not send help DM to ${message.author.tag}.\n`,
