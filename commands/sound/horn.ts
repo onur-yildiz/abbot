@@ -1,8 +1,5 @@
 import { Command, Message } from "discord.js";
-import {
-  TEST_COMMAND_NOT_VALID,
-  TEST_EXECUTION_ERROR,
-} from "../../constants/messages";
+import { TEST_EXECUTION_ERROR } from "../../constants/messages";
 import { checkUserInAChannel } from "../../util/checkUserInAChannel";
 import { connect } from "../../util/connect";
 import { getCommandContent } from "../../util/getCommandContent";
@@ -49,9 +46,3 @@ export = <Command>{
     }
   },
 };
-
-// https://www.myinstants.com/instant/hiko-dri-90536/
-// https://www.myinstants.com/instant/savage-fap/
-// https://www.myinstants.com/instant/yazik-kafana-45948/
-// https://www.myinstants.com/instant/neyi-basaramadin-1365/
-// puh sonmez reis
