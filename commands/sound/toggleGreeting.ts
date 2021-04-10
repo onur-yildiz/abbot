@@ -2,8 +2,8 @@ import { Command, Message } from "discord.js";
 import { getOrInitQueue } from "../../util/getOrInitQueue";
 
 export = <Command>{
-  name: "toggle greeting",
-  aliases: ["greeting", "tg", "toggle greet", "greet"],
+  name: "togglegreeting",
+  aliases: ["greeting", "tg", "togglegreet", "greet"],
   description: "Clears the queue.",
   usage: "",
   permissions: ["ADMINISTRATOR", "MOVE_MEMBERS"],
