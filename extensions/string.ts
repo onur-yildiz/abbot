@@ -1,5 +1,6 @@
 interface String {
   toBold(): string;
+  toItalic(): string;
   toInlineCodeBg(): string;
   toCodeBg(): string;
   toCodeBgCs(): string;
@@ -9,6 +10,14 @@ interface String {
 Object.defineProperty(String.prototype, "toBold", {
   value: function toBold() {
     return `\*\*${this}\*\*`;
+  },
+  writable: true,
+  configurable: true,
+});
+
+Object.defineProperty(String.prototype, "toItalic", {
+  value: function toItalic() {
+    return `\*${this}\*`;
   },
   writable: true,
   configurable: true,
