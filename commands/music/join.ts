@@ -1,16 +1,16 @@
 import { Command, Message } from "discord.js";
-import { checkAvailability } from "../../util/checkAvailability";
+import { checkUserInAChannel } from "../../util/checkUserInAChannel";
 import { connect } from "../../util/connect";
 import { getOrInitQueue } from "../../util/getOrInitQueue";
 
 export = <Command>{
-  name: "leave",
-  aliases: ["l", "quit"],
-  description: "Make the bot leave the voice channel.",
+  name: "join",
+  aliases: ["cmere"],
+  description: "Make the bot join the voice channel.",
   usage: "",
   guildOnly: true,
   execute(message: Message) {
-    const error = checkAvailability(message);
+    const error = checkUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());
 
     const queueContract = getOrInitQueue(
@@ -18,6 +18,7 @@ export = <Command>{
       message.channel,
       message.member.voice.channel
     );
+
     try {
       connect(queueContract);
     } catch (error) {
