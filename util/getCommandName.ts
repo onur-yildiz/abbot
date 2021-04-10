@@ -3,7 +3,7 @@ export const getCommandName = (commandMessage: string): string => {
   const regex = new RegExp(`^[${prefix}](.*?)(?=\\s|$)`);
   if (regex.test(commandMessage)) {
     const res = regex.exec(commandMessage);
-    return res ? res[1] : "";
+    return res ? res[1].toLowerCase() : "";
   }
   return "";
 };
