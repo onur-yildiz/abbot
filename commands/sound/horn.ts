@@ -36,10 +36,14 @@ export = <Command>{
       await connect(queueContract);
       const dispatcher = queueContract.connection
         .play(audioPath)
-        .on("finish", () => {})
+        .on("finish", () => {
+          responseMessage.delete();
+        })
         .on("error", (error) => console.error(error));
       dispatcher.setVolumeLogarithmic(queueContract.volume);
-      message.channel.send(`Playing **${commandContent}**`);
+      const responseMessage = await message.channel.send(
+        `Playing **${commandContent}**`
+      );
     } catch (error) {
       console.error(error);
       message.reply(TEST_EXECUTION_ERROR);

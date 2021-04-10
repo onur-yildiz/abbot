@@ -45,6 +45,7 @@ export = <Command>{
       const dispatcher = queueContract.connection
         .play(ytdl(queueContract.songs[0].url))
         .on("finish", () => {
+          responseMessage.delete();
           queueContract.songs.shift();
           message.content = "";
           if (queueContract.songs.length == 0) queueContract.playing = false;
@@ -52,7 +53,9 @@ export = <Command>{
         })
         .on("error", (error) => console.error(error));
       dispatcher.setVolumeLogarithmic(queueContract.volume);
-      message.channel.send(`css\n[Playing]\n${song.title}`.toCodeBg());
+      const responseMessage = await message.channel.send(
+        `css\n[Playing]\n${song.title}`.toCodeBg()
+      );
     } catch (error) {
       console.error(error);
       message.reply(TEST_COMMAND_NOT_VALID);
@@ -77,7 +80,9 @@ const fetchSong = async (commandContent: string): Promise<Song> => {
     };
   } else {
     const searchQuery = commandContent;
+
     const filters = await ytsr.getFilters(searchQuery);
+
     const filter = filters.get("Type").get("Video");
     const songInfo: ytsr.Result = await ytsr(filter.url, {
       limit: 1,
