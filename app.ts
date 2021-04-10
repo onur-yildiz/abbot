@@ -2,10 +2,9 @@ import {
   Collection,
   Command,
   Cooldowns,
-  DMChannel,
+  GuildContract,
   Message,
   NewsChannel,
-  QueueContract,
   TextChannel,
 } from "discord.js";
 
@@ -119,4 +118,4 @@ client.on("message", async (message: Message) => {
   }
 });
 
-export const guildContracts: Map<string, QueueContract> = new Map();
+export const guildContracts: GuildContract = new Map();

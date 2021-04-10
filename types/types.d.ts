@@ -9,6 +9,8 @@ declare module "discord.js" {
     enableGreeting: boolean;
   };
 
+  type GuildContract = Map<string, QueueContract>;
+
   type Command = {
     name: string;
     description: string;
