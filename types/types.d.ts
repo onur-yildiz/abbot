@@ -1,15 +1,17 @@
 declare module "discord.js" {
-  type QueueContract = {
+  type GuildData = {
     textChannel: TextChannel | DMChannel | NewsChannel;
     voiceChannel: VoiceChannel;
     connection: VoiceConnection;
     songs: Array<Song>;
     volume: number;
-    playing: boolean;
-    enableGreeting: boolean;
+    queueActive: boolean;
+    greetingEnabled: boolean;
+    audioAliases: Map<string, string>;
+    prefix: string;
   };
 
-  type GuildContract = Map<string, QueueContract>;
+  type Guilds = Map<string, GuildData>;
 
   type Command = {
     name: string;
@@ -17,14 +19,22 @@ declare module "discord.js" {
     guildOnly: boolean;
     aliases: Array<string>;
     usage: string;
+    args: Args;
     permissions?: PermissionResolvable;
     cooldown?: number;
-    args?: boolean;
+    argList?: Array<string>;
     execute: Function;
   };
 
   type Cooldowns = Collection<string, Collection<string, number>>;
 }
+
+declare type GuildSettings = {
+  guildId: string;
+  greetingEnabled: boolean;
+  audioAliases: Map<string, string>;
+  prefix: string;
+};
 
 declare type Song = {
   title: string;
@@ -33,3 +43,9 @@ declare type Song = {
   desc: string;
   author: string;
 };
+
+declare const enum Args {
+  none,
+  flexible,
+  required,
+}
