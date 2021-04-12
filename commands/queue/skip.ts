@@ -1,31 +1,39 @@
 import { Command, Message } from "discord.js";
 import { QUEUE_EMPTY_SKIP } from "../../constants/messages";
 import { checkAvailability } from "../../util/checkAvailability";
-import { getOrInitQueue } from "../../util/getOrInitQueue";
+import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 
 export = <Command>{
   name: "skip",
   aliases: ["s", "next"],
   description: "Skip the current song.",
   usage: "",
+  args: Args.none,
   guildOnly: true,
-  execute(message: Message) {
+  cooldown: 1,
+  async execute(message: Message) {
     const error = checkAvailability(message);
     if (error != null) return message.channel.send(error);
 
-    const queueContract = getOrInitQueue(
+    let guildData = getAndUpdateGuildData(
       message.guild,
       message.channel,
       message.member.voice.channel
     );
 
-    const isQueueEmpty = (): boolean => queueContract.songs.length === 0;
+    const dispatcher = guildData.connection.dispatcher;
+    const isQueueEmpty = (): boolean => guildData.songs.length === 0;
     if (isQueueEmpty()) return message.channel.send(QUEUE_EMPTY_SKIP.toBold());
-    if (queueContract.connection.dispatcher != null) {
-      queueContract.connection.dispatcher.end();
-      if (isQueueEmpty()) queueContract.playing = false;
-      return message.channel.send(`Skipped.`.toBold());
+
+    let responseMessage: Message;
+    try {
+      if (dispatcher != null) {
+        responseMessage = await message.channel.send("Skipped.".toBold());
+        dispatcher.emit("skip");
+      }
+    } catch (error) {
+      responseMessage.edit("Could not skip!".toBold());
+      console.log(error);
     }
-    return;
   },
 };
