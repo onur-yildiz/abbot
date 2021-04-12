@@ -1,7 +1,7 @@
-import { QueueContract } from "discord.js";
+import { GuildData } from "discord.js";
 
-export const connect = async (queueContract: QueueContract) => {
-  const connection = await queueContract.voiceChannel.join();
-  queueContract.connection = connection;
-  return queueContract;
+export const connect = async (guildData: GuildData) => {
+  const connection = await guildData.voiceChannel.join();
+  guildData.connection = connection;
+  return guildData;
 };
