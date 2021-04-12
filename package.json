@@ -1,7 +1,7 @@
 {
-  "name": "priv-abbot",
+  "name": "abbot",
   "version": "1.0.0",
-  "description": "Private version of github.com/onur-yildiz/abbot discord bot.",
+  "description": "A discord music/soundhorn bot with special snyder cut wonder woman themed greeting.",
   "main": "app.ts",
   "dependencies": {
     "@discordjs/opus": "^0.5.0",
@@ -32,12 +32,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/onur-yildiz/priv-abbot.git"
+    "url": "git+https://github.com/onur-yildiz/abbot.git"
   },
   "author": "Onur Yıldız",
-  "license": "",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/onur-yildiz/priv-abbot/issues"
+    "url": "https://github.com/onur-yildiz/abbot/issues"
   },
-  "homepage": "https://github.com/onur-yildiz/priv-abbot#readme"
+  "homepage": "https://github.com/onur-yildiz/abbot#readme"
 }
