@@ -1,5 +1,4 @@
 import { Command, Message, NewsChannel, TextChannel } from "discord.js";
-import { getCommandContent } from "../../util/getCommandContent";
 
 export = <Command>{
   name: "clearmessage",
@@ -7,9 +6,10 @@ export = <Command>{
   description: "Clear the past [?] messages.",
   usage: "[message amount]",
   guildOnly: true,
+  args: Args.required,
   cooldown: 8,
-  async execute(message: Message) {
-    const commandContent = getCommandContent(message.content);
+  async execute(message: Message, args: string[]) {
+    const commandContent = args[1];
     const amountText = commandContent.split(" ")[0];
     const amount = parseInt(amountText);
     if (isNaN(amount)) return;
