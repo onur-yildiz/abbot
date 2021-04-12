@@ -25,7 +25,7 @@ export const initGuildData = async (
   try {
     const guildSettings = await getGuildSettings(guild);
     if (guildSettings) {
-      if (guildSettings.greetingEnabled)
+      if (guildSettings.greetingEnabled != null)
         guildData.greetingEnabled = guildSettings.greetingEnabled;
       if (guildSettings.audioAliases)
         guildData.audioAliases = guildSettings.audioAliases;
