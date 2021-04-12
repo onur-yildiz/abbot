@@ -1,66 +1,94 @@
-import { Command, Message } from "discord.js";
+import { Command, GuildData, Message } from "discord.js";
 import ytdl from "ytdl-core";
 import ytsr from "ytsr";
 import { TEST_COMMAND_NOT_VALID } from "../../constants/messages";
+import { checkAvailability } from "../../util/checkAvailability";
 import { checkUserInAChannel } from "../../util/checkUserInAChannel";
 import { connect } from "../../util/connect";
-import { getCommandContent } from "../../util/getCommandContent";
-import { getOrInitQueue } from "../../util/getOrInitQueue";
+import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 
 export = <Command>{
   name: "play",
   aliases: ["p", "paly"],
-  description: "Play a song from youtube. URLs and search queries accepted.",
-  usage: " [URL || query]",
+  description: "Play a song with the given url or query from youtube.",
+  usage: " [URL/query]",
   guildOnly: true,
-  execute: async function execute(message: Message) {
-    const error = checkUserInAChannel(message);
-    if (error) return message.channel.send(error.toBold());
-
-    const commandContent = getCommandContent(message.content);
-    const queueContract = getOrInitQueue(
+  args: Args.flexible,
+  cooldown: 1,
+  async execute(message: Message, args?: string[]) {
+    const guildData = getAndUpdateGuildData(
       message.guild,
       message.channel,
       message.member.voice.channel
     );
 
-    const song = await fetchSong(commandContent);
-    // if (song == null) {
-    //   queueContract.voiceChannel.leave();
-    //   deleteQueue(message);
-    //   return null;
-    // }
+    const error = guildData.queueActive
+      ? checkAvailability(message)
+      : checkUserInAChannel(message);
+    if (error) return message.channel.send(error.toBold());
 
-    if (queueContract.playing) {
-      queueContract.songs.push(song);
-      console.log(queueContract.songs);
-      return message.channel.send(`Added to queue\n${song.title}`.toCodeBg());
+    //resume if paused
+    const dispatcher = guildData.connection
+      ? guildData.connection.dispatcher
+      : null;
+    if (!args[1] && dispatcher && dispatcher.paused) {
+      guildData.connection.dispatcher.resume();
+      return message.channel.send(`Resuming :play_pause:`.toBold());
     }
 
-    queueContract.songs.push(song);
-    queueContract.playing = true;
-    await connect(queueContract);
+    const commandContent = args[1];
 
     try {
-      const dispatcher = queueContract.connection
-        .play(ytdl(queueContract.songs[0].url))
-        .on("finish", () => {
-          responseMessage.delete();
-          queueContract.songs.shift();
-          message.content = "";
-          if (queueContract.songs.length == 0) queueContract.playing = false;
-          else execute(message);
-        })
-        .on("error", (error) => console.error(error));
-      dispatcher.setVolumeLogarithmic(queueContract.volume);
-      const responseMessage = await message.channel.send(
-        `css\n[Playing]\n${song.title}`.toCodeBg()
-      );
+      const song = await fetchSong(commandContent);
+      console.log(song.url);
+
+      if (guildData.queueActive) {
+        guildData.songs.push(song);
+        return message.channel.send(`Added to queue\n${song.title}`.toCodeBg());
+      }
+      guildData.songs.push(song);
+      guildData.queueActive = true;
+
+      await connect(guildData);
+      play(message, guildData);
     } catch (error) {
       console.error(error);
       message.reply(TEST_COMMAND_NOT_VALID);
     }
   },
+};
+
+const play = async (message: Message, guildData: GuildData) => {
+  const currentSong = guildData.songs[0];
+  const dispatcher = guildData.connection
+    .play(ytdl(currentSong.url))
+    .on("start", () => console.log(`Playing: ${currentSong}`))
+    .on("skip", () => {
+      if (!dispatcher.paused) dispatcher.emit("finish");
+      else guildData.songs.shift();
+    })
+    .on("resume", () => {
+      if (guildData.songs.length === 0) {
+        guildData.queueActive = false;
+        // if currentSong is not skipped, resume.
+      } else if (currentSong === guildData.songs[0]) {
+        dispatcher.resume();
+      } else {
+        responseMessage.delete();
+        play(message, guildData);
+      }
+    })
+    .on("finish", () => {
+      responseMessage.delete();
+      guildData.songs.shift();
+      if (guildData.songs.length === 0) guildData.queueActive = false;
+      else play(message, guildData);
+    })
+    .on("error", (error) => console.error(error));
+  dispatcher.setVolumeLogarithmic(guildData.volume);
+  const responseMessage = await message.channel.send(
+    `css\n[Playing]\n${guildData.songs[0].title}`.toCodeBg()
+  );
 };
 
 const fetchSong = async (commandContent: string): Promise<Song> => {
