@@ -1,9 +1,9 @@
-export const getCommandName = (commandMessage: string): string => {
-  const prefix = process.env.PREFIX;
-  const regex = new RegExp(`^[${prefix}](.*?)(?=\\s|$)`);
-  if (regex.test(commandMessage)) {
-    const res = regex.exec(commandMessage);
-    return res ? res[1].toLowerCase() : "";
+export const getCommandName = (
+  commandMessage: string,
+  prefix: string
+): string => {
+  if (commandMessage.startsWith(prefix)) {
+    return commandMessage.slice(prefix.length).split(" ")[0];
   }
   return "";
 };
