@@ -1,4 +1,5 @@
 import { Command, Message } from "discord.js";
+import { PONG } from "../../constants/messages";
 
 export = <Command>{
   name: "ping",
@@ -9,6 +10,6 @@ export = <Command>{
   guildOnly: false,
   cooldown: 5,
   execute(message: Message) {
-    message.channel.send("Pong.");
+    message.channel.send(PONG);
   },
 };

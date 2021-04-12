@@ -1,7 +1,6 @@
 import { Command, Message } from "discord.js";
 import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 import { saveGuildSettings } from "../../db/dbHelper";
-import { urlReachable } from "../../util/urlReachable";
 
 export = <Command>{
   name: "deletehorn",
@@ -29,7 +28,9 @@ export = <Command>{
         $unset: { [`audioAliases.${alias}`]: "" },
       });
       guildData.audioAliases.delete(alias);
-      message.channel.send(`:x: ${alias.toInlineCodeBg()} is deleted. :x:`);
+      message.channel.send(
+        `${alias.toInlineCodeBg()} is deleted. :wastebasket:`
+      );
     } catch (error) {
       console.error(error);
     }

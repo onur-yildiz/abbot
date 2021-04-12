@@ -1,4 +1,5 @@
 import { Command, Message } from "discord.js";
+import { ERROR_CONNECTING } from "../../constants/messages";
 import { checkUserInAChannel } from "../../util/checkUserInAChannel";
 import { connect } from "../../util/connect";
 import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
@@ -23,6 +24,7 @@ export = <Command>{
     try {
       await connect(guildData);
     } catch (error) {
+      message.channel.send(ERROR_CONNECTING.toBold());
       console.error(error);
     }
   },

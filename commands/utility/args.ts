@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import { TEST_EXECUTION_ERROR } from "../../constants/messages";
+import { ERROR_EXECUTION_ERROR } from "../../constants/messages";
 import { getGuildSettings } from "../../db/dbHelper";
 
 export = <Command>{
@@ -22,7 +22,7 @@ export = <Command>{
         return message.channel.send(data.join(", ").toInlineCodeBg());
       }
     } catch (error) {
-      message.channel.send(TEST_EXECUTION_ERROR.toBold());
+      message.channel.send(ERROR_EXECUTION_ERROR.toBold());
       console.error(error);
     }
   },

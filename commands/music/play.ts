@@ -1,7 +1,7 @@
 import { Command, GuildData, Message } from "discord.js";
 import ytdl from "ytdl-core";
 import ytsr from "ytsr";
-import { TEST_COMMAND_NOT_VALID } from "../../constants/messages";
+import { RESUMING, ERROR_COMMAND_NOT_VALID } from "../../constants/messages";
 import { checkAvailability } from "../../util/checkAvailability";
 import { checkUserInAChannel } from "../../util/checkUserInAChannel";
 import { connect } from "../../util/connect";
@@ -33,18 +33,17 @@ export = <Command>{
       : null;
     if (!args[1] && dispatcher && dispatcher.paused) {
       guildData.connection.dispatcher.resume();
-      return message.channel.send(`Resuming :play_pause:`.toBold());
+      return message.channel.send(RESUMING.toBold());
     }
 
     const commandContent = args[1];
 
     try {
       const song = await fetchSong(commandContent);
-      console.log(song.url);
 
       if (guildData.queueActive) {
         guildData.songs.push(song);
-        return message.channel.send(`Added to queue\n${song.title}`.toCodeBg());
+        return message.channel.send(`Added to queue\n${song.title}`.toCodeBg()); // TODO EMBED
       }
       guildData.songs.push(song);
       guildData.queueActive = true;
@@ -53,7 +52,7 @@ export = <Command>{
       play(message, guildData);
     } catch (error) {
       console.error(error);
-      message.reply(TEST_COMMAND_NOT_VALID);
+      message.reply(ERROR_COMMAND_NOT_VALID);
     }
   },
 };
@@ -62,7 +61,11 @@ const play = async (message: Message, guildData: GuildData) => {
   const currentSong = guildData.songs[0];
   const dispatcher = guildData.connection
     .play(ytdl(currentSong.url))
-    .on("start", () => console.log(`Playing: ${currentSong}`))
+    .on("start", () =>
+      console.log(
+        `Playing: ${currentSong.url} @${message.guild.name}<${message.guild.id}>`
+      )
+    )
     .on("skip", () => {
       if (!dispatcher.paused) dispatcher.emit("finish");
       else guildData.songs.shift();
@@ -87,7 +90,7 @@ const play = async (message: Message, guildData: GuildData) => {
     .on("error", (error) => console.error(error));
   dispatcher.setVolumeLogarithmic(guildData.volume);
   const responseMessage = await message.channel.send(
-    `css\n[Playing]\n${guildData.songs[0].title}`.toCodeBg()
+    `css\n[Playing]\n${guildData.songs[0].title}`.toCodeBg() // TODO EMBED
   );
 };
 

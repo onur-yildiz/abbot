@@ -1,4 +1,9 @@
 import { Command, Message } from "discord.js";
+import {
+  ALREADY_PAUSED,
+  NOTHING_IS_PLAYING,
+  PAUSED,
+} from "../../constants/messages";
 import { checkAvailability } from "../../util/checkAvailability";
 import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 
@@ -20,10 +25,10 @@ export = <Command>{
     );
 
     if (guildData.connection.dispatcher.paused)
-      return message.channel.send(`Already paused.`.toBold());
+      return message.channel.send(ALREADY_PAUSED.toBold());
     if (guildData.queueActive) {
       guildData.connection.dispatcher.pause();
-      message.channel.send(`Paused :pause_button:`.toBold());
-    } else message.channel.send(`No songs are playing.`.toBold());
+      message.channel.send(PAUSED.toBold());
+    } else message.channel.send(NOTHING_IS_PLAYING.toItalic());
   },
 };

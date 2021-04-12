@@ -1,4 +1,9 @@
 import { Command, Message } from "discord.js";
+import {
+  ALREADY_PLAYING,
+  NOTHING_IS_PLAYING,
+  RESUMING,
+} from "../../constants/messages";
 import { checkAvailability } from "../../util/checkAvailability";
 import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 
@@ -21,16 +26,14 @@ export = <Command>{
 
     const dispatcher = guildData.connection.dispatcher;
     if (!dispatcher.paused)
-      return message.channel.send(`Already playing.`.toBold());
+      return message.channel.send(ALREADY_PLAYING.toBold());
 
     let responseMessage: Message;
     try {
       if (guildData.queueActive) {
-        responseMessage = await message.channel.send(
-          `Resuming :play_pause:`.toBold()
-        );
+        responseMessage = await message.channel.send(RESUMING.toBold());
         dispatcher.emit("resume");
-      } else message.channel.send(`No songs are playing.`.toBold());
+      } else message.channel.send(NOTHING_IS_PLAYING.toBold());
     } catch (error) {
       responseMessage.edit("Could not resume!");
       console.error(error);

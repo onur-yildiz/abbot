@@ -1,6 +1,9 @@
 import fs from "fs";
 import { Command, GuildData, Message } from "discord.js";
-import { TEST_EXECUTION_ERROR } from "../../constants/messages";
+import {
+  HORN_PLAYING_MUSIC,
+  ERROR_EXECUTION_ERROR,
+} from "../../constants/messages";
 import { checkUserInAChannel } from "../../util/checkUserInAChannel";
 import { connect } from "../../util/connect";
 import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
@@ -25,9 +28,7 @@ export = <Command>{
     );
 
     if (guildData.queueActive)
-      return message.channel.send(
-        `I am already playing music.\nYou have to clear song queue to play audio.`.toBold()
-      );
+      return message.channel.send(HORN_PLAYING_MUSIC.toBold());
 
     try {
       let audioPath = "";
@@ -55,11 +56,11 @@ export = <Command>{
         .on("error", (error) => console.error(error));
       dispatcher.setVolumeLogarithmic(guildData.volume);
       const responseMessage = await message.channel.send(
-        `Playing **${commandContent}**`
+        `Playing **${commandContent}**` // TODO react instead of replying
       );
     } catch (error) {
       console.error(error);
-      message.reply(TEST_EXECUTION_ERROR);
+      message.reply(ERROR_EXECUTION_ERROR);
     }
   },
 };

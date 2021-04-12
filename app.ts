@@ -13,7 +13,7 @@ import mongoose from "mongoose";
 import fs from "fs";
 import "ffmpeg";
 
-import { TEST_EXECUTION_ERROR } from "./constants/messages";
+import { ERROR_EXECUTION_ERROR } from "./constants/messages";
 import { getCommandName } from "./util/getCommandName";
 import { getCommandContent } from "./util/getCommandContent";
 import { greetUserInVoiceChannel } from "./bot-functions/greetUserInVoiceChannel";
@@ -117,14 +117,12 @@ client.on("message", async (message: Message) => {
       message.channel
     )).permissionsFor(message.author);
     if (!authorPerms || !authorPerms.any(command.permissions)) {
-      return message.reply("You can not do this!");
+      return message.reply("you are not allowed to do this!");
     }
   }
 
   if (command.args === Args.required && commandContent == "")
-    return message.channel.send(
-      `You didn't provide any arguments, ${message.author}!`
-    );
+    return message.reply("you did not provide any arguments!");
 
   if (!cooldowns.has(command.name)) {
     cooldowns.set(command.name, new Discord.Collection());
@@ -156,6 +154,6 @@ client.on("message", async (message: Message) => {
     else await command.execute(message);
   } catch (error) {
     console.error(error);
-    message.reply(TEST_EXECUTION_ERROR.toBold());
+    message.reply(ERROR_EXECUTION_ERROR.toBold());
   }
 });

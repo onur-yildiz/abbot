@@ -1,29 +1,59 @@
-export const JOIN_CHANNEL_STOP =
-  "You have to be in the same voice channel to stop the music.";
-export const JOIN_CHANNEL_SKIP =
-  "You have to be in the same voice channel to skip the music.";
-export const JOIN_CHANNEL_CLEAR =
-  "You have to be in the same voice channel to clear the queue.";
-export const JOIN_CHANNEL_GENERIC =
-  "You have to be in the same voice channel to do that";
-export const JOIN_CHANNEL_PLAY = "You need to be in a voice channel first.";
+const JOIN_CHANNEL_GENERIC =
+  ":x: You have to be in the voice channel to do that.";
+const JOIN_CHANNEL_PLAY = ":x: You have to be in a voice channel to do that.";
 
-export const QUEUE_EMPTY_SKIP = "There is no more items in the queue.";
-export const QUEUE_EMPTY_CLEAR = "The queue is already empty.";
-export const QUEUE_CLEARED = "The queue is cleared.";
-export const QUEUE_EMPTY = "The queue is empty.";
-export const QUEUE_CHANNEL_CLEAR =
-  "You have to be in the same voice channel to clear the queue.";
+const QUEUE_EMPTY = "The queue is empty :no_entry_sign: :zzz:";
+const QUEUE_EMPTY_SKIP =
+  "There is no more items in the queue :no_entry_sign: :zzz:";
+const QUEUE_EMPTY_CLEAR = "The queue is already empty :no_entry_sign: :zzz:";
+const QUEUE_CLEARED = "Cleared :stop_button:";
 
-export const PERMISSIONS_PLAY =
+const HORN_PLAYING_MUSIC =
+  "I am playing music.\nYou have to clear the queue and skip the current track to play audio!"; // TODO make stop/resume compatible
+
+const PERMISSIONS_PLAY =
   "I need the permissions to join and speak in the voice channel";
 
-export const TEST_COMMAND_NOT_VALID = "TEST: command not valid.";
-export const TEST_EXECUTION_ERROR =
-  "TEST: there was an error trying to execute that command!";
+const ERROR_COMMAND_NOT_VALID = "This is not a valid command!";
+const ERROR_EXECUTION_ERROR =
+  "There was an error trying to execute that command!";
+const ERROR_CONNECTING =
+  "An error occured during connecting to the voice channel!";
+const ERROR_CLEAR_MESSAGES = "Something went wrong deleting the messages.";
 
-export const BOT_NOT_IN_CHANNEL = "I am not active in a channel.";
-export const BOT_NOT_IN_SAME_CHANNEL = "I am in another voice channel";
+const BOT_NOT_IN_CHANNEL = ":x: I am not active in a channel";
+const BOT_NOT_IN_SAME_CHANNEL = ":x: I am in another voice channel";
 
-// const QUEUE_ADDED_MSG = (title: string) => `${title} has been added to the queue!`
-// const PLAYING_MSG = (title: string) => `Playing: **${title}**`
+const DISCONNECTED = "Disconnected. :airplane:";
+const PAUSED = "Paused :pause_button:";
+const ALREADY_PAUSED = "Already paused :zzz:";
+const NOTHING_IS_PLAYING = "Nothing is playing :zzz:";
+const RESUMING = "Resuming :play_pause:";
+const ALREADY_PLAYING = "Already playing. :zzz:";
+const SKIPPED = "Skipped :track_next:";
+const PONG = "Pong :ping_pong:";
+
+export {
+  JOIN_CHANNEL_GENERIC,
+  JOIN_CHANNEL_PLAY,
+  QUEUE_EMPTY,
+  QUEUE_EMPTY_SKIP,
+  QUEUE_EMPTY_CLEAR,
+  QUEUE_CLEARED,
+  HORN_PLAYING_MUSIC,
+  PERMISSIONS_PLAY,
+  ERROR_COMMAND_NOT_VALID,
+  ERROR_EXECUTION_ERROR,
+  ERROR_CONNECTING,
+  ERROR_CLEAR_MESSAGES,
+  BOT_NOT_IN_CHANNEL,
+  BOT_NOT_IN_SAME_CHANNEL,
+  DISCONNECTED,
+  PAUSED,
+  ALREADY_PAUSED,
+  NOTHING_IS_PLAYING,
+  RESUMING,
+  ALREADY_PLAYING,
+  SKIPPED,
+  PONG,
+};

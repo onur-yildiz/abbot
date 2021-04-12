@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import { QUEUE_EMPTY_SKIP } from "../../constants/messages";
+import { QUEUE_EMPTY_SKIP, SKIPPED } from "../../constants/messages";
 import { checkAvailability } from "../../util/checkAvailability";
 import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 
@@ -28,7 +28,7 @@ export = <Command>{
     let responseMessage: Message;
     try {
       if (dispatcher != null) {
-        responseMessage = await message.channel.send("Skipped.".toBold());
+        responseMessage = await message.channel.send(SKIPPED.toBold());
         dispatcher.emit("skip");
       }
     } catch (error) {
