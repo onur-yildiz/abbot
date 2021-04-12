@@ -5,6 +5,7 @@ export = <Command>{
   aliases: ["clbm", "clrbotmsg", "clbotmsg"],
   description: "Clear the bot messages. (message cache is limited to 200)",
   usage: "",
+  args: Args.none,
   guildOnly: true,
   cooldown: 8,
   async execute(message: Message) {
