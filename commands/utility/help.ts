@@ -1,5 +1,5 @@
 import fs from "fs";
-import Discord, { Command, Message } from "discord.js";
+import Discord, { Command, Message, MessageReaction, User } from "discord.js";
 import { commands, guilds } from "../../app";
 
 export = <Command>{
@@ -90,7 +90,20 @@ export = <Command>{
       .addFields(...data);
 
     try {
-      await (await message.channel.send(embed)).react(":mega:");
+      const responseMessage = await message.channel.send(embed);
+      const r = await responseMessage.react("✅");
+
+      const filter = (reaction: MessageReaction, user: User) =>
+        reaction.emoji.name === "✅" && user.id === message.author.id;
+
+      const collector = responseMessage.createReactionCollector(filter, {
+        time: 60000,
+      });
+
+      collector.on("collect", (r) => responseMessage.delete());
+      collector.on("end", (collected) => {
+        if (!responseMessage.deleted) r.remove();
+      });
     } catch (error) {
       console.error(error);
     }
