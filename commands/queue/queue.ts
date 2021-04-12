@@ -2,29 +2,30 @@ import Discord, { Command, Message } from "discord.js";
 
 import { QUEUE_EMPTY } from "../../constants/messages";
 import { checkAvailability } from "../../util/checkAvailability";
-import { getOrInitQueue } from "../../util/getOrInitQueue";
+import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 
 export = <Command>{
   name: "queue",
   aliases: ["q", "quit"],
   description: "Show the song queue.",
   usage: "",
+  args: Args.none,
   guildOnly: true,
   execute(message: Message) {
     const error = checkAvailability(message);
     if (error) return message.channel.send(error.toBold());
 
-    const queueContract = getOrInitQueue(
+    const guildData = getAndUpdateGuildData(
       message.guild,
       message.channel,
       message.member.voice.channel
     );
 
-    if (queueContract.songs.length == 0)
+    if (guildData.songs.length == 0)
       return message.channel.send(QUEUE_EMPTY.toBold());
 
     let queue = [];
-    queueContract.songs.forEach((song, index) =>
+    guildData.songs.forEach((song, index) =>
       queue.push({
         name: `${index + 1}: ${song.title}`,
         value: `${song.author}`,
@@ -33,7 +34,7 @@ export = <Command>{
     const embed = new Discord.MessageEmbed()
       .setColor("#0099ff")
       .setTitle("Queue")
-      .setThumbnail(queueContract.songs[0].thumbnailUrl)
+      .setThumbnail(guildData.songs[0].thumbnailUrl)
       .addFields(...queue)
       .setTimestamp();
     message.channel.send(embed);

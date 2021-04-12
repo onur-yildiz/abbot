@@ -1,29 +1,29 @@
 import { Command, Message } from "discord.js";
 import { checkUserInAChannel } from "../../util/checkUserInAChannel";
 import { connect } from "../../util/connect";
-import { getOrInitQueue } from "../../util/getOrInitQueue";
+import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 
 export = <Command>{
   name: "join",
-  aliases: ["cmere"],
+  aliases: ["j", "cmere"],
   description: "Make the bot join the voice channel.",
   usage: "",
+  args: Args.none,
   guildOnly: true,
-  execute(message: Message) {
+  async execute(message: Message) {
     const error = checkUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());
 
-    const queueContract = getOrInitQueue(
+    const guildData = getAndUpdateGuildData(
       message.guild,
       message.channel,
       message.member.voice.channel
     );
 
     try {
-      connect(queueContract);
+      await connect(guildData);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   },
 };
-// TODO TEST

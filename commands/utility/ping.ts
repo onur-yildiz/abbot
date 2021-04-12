@@ -5,6 +5,7 @@ export = <Command>{
   aliases: ["pnig"],
   description: "Ping!",
   usage: "",
+  args: Args.none,
   guildOnly: false,
   cooldown: 5,
   execute(message: Message) {
