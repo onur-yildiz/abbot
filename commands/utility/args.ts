@@ -1,24 +1,29 @@
 import { Command, Message } from "discord.js";
-import { getCommandContent } from "../../util/getCommandContent";
+import { TEST_EXECUTION_ERROR } from "../../constants/messages";
+import { getGuildSettings } from "../../db/dbHelper";
 
 export = <Command>{
   name: "args",
   aliases: ["arg"],
-  description: "Information about the arguments provided.",
-  usage: " [query]",
+  description:
+    "Returns the list of saved arguments accepted by the entered command.",
+  usage: "[command name]",
   guildOnly: true,
-  execute(message: Message) {
-    const commandContent = getCommandContent(message.content);
+  args: Args.required,
+  async execute(message: Message, args: string[]) {
+    const commandContent = args[1];
 
-    if (commandContent === "anan") {
-      return message.channel.send("sqem");
-    }
-    if (commandContent.startsWith("echo")) {
-      return message.channel.send(commandContent.slice(4));
-    }
+    try {
+      if (commandContent === "horn") {
+        const data = [];
+        const guildSettings = await getGuildSettings(message.guild);
+        for (const key of guildSettings.audioAliases.keys()) data.push(key);
 
-    message.channel.send(
-      `Arguments: ${commandContent}\nArguments length: ${commandContent.length}`
-    );
+        return message.channel.send(data.join(", ").toInlineCodeBg());
+      }
+    } catch (error) {
+      message.channel.send(TEST_EXECUTION_ERROR.toBold());
+      console.error(error);
+    }
   },
 };
