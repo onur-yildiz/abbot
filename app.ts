@@ -2,13 +2,14 @@ import {
   Collection,
   Command,
   Cooldowns,
-  GuildContract,
+  Guilds,
   Message,
   NewsChannel,
   TextChannel,
 } from "discord.js";
 
 import Discord from "discord.js";
+import mongoose from "mongoose";
 import fs from "fs";
 import "ffmpeg";
 
@@ -17,14 +18,16 @@ import { getCommandName } from "./util/getCommandName";
 import { getCommandContent } from "./util/getCommandContent";
 import { greetUserInVoiceChannel } from "./bot-functions/greetUserInVoiceChannel";
 import "./extensions/string";
+import { initGuildData } from "./util/initGuildData";
+import { sendDefaultHelpMessage } from "./bot-functions/sendDefaultHelpMessage";
 
 require("dotenv").config();
-const prefix = process.env.PREFIX;
+const defaultPrefix = process.env.PREFIX;
 const token = process.env.TOKEN;
-
-const client = new Discord.Client();
+const uri = process.env.DATABASE_URI;
 
 export const commands = new Discord.Collection<string, Command>();
+export const guilds: Guilds = new Map();
 
 const commandFolders = fs.readdirSync("./commands");
 for (const folder of commandFolders) {
@@ -36,14 +39,30 @@ for (const folder of commandFolders) {
     commands.set(command.name, command);
   }
 }
+
 const cooldowns: Cooldowns = new Discord.Collection<
   string,
   Collection<string, number>
 >();
 
-client.login(token);
+const client = new Discord.Client();
+// mongoose.set("debug", true);
+mongoose
+  .connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  })
+  .then((res) => {
+    console.log("Connected to database.");
+    client.login(token);
+  })
+  .catch((error) => console.error(error));
 
-client.once("ready", () => {
+client.once("ready", async () => {
+  await client.user.setPresence({
+    activity: { type: "PLAYING", name: `Type @${client.user.username}` },
+  });
   console.log("Ready!");
 });
 
@@ -59,10 +78,31 @@ client.on("voiceStateUpdate", greetUserInVoiceChannel);
 
 client.on("message", async (message: Message) => {
   if (message.author.bot) return;
-  if (!message.content.startsWith(prefix)) return;
 
-  const commandName = getCommandName(message.content);
-  const commandContent = getCommandContent(message.content);
+  let curPrefix = defaultPrefix;
+  try {
+    if (message.channel.type !== "dm") {
+      if (!guilds.has(message.guild.id)) {
+        const guildData = await initGuildData(message.guild);
+        const argList = Array.from(guildData.audioAliases.keys());
+        commands.get("horn").argList = argList.length > 0 ? argList : null;
+        curPrefix = guildData.prefix;
+      } else {
+        curPrefix = guilds.get(message.guild.id).prefix;
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    return;
+  }
+
+  if (message.content === `<@!${client.user.id}>`)
+    return sendDefaultHelpMessage(message, curPrefix);
+
+  if (!message.content.startsWith(curPrefix)) return;
+
+  const commandName = getCommandName(message.content, curPrefix);
+  const commandContent = getCommandContent(message.content, curPrefix);
 
   const command =
     commands.get(commandName) ||
@@ -81,7 +121,7 @@ client.on("message", async (message: Message) => {
     }
   }
 
-  if (command.args && commandContent == "")
+  if (command.args === Args.required && commandContent == "")
     return message.channel.send(
       `You didn't provide any arguments, ${message.author}!`
     );
@@ -111,11 +151,11 @@ client.on("message", async (message: Message) => {
   }, cooldownAmount);
 
   try {
-    command.execute(message);
+    if (command.args === Args.required || command.args === Args.flexible)
+      await command.execute(message, [commandName, commandContent]);
+    else await command.execute(message);
   } catch (error) {
     console.error(error);
     message.reply(TEST_EXECUTION_ERROR.toBold());
   }
 });
-
-export const guildContracts: GuildContract = new Map();
