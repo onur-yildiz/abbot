@@ -2,7 +2,6 @@ import fs from "fs";
 
 import { Command, Message } from "discord.js";
 import { commands } from "../../app";
-import { getCommandContent } from "../../util/getCommandContent";
 
 //! PICKS CHANGES IN DIST/COMMANDS/
 //! IF YOU WANT TO CHANGE 'EXECUTE' FUNCTION OF A COMMAND, YOU SHOULD CHANGE THE ORIGINAL .TS FILE AND RECOMPILE!
@@ -13,9 +12,11 @@ export = <Command>{
   aliases: ["rl"],
   guildOnly: false,
   usage: "[command]",
-  description: "Reloads a command",
-  execute(message: Message) {
-    const reloadCommandName = getCommandContent(message.content); // ~reload [Command to be reloaded]
+  args: Args.required,
+  description:
+    "Reloads and updates the command if it was changed by my developers.",
+  execute(message: Message, args: string[]) {
+    const reloadCommandName = args[1]; // ~reload [reloadCommandName]
     const command =
       commands.get(reloadCommandName) ||
       commands.find((cmd) => cmd.aliases.includes(reloadCommandName));
