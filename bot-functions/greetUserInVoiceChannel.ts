@@ -1,5 +1,5 @@
 import { VoiceState } from "discord.js";
-import { getUserSettings } from "../db/dbHelper";
+import { getUserSettings, saveUserSettings } from "../db/dbHelper";
 import { initGuildData } from "../util/initGuildData";
 
 const defaultTheme = "./assets/audio/ww.mp3";
@@ -24,14 +24,10 @@ export const greetUserInVoiceChannel = async (
       return;
     }
 
-    const guildId = newVoiceState.member.guild.id;
-    const userSettings = await getUserSettings(newVoiceState.member.user, {
-      [`themes.${guildId}`]: 1,
-    });
-    const theme = userSettings.themes.get(guildId);
+    const theme = await getTheme(newVoiceState);
     const connection = await newVoiceState.channel.join();
     const dispatcher = connection
-      .play(theme ? theme : defaultTheme)
+      .play(theme)
       .on("finish", () => {
         connection.disconnect();
       })
@@ -40,4 +36,18 @@ export const greetUserInVoiceChannel = async (
   } catch (error) {
     console.error(error);
   }
+};
+
+const getTheme = async (voiceState: VoiceState) => {
+  const guildId = voiceState.member.guild.id;
+  const userSettings = await getUserSettings(voiceState.member.user, {
+    [`themes.${guildId}`]: 1,
+  });
+
+  if (!userSettings || (userSettings && userSettings.themes.size === 0)) {
+    await saveUserSettings(voiceState.member.user, {
+      $set: { [`themes.${guildId}`]: defaultTheme },
+    });
+    return defaultTheme;
+  } else return userSettings.themes.get(guildId);
 };
