@@ -24,8 +24,10 @@ export = <Command>{
       });
       message.channel.send(
         `Greeting is ${
-          guildData.greetingEnabled ? "enabled" : "disabled"
-        }.`.toBold()
+          guildData.greetingEnabled
+            ? "enabled :white_check_mark: "
+            : "disabled :x:"
+        }`.toBold()
       );
     } catch (error) {
       console.error(error);

@@ -109,7 +109,7 @@ const play = async (message: Message, guildData: GuildData) => {
 
   const embed = new Discord.MessageEmbed()
     .setColor("#222222")
-    .setAuthor("Now Playing")
+    .setAuthor("Now Playing :notes:")
     .setTitle(currentSong.title)
     .setThumbnail(currentSong.thumbnailUrl)
     .setDescription(
