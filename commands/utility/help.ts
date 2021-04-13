@@ -1,6 +1,7 @@
 import fs from "fs";
 import Discord, { Command, Message, MessageReaction, User } from "discord.js";
 import { commands, guilds } from "../../app";
+import { awaitDone } from "../../util/awaitDone";
 
 require("dotenv").config();
 const defaultPrefix = process.env.PREFIX;
@@ -102,19 +103,7 @@ export = <Command>{
 
     try {
       const responseMessage = await message.channel.send(embed);
-      const r = await responseMessage.react("✅");
-
-      const filter = (reaction: MessageReaction, user: User) =>
-        reaction.emoji.name === "✅" && user.id === message.author.id;
-
-      const collector = responseMessage.createReactionCollector(filter, {
-        time: 60000,
-      });
-
-      collector.on("collect", (r) => responseMessage.delete());
-      collector.on("end", (collected) => {
-        if (!responseMessage.deleted) r.remove();
-      });
+      awaitDone(responseMessage, message.author);
     } catch (error) {
       console.error(error);
     }
