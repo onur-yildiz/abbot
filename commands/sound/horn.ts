@@ -1,5 +1,5 @@
 import fs from "fs";
-import { Command, GuildData, Message } from "discord.js";
+import { Command, Message } from "discord.js";
 import {
   HORN_PLAYING_MUSIC,
   ERROR_EXECUTION_ERROR,

@@ -1,7 +1,6 @@
 export const getCommandContent = (
   commandMessage: string,
-  prefix: string,
-  trim: boolean = true
+  prefix: string
 ): string => {
   return commandMessage
     .slice(prefix.length)

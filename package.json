@@ -1,7 +1,7 @@
 {
   "name": "abbot",
   "version": "1.0.0",
-  "description": "A discord music/soundhorn bot with special snyder cut wonder woman themed greeting.",
+  "description": "A discord music/soundhorn bot with special snyder cut wonder woman themed greeting. :)",
   "main": "app.ts",
   "dependencies": {
     "@discordjs/opus": "^0.5.0",

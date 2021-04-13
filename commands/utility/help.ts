@@ -1,5 +1,5 @@
 import fs from "fs";
-import Discord, { Command, Message, MessageReaction, User } from "discord.js";
+import Discord, { Command, Message } from "discord.js";
 import { commands, guilds } from "../../app";
 import { awaitDone } from "../../util/awaitDone";
 

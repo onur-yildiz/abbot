@@ -1,5 +1,4 @@
 import { VoiceState } from "discord.js";
-import { getAndUpdateGuildData } from "../util/getAndUpdateGuildData";
 import { initGuildData } from "../util/initGuildData";
 
 export const greetUserInVoiceChannel = async (
@@ -18,11 +17,6 @@ export const greetUserInVoiceChannel = async (
       newVoiceState.member.guild,
       newVoiceState.member.voice.channel
     );
-    // const guildData = getAndUpdateGuildData(
-    //   newVoiceState.member.guild,
-    //   null,
-    //   newVoiceState.member.voice.channel
-    // );
     if (guildData.queueActive || !guildData.greetingEnabled) {
       return;
     }

@@ -1,2 +1,2 @@
 ABBOT
-A discord bot for playing music and sounds.
+A discord music/soundhorn bot with special snyder cut wonder woman themed greeting. :)

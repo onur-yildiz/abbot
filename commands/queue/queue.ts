@@ -1,4 +1,4 @@
-import Discord, { Command, Message, MessageReaction, User } from "discord.js";
+import Discord, { Command, Message } from "discord.js";
 
 import { ERROR_EXECUTION_ERROR, QUEUE_EMPTY } from "../../constants/messages";
 import { awaitDone } from "../../util/awaitDone";

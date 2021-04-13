@@ -17,9 +17,9 @@ import { ERROR_EXECUTION_ERROR } from "./constants/messages";
 import { getCommandName } from "./util/getCommandName";
 import { getCommandContent } from "./util/getCommandContent";
 import { greetUserInVoiceChannel } from "./bot-functions/greetUserInVoiceChannel";
-import "./extensions/string";
 import { initGuildData } from "./util/initGuildData";
 import { sendDefaultHelpMessage } from "./bot-functions/sendDefaultHelpMessage";
+import "./extensions/string";
 
 require("dotenv").config();
 const defaultPrefix = process.env.PREFIX;
@@ -46,7 +46,6 @@ const cooldowns: Cooldowns = new Discord.Collection<
 >();
 
 const client = new Discord.Client();
-// mongoose.set("debug", true);
 mongoose
   .connect(uri, {
     useNewUrlParser: true,
