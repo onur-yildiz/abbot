@@ -2,6 +2,7 @@ import fs from "fs";
 import Discord, { Command, Message } from "discord.js";
 import { commands, guilds } from "../../app";
 import { awaitDone } from "../../util/awaitDone";
+import { getDefaultAudios } from "../../util/getDefaultAudios";
 
 require("dotenv").config();
 const defaultPrefix = process.env.PREFIX;
@@ -88,13 +89,7 @@ export = <Command>{
       });
     if (command.argList) {
       let argList = command.argList;
-      if (command.name === "horn")
-        argList = argList.concat(
-          fs
-            .readdirSync("./assets/audio")
-            .filter((audio) => audio.endsWith(".mp3"))
-            .map((audio) => audio.slice(0, -4))
-        );
+      if (command.name === "horn") argList = argList.concat(getDefaultAudios());
 
       argList = argList.map((arg) => arg.toInlineCodeBg());
       data.push({ name: `Arguments:`, value: `${argList.join(" ")}` });

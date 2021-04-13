@@ -8,6 +8,7 @@ import { checkUserInAChannel } from "../../util/checkUserInAChannel";
 import { connect } from "../../util/connect";
 import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 import { urlReachable } from "../../util/urlReachable";
+import { getDefaultAudios } from "../../util/getDefaultAudios";
 
 export = <Command>{
   name: "horn",
@@ -32,9 +33,9 @@ export = <Command>{
 
     try {
       let audioPath = "";
-      const audios = fs.readdirSync("./assets/audio");
-      if (audios.includes(`${commandContent}.mp3`))
-        audioPath = `./assets/audio/${commandContent}.mp3`;
+      const audios = getDefaultAudios();
+      if (audios.includes(`${commandContent}`))
+        audioPath = `./assets/audio/${commandContent}`;
       else if (guildData.audioAliases.has(commandContent)) {
         audioPath = guildData.audioAliases.get(commandContent);
         if (!(await urlReachable(audioPath))) return;
