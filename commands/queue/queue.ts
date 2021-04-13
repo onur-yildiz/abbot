@@ -1,6 +1,7 @@
-import Discord, { Command, Message } from "discord.js";
+import Discord, { Command, Message, MessageReaction, User } from "discord.js";
 
-import { QUEUE_EMPTY } from "../../constants/messages";
+import { ERROR_EXECUTION_ERROR, QUEUE_EMPTY } from "../../constants/messages";
+import { awaitDone } from "../../util/awaitDone";
 import { checkAvailability } from "../../util/checkAvailability";
 import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 
@@ -11,7 +12,7 @@ export = <Command>{
   usage: "",
   args: Args.none,
   guildOnly: true,
-  execute(message: Message) {
+  async execute(message: Message) {
     const error = checkAvailability(message);
     if (error) return message.channel.send(error.toBold());
 
@@ -25,18 +26,28 @@ export = <Command>{
       return message.channel.send(QUEUE_EMPTY.toBold());
 
     let queue = [];
-    guildData.songs.forEach((song, index) =>
+    const currentSong = guildData.songs[0];
+    queue.push({
+      name: `:musical_note: Now Playing: ${currentSong.title}`,
+      value: `${currentSong.duration} • ${currentSong.channel}`,
+    });
+    guildData.songs.slice(1).forEach((song, index) =>
       queue.push({
         name: `${index + 1}: ${song.title}`,
-        value: `${song.author}`,
+        value: `${song.duration} • ${song.channel}`,
       })
     );
     const embed = new Discord.MessageEmbed()
-      .setColor("#0099ff")
+      .setColor("#222222")
       .setTitle("Queue")
       .setThumbnail(guildData.songs[0].thumbnailUrl)
       .addFields(...queue)
       .setTimestamp();
-    message.channel.send(embed);
+    try {
+      const responseMessage = await message.channel.send(embed);
+      awaitDone(responseMessage, message.author);
+    } catch (error) {
+      console.error(ERROR_EXECUTION_ERROR);
+    }
   },
 };
