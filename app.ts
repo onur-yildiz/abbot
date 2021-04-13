@@ -148,9 +148,8 @@ client.on("message", async (message: Message) => {
   }, cooldownAmount);
 
   try {
-    if (command.args === Args.required || command.args === Args.flexible)
-      await command.execute(message, [commandName, commandContent]);
-    else await command.execute(message);
+    if (command.args === Args.none) await command.execute(message);
+    else await command.execute(message, [commandName, commandContent]);
   } catch (error) {
     console.error(error);
     message.reply(ERROR_EXECUTION_ERROR.toBold());
