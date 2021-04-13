@@ -5,28 +5,29 @@ import { saveUserSettings } from "../../db/dbHelper";
 import { UpdateQuery } from "mongoose";
 import { IUserSettings } from "../../db/dbModels";
 import { ERROR_SAVE_THEME } from "../../constants/messages";
+import { getDefaultAudios } from "../../util/getDefaultAudios";
+
+const defaultAlias = "ww";
 
 export = <Command>{
   name: "theme",
   aliases: ["settheme", "mytheme"],
   description: "Set your custom greeting theme from the saved horns.",
-  usage: "[horn alias]",
+  usage: '[horn alias] OR "reset"',
   args: Args.required,
   guildOnly: true,
   cooldown: 5,
   async execute(message: Message, args: string[]) {
-    const alias = args[1];
+    let alias = args[1];
+    if (args[1] === "reset") alias = defaultAlias;
     const guildData = guilds.get(message.guild.id);
-    const botAliases = fs
-      .readdirSync("./assets/audio")
-      .filter((audio) => audio.endsWith(".mp3"))
-      .map((audio) => audio.slice(0, -4));
+    const botAliases = getDefaultAudios();
     const guildAliases = Array.from(guildData.audioAliases.keys());
 
     let query: UpdateQuery<IUserSettings>;
     if (botAliases.includes(alias))
       query = {
-        $set: { [`themes.${message.guild.id}`]: `${alias}.mp3` },
+        $set: { [`themes.${message.guild.id}`]: `./assets/audio/${alias}.mp3` },
       };
     else if (guildAliases.includes(alias))
       query = {
