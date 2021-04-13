@@ -2,6 +2,9 @@ import fs from "fs";
 import Discord, { Command, Message, MessageReaction, User } from "discord.js";
 import { commands, guilds } from "../../app";
 
+require("dotenv").config();
+const defaultPrefix = process.env.PREFIX;
+
 export = <Command>{
   name: "help",
   description: "List all of my commands or info about a specific command.",
@@ -11,7 +14,10 @@ export = <Command>{
   args: Args.flexible,
   cooldown: 1,
   async execute(message: Message, args?: string[]) {
-    const prefix = guilds.get(message.guild.id).prefix;
+    let prefix = defaultPrefix;
+    if (message.channel.type !== "dm")
+      prefix = guilds.get(message.guild.id).prefix;
+
     const data = [];
     const commandContent = args ? args[1] : "";
 
@@ -28,20 +34,23 @@ export = <Command>{
     let embed: Discord.MessageEmbed;
     if (commandContent == "") {
       commandsByCat.forEach((commands, category) => {
+        const commandList = commands.map((cmd) => cmd.toInlineCodeBg());
         const categorySection = {
           name: `${category}:`,
-          value: commands.join(", ").toInlineCodeBg(),
+          value: commandList.join(" "),
         };
 
         data.push(categorySection);
       });
 
       embed = new Discord.MessageEmbed()
-        .setColor("#0099ff")
+        .setColor("#222222")
         .setTitle("Commands")
         .addFields(...data)
         .setFooter(
-          `You can send ${prefix}help [command] to get info on a specific command!`
+          "You can type " +
+            `${defaultPrefix}help [command]`.toInlineCodeBg() +
+            " to get info on a specific command!"
         );
 
       try {
@@ -77,15 +86,17 @@ export = <Command>{
         value: `${prefix}${command.name} ${command.usage}`,
       });
     //TODO also show preinstalled args
-    if (command.argList)
-      data.push({ name: `Arguments:`, value: `${command.argList.join(", ")}` });
+    if (command.argList) {
+      const argList = command.argList.map((arg) => arg.toInlineCodeBg());
+      data.push({ name: `Arguments:`, value: `${argList.join(" ")}` });
+    }
     data.push({
       name: `Cooldown:`,
       value: `${command.cooldown || 3} second(s)`,
     });
 
     embed = new Discord.MessageEmbed()
-      .setColor("#0099ff")
+      .setColor("#222222")
       .setTitle(command.name)
       .addFields(...data);
 
