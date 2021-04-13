@@ -1,5 +1,8 @@
 import { VoiceState } from "discord.js";
+import { getUserSettings } from "../db/dbHelper";
 import { initGuildData } from "../util/initGuildData";
+
+const defaultTheme = "./assets/audio/ww.mp3";
 
 export const greetUserInVoiceChannel = async (
   oldVoiceState: VoiceState,
@@ -21,9 +24,14 @@ export const greetUserInVoiceChannel = async (
       return;
     }
 
+    const guildId = newVoiceState.member.guild.id;
+    const userSettings = await getUserSettings(newVoiceState.member.user, {
+      [`themes.${guildId}`]: 1,
+    });
+    const theme = userSettings.themes.get(guildId);
     const connection = await newVoiceState.channel.join();
     const dispatcher = connection
-      .play("./assets/audio/ww.mp3")
+      .play(theme ? theme : defaultTheme)
       .on("finish", () => {
         connection.disconnect();
       })
