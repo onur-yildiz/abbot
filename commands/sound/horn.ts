@@ -50,14 +50,10 @@ export = <Command>{
       await connect(guildData);
       const dispatcher = guildData.connection
         .play(audioPath)
-        .on("finish", () => {
-          responseMessage.delete();
-        })
+        .on("finish", () => {})
         .on("error", (error) => console.error(error));
       dispatcher.setVolumeLogarithmic(guildData.volume);
-      const responseMessage = await message.channel.send(
-        `Playing **${commandContent}**` // TODO react instead of replying
-      );
+      await message.react("✅");
     } catch (error) {
       console.error(error);
       message.reply(ERROR_EXECUTION_ERROR);
