@@ -46,6 +46,12 @@ export = <Command>{
       });
 
       embed = new Discord.MessageEmbed()
+        .attachFiles(["./assets/images/github.png"])
+        .setAuthor(
+          "Repo",
+          "attachment://github.png",
+          "https://github.com/onur-yildiz/abbot"
+        )
         .setColor("#222222")
         .setTitle("Commands")
         .addFields(...data)
