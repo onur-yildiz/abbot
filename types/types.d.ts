@@ -9,6 +9,7 @@ declare module "discord.js" {
     greetingEnabled: boolean;
     audioAliases: Map<string, string>;
     prefix: string;
+    lastTrackStart: number;
   };
 
   type Guilds = Map<string, GuildData>;
@@ -41,7 +42,8 @@ declare type Song = {
   url: string;
   thumbnailUrl: string;
   desc: string;
-  author: string;
+  channel: string;
+  duration: string;
 };
 
 declare const enum Args {
