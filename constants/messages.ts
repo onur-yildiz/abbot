@@ -11,6 +11,8 @@ const QUEUE_CLEARED = "Cleared :stop_button:";
 const HORN_PLAYING_MUSIC =
   "I am playing music.\nYou have to clear the queue and skip the current track to play audio!"; // TODO make stop/resume compatible
 
+const SETHORN_NOT_ALLOWED = "This alias is not allowed!";
+
 const PERMISSIONS_PLAY =
   "I need the permissions to join and speak in the voice channel";
 
@@ -42,6 +44,7 @@ export {
   QUEUE_EMPTY_CLEAR,
   QUEUE_CLEARED,
   HORN_PLAYING_MUSIC,
+  SETHORN_NOT_ALLOWED,
   PERMISSIONS_PLAY,
   ERROR_COMMAND_NOT_VALID,
   ERROR_SAVE_THEME,
