@@ -20,6 +20,7 @@ export const initGuildData = async (
     greetingEnabled: true,
     audioAliases: new Map(),
     prefix: defaultPrefix,
+    lastTrackStart: null,
   };
 
   try {
