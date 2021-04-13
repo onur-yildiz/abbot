@@ -1,4 +1,4 @@
-import { Command, GuildData, Message } from "discord.js";
+import Discord, { Command, GuildData, Message } from "discord.js";
 import ytdl from "ytdl-core";
 import ytsr from "ytsr";
 import { RESUMING, ERROR_COMMAND_NOT_VALID } from "../../constants/messages";
@@ -42,8 +42,24 @@ export = <Command>{
       const song = await fetchSong(commandContent);
 
       if (guildData.queueActive) {
+        const estimatedTime = calculateEta(
+          guildData.songs,
+          guildData.lastTrackStart
+        );
         guildData.songs.push(song);
-        return message.channel.send(`Added to queue\n${song.title}`.toCodeBg()); // TODO EMBED
+        const embed = new Discord.MessageEmbed()
+          .setColor("#222222")
+          .setAuthor("Added to the Queue")
+          .setTitle(song.title)
+          .setThumbnail(song.thumbnailUrl)
+          .setDescription(
+            song.desc.length > 100 ? song.desc.slice(0, 100) + "..." : song.desc
+          )
+          .addField("Channel", song.channel, true)
+          .addField("Duration", song.duration, true)
+          .addField("ETA", estimatedTime, true)
+          .addField("Position in queue", guildData.songs.indexOf(song));
+        return message.channel.send(embed);
       }
       guildData.songs.push(song);
       guildData.queueActive = true;
@@ -60,12 +76,13 @@ export = <Command>{
 const play = async (message: Message, guildData: GuildData) => {
   const currentSong = guildData.songs[0];
   const dispatcher = guildData.connection
-    .play(ytdl(currentSong.url))
-    .on("start", () =>
+    .play(ytdl(currentSong.url, { filter: "audioonly" }))
+    .on("start", () => {
+      guildData.lastTrackStart = Date.now();
       console.log(
         `Playing: ${currentSong.url} @${message.guild.name}<${message.guild.id}>`
-      )
-    )
+      );
+    })
     .on("skip", () => {
       if (!dispatcher.paused) dispatcher.emit("finish");
       else guildData.songs.shift();
@@ -89,9 +106,21 @@ const play = async (message: Message, guildData: GuildData) => {
     })
     .on("error", (error) => console.error(error));
   dispatcher.setVolumeLogarithmic(guildData.volume);
-  const responseMessage = await message.channel.send(
-    `css\n[Playing]\n${guildData.songs[0].title}`.toCodeBg() // TODO EMBED
-  );
+
+  const embed = new Discord.MessageEmbed()
+    .setColor("#222222")
+    .setAuthor("Now Playing")
+    .setTitle(currentSong.title)
+    .setThumbnail(currentSong.thumbnailUrl)
+    .setDescription(
+      currentSong.desc.length > 100
+        ? currentSong.desc.slice(0, 100) + "..."
+        : currentSong.desc
+    )
+    .addField("Channel", currentSong.channel, true)
+    .addField("Duration", currentSong.duration, true);
+
+  const responseMessage = await message.channel.send(embed);
 };
 
 const fetchSong = async (commandContent: string): Promise<Song> => {
@@ -107,7 +136,10 @@ const fetchSong = async (commandContent: string): Promise<Song> => {
       url: songInfo.videoDetails.video_url,
       thumbnailUrl: songInfo.videoDetails.thumbnails[0].url,
       desc: songInfo.videoDetails.description,
-      author: songInfo.videoDetails.author.name,
+      channel: songInfo.videoDetails.author.name,
+      duration: parseDurationString(
+        parseInt(songInfo.videoDetails.lengthSeconds)
+      ),
     };
   } else {
     const searchQuery = commandContent;
@@ -123,8 +155,46 @@ const fetchSong = async (commandContent: string): Promise<Song> => {
       url: (<ytsr.Video>songInfo.items[0]).url,
       thumbnailUrl: (<ytsr.Video>songInfo.items[0]).thumbnails[0].url,
       desc: (<ytsr.Video>songInfo.items[0]).description,
-      author: (<ytsr.Video>songInfo.items[0]).author.name,
+      channel: (<ytsr.Video>songInfo.items[0]).author.name,
+      duration: (<ytsr.Video>songInfo.items[0]).duration,
     };
   }
   return song;
+};
+
+// convert seconds to hh:mm:ss
+const parseDurationString = (durationInSeconds: number): string => {
+  const hours = Math.trunc(durationInSeconds / 3600);
+  const minutes = Math.trunc((durationInSeconds % 3600) / 60);
+  const seconds = Math.trunc(durationInSeconds % 60);
+
+  const fHours: string = hours > 0 ? hours + ":" : "";
+  const fMinutes: string =
+    (hours > 0 ? `${minutes}`.padStart(2, "0") : minutes) + ":";
+  const fSeconds: string = `${seconds}`.padStart(2, "0");
+
+  return fHours + fMinutes + fSeconds;
+};
+
+// convert hh:mm:ss to seconds
+const parseDuration = (durationString: string): number => {
+  const sections: string[] = durationString.split(":").reverse();
+  const parsedSections: number[] = sections.map((section) => parseInt(section));
+
+  let eta = 0;
+  if (parsedSections[0]) eta += parsedSections[0];
+  if (parsedSections[1]) eta += parsedSections[1] * 60;
+  if (parsedSections[2]) eta += parsedSections[2] * 3600;
+  return eta;
+};
+
+const calculateEta = (songs: Song[], lastTrackStart: number): string => {
+  let etaInSeconds = 0;
+  songs.forEach((song, index) => {
+    if (index === 0) {
+      const passedTime = Date.now() - lastTrackStart;
+      etaInSeconds += parseDuration(song.duration) - passedTime / 1000;
+    } else etaInSeconds += parseDuration(song.duration);
+  });
+  return parseDurationString(etaInSeconds);
 };
