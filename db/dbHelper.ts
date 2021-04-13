@@ -1,9 +1,18 @@
-import { Guild } from "discord.js";
-import { GuildSettings, IGuildSettings } from "./dbModels";
+import { Guild, User } from "discord.js";
+import { UpdateQuery } from "mongoose";
+import {
+  GuildSettings,
+  IGuildSettings,
+  IUserSettings,
+  UserSettings,
+} from "./dbModels";
 
-export const saveGuildSettings = async (guild: Guild, settings: object) => {
+export const saveGuildSettings = async (
+  guild: Guild,
+  query: UpdateQuery<IGuildSettings>
+) => {
   try {
-    await GuildSettings.findOneAndUpdate({ guildId: guild.id }, settings, {
+    await GuildSettings.findOneAndUpdate({ guildId: guild.id }, query, {
       upsert: true,
     });
   } catch (error) {
@@ -12,18 +21,47 @@ export const saveGuildSettings = async (guild: Guild, settings: object) => {
 };
 
 export const getGuildSettings = async (
-  guild: Guild
+  guild: Guild,
+  projection?: any
 ): Promise<IGuildSettings> => {
   try {
-    let guildSettings: IGuildSettings;
-    await GuildSettings.findOne(
-      { guildId: guild.id },
-      (error: Error, doc: IGuildSettings) => {
-        if (error) console.error(error);
-        guildSettings = doc;
-      }
-    );
+    const guildSettings = await GuildSettings.findOne(
+      {
+        guildId: guild.id,
+      },
+      projection
+    ).exec();
     return guildSettings;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const saveUserSettings = async (
+  user: User,
+  query: UpdateQuery<IUserSettings>
+) => {
+  try {
+    await UserSettings.findOneAndUpdate({ userId: user.id }, query, {
+      upsert: true,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getUserSettings = async (
+  user: User,
+  projection?: any
+): Promise<IUserSettings> => {
+  try {
+    const userSettings = await UserSettings.findOne(
+      {
+        userId: user.id,
+      },
+      projection
+    ).exec();
+    return userSettings;
   } catch (error) {
     console.error(error);
   }
