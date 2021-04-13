@@ -22,7 +22,7 @@ export = <Command>{
         return message.channel.send(data.join(", ").toInlineCodeBg());
       }
     } catch (error) {
-      message.channel.send(ERROR_EXECUTION_ERROR.toBold());
+      message.reply(ERROR_EXECUTION_ERROR.toBold());
       console.error(error);
     }
   },

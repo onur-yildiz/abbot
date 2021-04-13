@@ -44,7 +44,7 @@ export = <Command>{
       await saveUserSettings(message.author, query);
       message.react("✅");
     } catch (error) {
-      message.channel.send(ERROR_SAVE_THEME);
+      message.reply(ERROR_SAVE_THEME);
       console.log(error);
     }
   },

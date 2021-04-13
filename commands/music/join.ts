@@ -24,7 +24,7 @@ export = <Command>{
     try {
       await connect(guildData);
     } catch (error) {
-      message.channel.send(ERROR_CONNECTING.toBold());
+      message.reply(ERROR_CONNECTING.toBold());
       console.error(error);
     }
   },
