@@ -1,7 +1,10 @@
+import fs from "fs";
 import { Command, Message } from "discord.js";
 import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 import { saveGuildSettings } from "../../db/dbHelper";
 import { urlReachable } from "../../util/urlReachable";
+import { SETHORN_NOT_ALLOWED } from "../../constants/messages";
+import { getDefaultAudios } from "../../util/getDefaultAudios";
 
 export = <Command>{
   name: "sethorn",
@@ -17,6 +20,10 @@ export = <Command>{
     const commandContent = args[1].split(" ");
     const alias = commandContent.shift().toLowerCase();
     const url = commandContent[0];
+    const audios = getDefaultAudios();
+
+    if (audios.includes(alias))
+      return message.channel.send(SETHORN_NOT_ALLOWED.toBold());
 
     const guildData = getAndUpdateGuildData(
       message.guild,
