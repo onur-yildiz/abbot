@@ -137,9 +137,7 @@ const fetchSong = async (commandContent: string): Promise<Song> => {
       thumbnailUrl: songInfo.videoDetails.thumbnails[0].url,
       desc: songInfo.videoDetails.description,
       channel: songInfo.videoDetails.author.name,
-      duration: parseDurationString(
-        parseInt(songInfo.videoDetails.lengthSeconds)
-      ),
+      duration: hhmmss(parseInt(songInfo.videoDetails.lengthSeconds)),
     };
   } else {
     const searchQuery = commandContent;
@@ -163,7 +161,7 @@ const fetchSong = async (commandContent: string): Promise<Song> => {
 };
 
 // convert seconds to hh:mm:ss
-const parseDurationString = (durationInSeconds: number): string => {
+const hhmmss = (durationInSeconds: number): string => {
   const hours = Math.trunc(durationInSeconds / 3600);
   const minutes = Math.trunc((durationInSeconds % 3600) / 60);
   const seconds = Math.trunc(durationInSeconds % 60);
@@ -177,7 +175,7 @@ const parseDurationString = (durationInSeconds: number): string => {
 };
 
 // convert hh:mm:ss to seconds
-const parseDuration = (durationString: string): number => {
+const hhmmssToSeconds = (durationString: string): number => {
   const sections: string[] = durationString.split(":").reverse();
   const parsedSections: number[] = sections.map((section) => parseInt(section));
 
@@ -193,8 +191,8 @@ const calculateEta = (songs: Song[], lastTrackStart: number): string => {
   songs.forEach((song, index) => {
     if (index === 0) {
       const passedTime = Date.now() - lastTrackStart;
-      etaInSeconds += parseDuration(song.duration) - passedTime / 1000;
-    } else etaInSeconds += parseDuration(song.duration);
+      etaInSeconds += hhmmssToSeconds(song.duration) - passedTime / 1000;
+    } else etaInSeconds += hhmmssToSeconds(song.duration);
   });
-  return parseDurationString(etaInSeconds);
+  return hhmmss(etaInSeconds);
 };
