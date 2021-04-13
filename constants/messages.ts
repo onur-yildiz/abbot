@@ -14,12 +14,13 @@ const HORN_PLAYING_MUSIC =
 const PERMISSIONS_PLAY =
   "I need the permissions to join and speak in the voice channel";
 
-const ERROR_COMMAND_NOT_VALID = "This is not a valid command!";
+const ERROR_COMMAND_NOT_VALID = "this is not a valid command!";
+const ERROR_SAVE_THEME = "an error occured during saving the theme!";
 const ERROR_EXECUTION_ERROR =
-  "There was an error trying to execute that command!";
+  "there was an error trying to execute that command!";
 const ERROR_CONNECTING =
-  "An error occured during connecting to the voice channel!";
-const ERROR_CLEAR_MESSAGES = "Something went wrong deleting the messages.";
+  "an error occured during connecting to the voice channel!";
+const ERROR_CLEAR_MESSAGES = "something went wrong deleting the messages.";
 
 const BOT_NOT_IN_CHANNEL = ":x: I am not active in a channel";
 const BOT_NOT_IN_SAME_CHANNEL = ":x: I am in another voice channel";
@@ -43,6 +44,7 @@ export {
   HORN_PLAYING_MUSIC,
   PERMISSIONS_PLAY,
   ERROR_COMMAND_NOT_VALID,
+  ERROR_SAVE_THEME,
   ERROR_EXECUTION_ERROR,
   ERROR_CONNECTING,
   ERROR_CLEAR_MESSAGES,
