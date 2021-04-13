@@ -86,9 +86,17 @@ export = <Command>{
         name: `Usage:`,
         value: `${prefix}${command.name} ${command.usage}`,
       });
-    //TODO also show preinstalled args
     if (command.argList) {
-      const argList = command.argList.map((arg) => arg.toInlineCodeBg());
+      let argList = command.argList;
+      if (command.name === "horn")
+        argList = argList.concat(
+          fs
+            .readdirSync("./assets/audio")
+            .filter((audio) => audio.endsWith(".mp3"))
+            .map((audio) => audio.slice(0, -4))
+        );
+
+      argList = argList.map((arg) => arg.toInlineCodeBg());
       data.push({ name: `Arguments:`, value: `${argList.join(" ")}` });
     }
     data.push({
