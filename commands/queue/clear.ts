@@ -23,7 +23,7 @@ export = <Command>{
     if (guildData.songs.length == 0)
       return message.channel.send(QUEUE_EMPTY_CLEAR.toBold());
 
-    guildData.songs = [];
+    guildData.songs.splice(1, guildData.songs.length - 1);
     return message.channel.send(QUEUE_CLEARED.toBold());
   },
 };
