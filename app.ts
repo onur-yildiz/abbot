@@ -81,14 +81,8 @@ client.on("message", async (message: Message) => {
   let curPrefix = defaultPrefix;
   try {
     if (message.channel.type !== "dm") {
-      if (!guilds.has(message.guild.id)) {
-        const guildData = await initGuildData(message.guild);
-        const argList = Array.from(guildData.audioAliases.keys());
-        commands.get("horn").argList = argList.length > 0 ? argList : null;
-        curPrefix = guildData.prefix;
-      } else {
-        curPrefix = guilds.get(message.guild.id).prefix;
-      }
+      if (!guilds.has(message.guild.id)) await initGuildData(message.guild);
+      curPrefix = guilds.get(message.guild.id).prefix;
     }
   } catch (error) {
     console.error(error);
