@@ -4,7 +4,7 @@ import { initGuildData } from "../util/initGuildData";
 
 const defaultTheme = "./assets/audio/ww.mp3";
 
-export const greetUserInVoiceChannel = async (
+export const voiceStateUpdateHandler = async (
   oldVoiceState: VoiceState,
   newVoiceState: VoiceState
 ) => {
