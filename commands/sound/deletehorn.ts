@@ -1,6 +1,6 @@
 import { Command, Message } from "discord.js";
 import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
-import { saveGuildSettings } from "../../db/dbHelper";
+import { getGuildSettings, saveGuildSettings } from "../../db/dbHelper";
 
 export = <Command>{
   name: "deletehorn",
@@ -20,14 +20,19 @@ export = <Command>{
       message.member.voice.channel
     );
 
-    const exists = checkIfKeyExists(guildData.audioAliases, alias);
+    const guildSettings = await getGuildSettings(message.guild, {
+      [`audioAliases.${alias}`]: 1,
+    });
+    const exists = checkIfKeyExists(guildSettings.audioAliases, alias);
     console.log(exists);
     if (!exists) return message.reply(`this alias does not exist.`);
     try {
       await saveGuildSettings(message.guild, {
         $unset: { [`audioAliases.${alias}`]: "" },
       });
-      guildData.audioAliases.delete(alias);
+      await saveGuildSettings(message.guild, {
+        $unset: { [`audioAliases.${alias}`]: "" },
+      });
       message.channel.send(
         `${alias.toInlineCodeBg()} is deleted. :wastebasket:`
       );

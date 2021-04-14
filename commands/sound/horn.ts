@@ -8,6 +8,7 @@ import { connect } from "../../util/connect";
 import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 import { urlReachable } from "../../util/urlReachable";
 import { getDefaultAudios } from "../../util/getDefaultAudios";
+import { getGuildSettings } from "../../db/dbHelper";
 
 export = <Command>{
   name: "horn",
@@ -36,15 +37,20 @@ export = <Command>{
       const audios = getDefaultAudios();
       if (audios.includes(`${commandContent}`))
         audioPath = `./assets/audio/${commandContent}`;
-      else if (guildData.audioAliases.has(commandContent)) {
-        audioPath = guildData.audioAliases.get(commandContent);
-        if (!(await urlReachable(audioPath))) return;
-      } else {
-        return message.reply(
-          "No audio named " +
-            `${commandContent}`.toInlineCodeBg() +
-            " was found."
-        );
+      else {
+        const guildSettings = await getGuildSettings(message.guild, {
+          [`audioAliases.${commandContent}`]: 1,
+        });
+        if (guildSettings.audioAliases.has(commandContent)) {
+          audioPath = guildSettings.audioAliases.get(commandContent);
+          if (!(await urlReachable(audioPath))) return;
+        } else {
+          return message.reply(
+            "No audio named " +
+              `${commandContent}`.toInlineCodeBg() +
+              " was found."
+          );
+        }
       }
 
       console.log(audioPath);
