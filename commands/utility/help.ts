@@ -2,7 +2,6 @@ import fs from "fs";
 import Discord, { Command, Message } from "discord.js";
 import { commands, guilds } from "../../app";
 import { awaitDone } from "../../util/awaitDone";
-import { getDefaultAudios } from "../../util/getDefaultAudios";
 
 require("dotenv").config();
 const defaultPrefix = process.env.PREFIX;
@@ -95,7 +94,11 @@ export = <Command>{
       });
     if (command.argList) {
       let argList = command.argList;
-      if (command.name === "horn") argList = argList.concat(getDefaultAudios());
+
+      if (command.name === "horn" && message.channel.type !== "dm")
+        argList = argList.concat(
+          Array.from(guilds.get(message.guild.id).audioAliases.keys())
+        );
 
       argList = argList.map((arg) => arg.toInlineCodeBg());
       data.push({ name: `Arguments:`, value: `${argList.join(" ")}` });

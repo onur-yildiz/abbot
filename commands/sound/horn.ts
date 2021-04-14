@@ -1,4 +1,3 @@
-import fs from "fs";
 import { Command, Message } from "discord.js";
 import {
   HORN_PLAYING_MUSIC,
@@ -13,10 +12,11 @@ import { getDefaultAudios } from "../../util/getDefaultAudios";
 export = <Command>{
   name: "horn",
   aliases: ["h", "say"],
-  description: "Play a sound. Ex. [~horn ww].",
+  description: "Play a sound.",
   usage: "[audio name]",
   guildOnly: true,
   args: Args.required,
+  argList: getDefaultAudios(),
   async execute(message: Message, args: string[]) {
     const error = checkUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());
