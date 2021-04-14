@@ -7,7 +7,6 @@ declare module "discord.js" {
     volume: number;
     queueActive: boolean;
     greetingEnabled: boolean;
-    audioAliases: Map<string, string>;
     prefix: string;
     lastTrackStart: number;
   };

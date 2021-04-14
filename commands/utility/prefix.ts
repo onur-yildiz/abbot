@@ -1,9 +1,6 @@
 import { Command, Message } from "discord.js";
-import { guilds } from "../../app";
 import { saveGuildSettings } from "../../db/dbHelper";
-
-require("dotenv").config();
-const defaultPrefix = process.env.PREFIX;
+import { defaultPrefix, guilds } from "../../global/globals";
 
 export = <Command>{
   name: "prefix",

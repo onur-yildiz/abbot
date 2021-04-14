@@ -1,11 +1,9 @@
-import fs from "fs";
 import { Command, Message } from "discord.js";
-import { guilds } from "../../app";
-import { saveUserSettings } from "../../db/dbHelper";
 import { UpdateQuery } from "mongoose";
-import { IUserSettings } from "../../db/dbModels";
 import { ERROR_SAVE_THEME } from "../../constants/messages";
 import { getDefaultAudios } from "../../util/getDefaultAudios";
+import { IGuildSettings } from "../../db/dbModels";
+import { getGuildSettings, saveGuildSettings } from "../../db/dbHelper";
 
 const defaultAlias = "ww";
 
@@ -20,11 +18,13 @@ export = <Command>{
   async execute(message: Message, args: string[]) {
     let alias = args[1];
     if (args[1] === "reset") alias = defaultAlias;
-    const guildData = guilds.get(message.guild.id);
     const botAliases = getDefaultAudios();
-    const guildAliases = Array.from(guildData.audioAliases.keys());
+    const guildSettings = await getGuildSettings(message.guild, {
+      audioAliases: 1,
+    });
+    const guildAliases = Array.from(guildSettings.audioAliases.keys());
 
-    let query: UpdateQuery<IUserSettings>;
+    let query: UpdateQuery<IGuildSettings>;
     if (botAliases.includes(alias))
       query = {
         $set: { [`themes.${message.guild.id}`]: `./assets/audio/${alias}.mp3` },
@@ -32,7 +32,7 @@ export = <Command>{
     else if (guildAliases.includes(alias))
       query = {
         $set: {
-          [`themes.${message.guild.id}`]: guildData.audioAliases.get(alias),
+          [`themes.${message.guild.id}`]: guildSettings.audioAliases.get(alias),
         },
       };
     else {
@@ -42,7 +42,7 @@ export = <Command>{
     }
 
     try {
-      await saveUserSettings(message.author, query);
+      await saveGuildSettings(message.guild, query);
       message.react("✅");
     } catch (error) {
       message.reply(ERROR_SAVE_THEME);

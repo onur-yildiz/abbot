@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { defaultPrefix } from "../global/globals";
 
 const dbTypes = mongoose.SchemaTypes;
 
@@ -6,12 +7,8 @@ export interface IGuildSettings extends mongoose.Document {
   guildId: string;
   greetingEnabled: boolean;
   audioAliases: Map<string, string>;
-  prefix: string;
-}
-
-export interface IUserSettings extends mongoose.Document {
-  userId: string;
   themes: Map<string, string>;
+  prefix: string;
 }
 
 const guildSettingsSchema = new mongoose.Schema({
@@ -21,27 +18,27 @@ const guildSettingsSchema = new mongoose.Schema({
   },
   greetingEnabled: {
     type: dbTypes.Boolean,
-    required: true,
+    require: true,
+    default: true,
   },
   audioAliases: {
     type: dbTypes.Map,
+    require: true,
+    default: new Map<string, string>(),
+  },
+  themes: {
+    type: dbTypes.Map,
+    require: true,
+    default: new Map<string, string>(),
   },
   prefix: {
     type: String,
+    require: true,
+    default: defaultPrefix,
   },
-});
-
-const userSettingsSchema = new mongoose.Schema({
-  userId: { type: dbTypes.String, unique: true },
-  themes: { type: dbTypes.Map },
 });
 
 export const GuildSettings = mongoose.model<IGuildSettings>(
   "guildSettings",
   guildSettingsSchema
-);
-
-export const UserSettings = mongoose.model<IUserSettings>(
-  "userSettings",
-  userSettingsSchema
 );

@@ -1,10 +1,8 @@
 import fs from "fs";
 import Discord, { Command, Message } from "discord.js";
-import { commands, guilds } from "../../app";
 import { awaitDone } from "../../util/awaitDone";
-
-require("dotenv").config();
-const defaultPrefix = process.env.PREFIX;
+import { commands, defaultPrefix, guilds } from "../../global/globals";
+import { getGuildSettings } from "../../db/dbHelper";
 
 export = <Command>{
   name: "help",
@@ -95,10 +93,10 @@ export = <Command>{
     if (command.argList) {
       let argList = command.argList;
 
-      if (command.name === "horn" && message.channel.type !== "dm")
-        argList = argList.concat(
-          Array.from(guilds.get(message.guild.id).audioAliases.keys())
-        );
+      if (command.name === "horn" && message.channel.type !== "dm") {
+        const guildSettings = await getGuildSettings(message.guild);
+        argList = argList.concat(Array.from(guildSettings.audioAliases.keys()));
+      }
 
       argList = argList.map((arg) => arg.toInlineCodeBg());
       data.push({ name: `Arguments:`, value: `${argList.join(" ")}` });
