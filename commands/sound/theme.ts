@@ -1,11 +1,10 @@
-import fs from "fs";
 import { Command, Message } from "discord.js";
-import { guilds } from "../../app";
 import { saveUserSettings } from "../../db/dbHelper";
 import { UpdateQuery } from "mongoose";
 import { IUserSettings } from "../../db/dbModels";
 import { ERROR_SAVE_THEME } from "../../constants/messages";
 import { getDefaultAudios } from "../../util/getDefaultAudios";
+import { guilds } from "../../global/globals";
 
 const defaultAlias = "ww";
 

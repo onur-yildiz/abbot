@@ -1,33 +1,26 @@
-import {
-  Collection,
-  Command,
-  Cooldowns,
-  Guilds,
-  Message,
-  NewsChannel,
-  TextChannel,
-} from "discord.js";
+import { Message, NewsChannel, TextChannel } from "discord.js";
 
 import Discord from "discord.js";
 import mongoose from "mongoose";
 import fs from "fs";
 import "ffmpeg";
 
+import {
+  commands,
+  cooldowns,
+  defaultPrefix,
+  guilds,
+  token,
+  uri,
+} from "./global/globals";
 import { ERROR_EXECUTION_ERROR } from "./constants/messages";
 import { getCommandName } from "./util/getCommandName";
 import { getCommandContent } from "./util/getCommandContent";
 import { greetUserInVoiceChannel } from "./bot-functions/greetUserInVoiceChannel";
 import { initGuildData } from "./util/initGuildData";
 import { sendDefaultHelpMessage } from "./bot-functions/sendDefaultHelpMessage";
+import { deleteGuildSettings } from "./db/dbHelper";
 import "./extensions/string";
-
-require("dotenv").config();
-const defaultPrefix = process.env.PREFIX;
-const token = process.env.TOKEN;
-const uri = process.env.DATABASE_URI;
-
-export const commands = new Discord.Collection<string, Command>();
-export const guilds: Guilds = new Map();
 
 const commandFolders = fs.readdirSync("./commands");
 for (const folder of commandFolders) {
@@ -39,11 +32,6 @@ for (const folder of commandFolders) {
     commands.set(command.name, command);
   }
 }
-
-const cooldowns: Cooldowns = new Discord.Collection<
-  string,
-  Collection<string, number>
->();
 
 const client = new Discord.Client();
 mongoose
@@ -74,6 +62,11 @@ client.once("disconnect", () => {
 });
 
 client.on("voiceStateUpdate", greetUserInVoiceChannel);
+
+client.on("guildDelete", (guild: Discord.Guild) => {
+  guilds.delete(guild.id);
+  deleteGuildSettings(guild);
+});
 
 client.on("message", async (message: Message) => {
   if (message.author.bot) return;

@@ -1,7 +1,7 @@
 import fs from "fs";
 import Discord, { Command, Message } from "discord.js";
-import { commands, guilds } from "../../app";
 import { awaitDone } from "../../util/awaitDone";
+import { commands, guilds } from "../../global/globals";
 
 require("dotenv").config();
 const defaultPrefix = process.env.PREFIX;

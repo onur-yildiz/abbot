@@ -6,7 +6,7 @@ import {
   TextChannel,
   VoiceChannel,
 } from "discord.js";
-import { guilds } from "../app";
+import { guilds } from "../global/globals";
 
 export const getAndUpdateGuildData = (
   guild: Guild,

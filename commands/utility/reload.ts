@@ -1,7 +1,7 @@
 import fs from "fs";
 
 import { Command, Message } from "discord.js";
-import { commands } from "../../app";
+import { commands } from "../../global/globals";
 
 //! PICKS CHANGES IN DIST/COMMANDS/
 //! IF YOU WANT TO CHANGE 'EXECUTE' FUNCTION OF A COMMAND, YOU SHOULD CHANGE THE ORIGINAL .TS FILE AND RECOMPILE!
