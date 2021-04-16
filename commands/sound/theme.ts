@@ -27,12 +27,16 @@ export = <Command>{
     let query: UpdateQuery<IGuildSettings>;
     if (botAliases.includes(alias))
       query = {
-        $set: { [`themes.${message.guild.id}`]: `./assets/audio/${alias}.mp3` },
+        $set: {
+          [`themes.${message.member.user.id}`]: `./assets/audio/${alias}.mp3`,
+        },
       };
     else if (guildAliases.includes(alias))
       query = {
         $set: {
-          [`themes.${message.guild.id}`]: guildSettings.audioAliases.get(alias),
+          [`themes.${message.member.user.id}`]: guildSettings.audioAliases.get(
+            alias
+          ),
         },
       };
     else {
