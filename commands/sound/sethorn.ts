@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import { getGuildSettings, saveGuildSettings } from "../../db/dbHelper";
+import DBHelper from "../../db/dbHelper";
 import { urlReachable } from "../../util/urlReachable";
 import { SETHORN_NOT_ALLOWED } from "../../constants/messages";
 import getDefaultAudios from "../../util/getDefaultAudios";
@@ -34,7 +34,7 @@ export = <Command>{
       `(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
     );
     if (regexUrl.test(url) && urlReachable(url)) {
-      const guildSettings = await getGuildSettings(message.guild, {
+      const guildSettings = await DBHelper.getGuildSettings(message.guild, {
         audioAliases: 1,
       });
       const urlAlreadyExists = checkIfValueExists(
@@ -46,7 +46,7 @@ export = <Command>{
           const oldAlias = getOldKey(guildSettings.audioAliases, url);
           if (oldAlias === alias)
             return message.channel.send(`You entered an existing alias :zzz:`);
-          await saveGuildSettings(message.guild, {
+          await DBHelper.saveGuildSettings(message.guild, {
             $rename: {
               [`audioAliases.${oldAlias}`]: `audioAliases.${alias}`,
             },
@@ -55,7 +55,7 @@ export = <Command>{
             `Horn alias ${oldAlias.toInlineCodeBg()} is changed to ${alias.toInlineCodeBg()}:mega::mega:`
           );
         } else {
-          await saveGuildSettings(message.guild, {
+          await DBHelper.saveGuildSettings(message.guild, {
             $set: { [`audioAliases.${alias}`]: url },
           });
           const aliasAlreadyExists = guildSettings.audioAliases.has(alias);

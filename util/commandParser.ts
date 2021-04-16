@@ -15,7 +15,7 @@ export const getCommandName = (
   prefix: string
 ): string => {
   if (commandMessage.startsWith(prefix)) {
-    return commandMessage.slice(prefix.length).split(" ")[0];
+    return commandMessage.slice(prefix.length).split(" ")[0].toLowerCase();
   }
   return "";
 };

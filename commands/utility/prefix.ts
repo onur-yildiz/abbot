@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import { saveGuildSettings } from "../../db/dbHelper";
+import DBHelper from "../../db/dbHelper";
 import { defaultPrefix, guilds } from "../../global/globals";
 
 export = <Command>{
@@ -39,7 +39,7 @@ export = <Command>{
 };
 
 const setPrefix = async (message: Message, prefix: string): Promise<void> => {
-  await saveGuildSettings(message.guild, { prefix: prefix });
+  await DBHelper.saveGuildSettings(message.guild, { prefix: prefix });
   guilds.get(message.guild.id).prefix = prefix;
 };
 

@@ -2,7 +2,7 @@ import { Command, Message } from "discord.js";
 import { UpdateQuery } from "mongoose";
 import { ERROR_SAVE_THEME } from "../../constants/messages";
 import { IGuildSettings } from "../../db/dbModels";
-import { getGuildSettings, saveGuildSettings } from "../../db/dbHelper";
+import DBHelper from "../../db/dbHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 
 const defaultAlias = "ww";
@@ -19,7 +19,7 @@ export = <Command>{
     let alias = args[1];
     if (args[1] === "reset") alias = defaultAlias;
     const botAliases = getDefaultAudios();
-    const guildSettings = await getGuildSettings(message.guild, {
+    const guildSettings = await DBHelper.getGuildSettings(message.guild, {
       audioAliases: 1,
     });
     const guildAliases = Array.from(guildSettings.audioAliases.keys());
@@ -27,12 +27,16 @@ export = <Command>{
     let query: UpdateQuery<IGuildSettings>;
     if (botAliases.includes(alias))
       query = {
-        $set: { [`themes.${message.guild.id}`]: `./assets/audio/${alias}.mp3` },
+        $set: {
+          [`themes.${message.member.user.id}`]: `./assets/audio/${alias}.mp3`,
+        },
       };
     else if (guildAliases.includes(alias))
       query = {
         $set: {
-          [`themes.${message.guild.id}`]: guildSettings.audioAliases.get(alias),
+          [`themes.${message.member.user.id}`]: guildSettings.audioAliases.get(
+            alias
+          ),
         },
       };
     else {
@@ -42,7 +46,7 @@ export = <Command>{
     }
 
     try {
-      await saveGuildSettings(message.guild, query);
+      await DBHelper.saveGuildSettings(message.guild, query);
       message.react("✅");
     } catch (error) {
       message.reply(ERROR_SAVE_THEME);

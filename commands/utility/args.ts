@@ -1,6 +1,6 @@
 import { Command, Message } from "discord.js";
 import { ERROR_EXECUTION_ERROR } from "../../constants/messages";
-import { getGuildSettings } from "../../db/dbHelper";
+import DBHelper from "../../db/dbHelper";
 
 export = <Command>{
   name: "args",
@@ -16,7 +16,7 @@ export = <Command>{
     try {
       if (commandContent === "horn") {
         const data = [];
-        const guildSettings = await getGuildSettings(message.guild);
+        const guildSettings = await DBHelper.getGuildSettings(message.guild);
         for (const key of guildSettings.audioAliases.keys()) data.push(key);
 
         return message.channel.send(data.join(", ").toInlineCodeBg());

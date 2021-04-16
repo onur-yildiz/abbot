@@ -2,7 +2,10 @@ import Discord, { Command, GuildData, Message } from "discord.js";
 import ytdl from "ytdl-core";
 import ytsr from "ytsr";
 import { RESUMING, ERROR_COMMAND_NOT_VALID } from "../../constants/messages";
-import { checkAvailability, checkUserInAChannel } from "../../util/checker";
+import {
+  checkVoiceChannelAvailability,
+  checkUserInAChannel,
+} from "../../util/checker";
 import { connect, getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
@@ -21,7 +24,7 @@ export = <Command>{
     );
 
     const error = guildData.queueActive
-      ? checkAvailability(message)
+      ? checkVoiceChannelAvailability(message)
       : checkUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());
 

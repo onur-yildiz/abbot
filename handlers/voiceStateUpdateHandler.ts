@@ -1,5 +1,5 @@
 import { VoiceState } from "discord.js";
-import { getGuildSettings, saveGuildSettings } from "../db/dbHelper";
+import DBHelper from "../db/dbHelper";
 import { initGuildData } from "../util/guildActions";
 
 const defaultTheme = "./assets/audio/ww.mp3";
@@ -40,12 +40,12 @@ export const voiceStateUpdateHandler = async (
 
 const getTheme = async (voiceState: VoiceState) => {
   const guildId = voiceState.member.guild.id;
-  const guildSettings = await getGuildSettings(voiceState.guild, {
+  const guildSettings = await DBHelper.getGuildSettings(voiceState.guild, {
     [`themes.${guildId}`]: 1,
   });
 
   if (!guildSettings || !guildSettings.themes.has(guildId)) {
-    await saveGuildSettings(voiceState.guild, {
+    await DBHelper.saveGuildSettings(voiceState.guild, {
       $set: { [`themes.${guildId}`]: defaultTheme },
     });
     return defaultTheme;

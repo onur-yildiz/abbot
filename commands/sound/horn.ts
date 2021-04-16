@@ -4,7 +4,7 @@ import {
   ERROR_EXECUTION_ERROR,
 } from "../../constants/messages";
 import { urlReachable } from "../../util/urlReachable";
-import { getGuildSettings } from "../../db/dbHelper";
+import DBHelper from "../../db/dbHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { checkUserInAChannel } from "../../util/checker";
 import { connect, getAndUpdateGuildData } from "../../util/guildActions";
@@ -37,7 +37,7 @@ export = <Command>{
       if (audios.includes(`${commandContent}`))
         audioPath = `./assets/audio/${commandContent}`;
       else {
-        const guildSettings = await getGuildSettings(message.guild, {
+        const guildSettings = await DBHelper.getGuildSettings(message.guild, {
           [`audioAliases.${commandContent}`]: 1,
         });
         if (guildSettings.audioAliases.has(commandContent)) {

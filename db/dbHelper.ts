@@ -2,7 +2,7 @@ import { Guild } from "discord.js";
 import { UpdateQuery } from "mongoose";
 import { GuildSettings, IGuildSettings } from "./dbModels";
 
-export const createGuildSettings = async (guild: Guild) => {
+const createGuildSettings = async (guild: Guild) => {
   try {
     return await GuildSettings.create({
       guildId: guild.id,
@@ -12,7 +12,7 @@ export const createGuildSettings = async (guild: Guild) => {
   }
 };
 
-export const saveGuildSettings = async (
+const saveGuildSettings = async (
   guild: Guild,
   updateQuery: UpdateQuery<IGuildSettings>
 ) => {
@@ -25,7 +25,7 @@ export const saveGuildSettings = async (
   }
 };
 
-export const getGuildSettings = async (
+const getGuildSettings = async (
   guild: Guild,
   projection?: any
 ): Promise<IGuildSettings> => {
@@ -41,10 +41,17 @@ export const getGuildSettings = async (
   }
 };
 
-export const deleteGuildSettings = async (guild: Guild) => {
+const deleteGuildSettings = async (guild: Guild) => {
   try {
     await GuildSettings.findOneAndDelete({ guildId: guild.id });
   } catch (error) {
     console.error(error);
   }
+};
+
+export default {
+  createGuildSettings,
+  saveGuildSettings,
+  getGuildSettings,
+  deleteGuildSettings,
 };
