@@ -1,8 +1,7 @@
 import { Command, Message } from "discord.js";
 import { ERROR_CONNECTING } from "../../constants/messages";
-import { checkUserInAChannel } from "../../util/checkUserInAChannel";
-import { connect } from "../../util/connect";
-import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
+import { checkUserInAChannel } from "../../util/checker";
+import { connect, getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "join",

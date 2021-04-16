@@ -1,9 +1,9 @@
 import Discord, { Command, Message } from "discord.js";
 
 import { ERROR_EXECUTION_ERROR, QUEUE_EMPTY } from "../../constants/messages";
-import { awaitDone } from "../../util/awaitDone";
-import { checkAvailability } from "../../util/checkAvailability";
-import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
+import { checkAvailability } from "../../util/checker";
+import { getAndUpdateGuildData } from "../../util/guildActions";
+import { awaitDone } from "../../util/messageUtil";
 
 export = <Command>{
   name: "queue",

@@ -1,6 +1,6 @@
 import { Command, Message } from "discord.js";
 import { saveGuildSettings } from "../../db/dbHelper";
-import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
+import { getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "togglegreeting",

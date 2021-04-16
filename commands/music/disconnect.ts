@@ -1,8 +1,7 @@
 import { Command, Message } from "discord.js";
 import { DISCONNECTED } from "../../constants/messages";
-import { checkAvailability } from "../../util/checkAvailability";
-import { deleteGuild } from "../../util/deleteGuild";
-import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
+import { checkAvailability } from "../../util/checker";
+import { getAndUpdateGuildData, deleteGuild } from "../../util/guildActions";
 
 export = <Command>{
   name: "disconnect",

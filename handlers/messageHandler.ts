@@ -1,10 +1,9 @@
 import Discord, { Client, Message, NewsChannel, TextChannel } from "discord.js";
 import { ERROR_EXECUTION_ERROR } from "../constants/messages";
 import { commands, cooldowns, defaultPrefix, guilds } from "../global/globals";
-import { getCommandContent } from "../util/getCommandContent";
-import { getCommandName } from "../util/getCommandName";
-import { initGuildData } from "../util/initGuildData";
-import { sendDefaultHelpMessage } from "../util/sendDefaultHelpMessage";
+import { getCommandContent, getCommandName } from "../util/commandParser";
+import { initGuildData } from "../util/guildActions";
+import { sendDefaultHelpMessage } from "../util/messageUtil";
 
 export const messageHandler = async (client: Client, message: Message) => {
   if (message.author.bot) return;

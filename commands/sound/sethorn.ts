@@ -1,9 +1,9 @@
 import { Command, Message } from "discord.js";
-import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 import { getGuildSettings, saveGuildSettings } from "../../db/dbHelper";
 import { urlReachable } from "../../util/urlReachable";
 import { SETHORN_NOT_ALLOWED } from "../../constants/messages";
-import { getDefaultAudios } from "../../util/getDefaultAudios";
+import getDefaultAudios from "../../util/getDefaultAudios";
+import { getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "sethorn",

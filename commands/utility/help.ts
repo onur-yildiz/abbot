@@ -1,8 +1,8 @@
 import fs from "fs";
 import Discord, { Command, Message } from "discord.js";
-import { awaitDone } from "../../util/awaitDone";
 import { commands, defaultPrefix, guilds } from "../../global/globals";
 import { getGuildSettings } from "../../db/dbHelper";
+import { awaitDone } from "../../util/messageUtil";
 
 export = <Command>{
   name: "help",

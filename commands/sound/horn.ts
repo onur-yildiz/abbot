@@ -3,12 +3,11 @@ import {
   HORN_PLAYING_MUSIC,
   ERROR_EXECUTION_ERROR,
 } from "../../constants/messages";
-import { checkUserInAChannel } from "../../util/checkUserInAChannel";
-import { connect } from "../../util/connect";
-import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
 import { urlReachable } from "../../util/urlReachable";
-import { getDefaultAudios } from "../../util/getDefaultAudios";
 import { getGuildSettings } from "../../db/dbHelper";
+import getDefaultAudios from "../../util/getDefaultAudios";
+import { checkUserInAChannel } from "../../util/checker";
+import { connect, getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "horn",

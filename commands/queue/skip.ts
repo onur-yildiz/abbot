@@ -1,7 +1,7 @@
 import { Command, Message } from "discord.js";
 import { QUEUE_EMPTY_SKIP, SKIPPED } from "../../constants/messages";
-import { checkAvailability } from "../../util/checkAvailability";
-import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
+import { checkAvailability } from "../../util/checker";
+import { getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "skip",

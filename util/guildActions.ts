@@ -1,6 +1,23 @@
-import { Guild, GuildData, VoiceChannel } from "discord.js";
-import { createGuildSettings, getGuildSettings } from "../db/dbHelper";
+import {
+  DMChannel,
+  Guild,
+  NewsChannel,
+  GuildData,
+  TextChannel,
+  VoiceChannel,
+} from "discord.js";
 import { guilds } from "../global/globals";
+import { createGuildSettings, getGuildSettings } from "../db/dbHelper";
+
+export const connect = async (guildData: GuildData) => {
+  const connection = await guildData.voiceChannel.join();
+  guildData.connection = connection;
+  return guildData;
+};
+
+export const deleteGuild = (guild: Guild): boolean => {
+  return guilds.delete(guild.id);
+};
 
 export const initGuildData = async (
   guild: Guild,
@@ -32,4 +49,16 @@ export const initGuildData = async (
     console.error(error);
     return;
   }
+};
+
+export const getAndUpdateGuildData = (
+  guild: Guild,
+  textChannel: TextChannel | DMChannel | NewsChannel,
+  voiceChannel: VoiceChannel
+): GuildData => {
+  const guildId = guild.id;
+  const guildData = guilds.get(guildId);
+  if (textChannel) guildData.textChannel = textChannel;
+  if (voiceChannel) guildData.voiceChannel = voiceChannel;
+  return guildData;
 };

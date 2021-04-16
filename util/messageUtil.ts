@@ -1,5 +1,13 @@
 import { Message, MessageReaction, User } from "discord.js";
 
+export const sendDefaultHelpMessage = (message: Message, prefix: string) => {
+  message.reply(
+    "Hi! You can type " +
+      ` ${prefix}help `.toInlineCodeBg() +
+      " to see my commands!"
+  );
+};
+
 export const awaitDone = async (message: Message, author: User) => {
   const r = await message.react("✅");
 

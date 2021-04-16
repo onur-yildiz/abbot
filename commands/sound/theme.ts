@@ -1,9 +1,9 @@
 import { Command, Message } from "discord.js";
 import { UpdateQuery } from "mongoose";
 import { ERROR_SAVE_THEME } from "../../constants/messages";
-import { getDefaultAudios } from "../../util/getDefaultAudios";
 import { IGuildSettings } from "../../db/dbModels";
 import { getGuildSettings, saveGuildSettings } from "../../db/dbHelper";
+import getDefaultAudios from "../../util/getDefaultAudios";
 
 const defaultAlias = "ww";
 

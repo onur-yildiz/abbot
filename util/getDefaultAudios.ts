@@ -1,6 +1,6 @@
 import fs from "fs";
 
-export const getDefaultAudios = () => {
+export default () => {
   return fs
     .readdirSync("./assets/audio")
     .filter((audio) => audio.endsWith(".mp3"))

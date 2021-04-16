@@ -1,6 +1,6 @@
 import { VoiceState } from "discord.js";
 import { getGuildSettings, saveGuildSettings } from "../db/dbHelper";
-import { initGuildData } from "../util/initGuildData";
+import { initGuildData } from "../util/guildActions";
 
 const defaultTheme = "./assets/audio/ww.mp3";
 

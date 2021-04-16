@@ -2,10 +2,8 @@ import Discord, { Command, GuildData, Message } from "discord.js";
 import ytdl from "ytdl-core";
 import ytsr from "ytsr";
 import { RESUMING, ERROR_COMMAND_NOT_VALID } from "../../constants/messages";
-import { checkAvailability } from "../../util/checkAvailability";
-import { checkUserInAChannel } from "../../util/checkUserInAChannel";
-import { connect } from "../../util/connect";
-import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
+import { checkAvailability, checkUserInAChannel } from "../../util/checker";
+import { connect, getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "play",

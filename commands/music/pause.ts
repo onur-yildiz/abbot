@@ -4,8 +4,8 @@ import {
   NOTHING_IS_PLAYING,
   PAUSED,
 } from "../../constants/messages";
-import { checkAvailability } from "../../util/checkAvailability";
-import { getAndUpdateGuildData } from "../../util/getAndUpdateGuildData";
+import { checkAvailability } from "../../util/checker";
+import { getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "pause",
