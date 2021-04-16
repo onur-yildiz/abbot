@@ -39,15 +39,15 @@ export const voiceStateUpdateHandler = async (
 };
 
 const getTheme = async (voiceState: VoiceState) => {
-  const guildId = voiceState.member.guild.id;
+  const userId = voiceState.member.id;
   const guildSettings = await DBHelper.getGuildSettings(voiceState.guild, {
-    [`themes.${guildId}`]: 1,
+    [`themes.${userId}`]: 1,
   });
 
-  if (!guildSettings || !guildSettings.themes.has(guildId)) {
+  if (!guildSettings || !guildSettings.themes.has(userId)) {
     await DBHelper.saveGuildSettings(voiceState.guild, {
-      $set: { [`themes.${guildId}`]: defaultTheme },
+      $set: { [`themes.${userId}`]: defaultTheme },
     });
     return defaultTheme;
-  } else return guildSettings.themes.get(guildId);
+  } else return guildSettings.themes.get(userId);
 };
