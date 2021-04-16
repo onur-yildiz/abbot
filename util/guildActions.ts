@@ -7,7 +7,7 @@ import {
   VoiceChannel,
 } from "discord.js";
 import { guilds } from "../global/globals";
-import { createGuildSettings, getGuildSettings } from "../db/dbHelper";
+import DBHelper from "../db/dbHelper";
 
 export const connect = async (guildData: GuildData) => {
   const connection = await guildData.voiceChannel.join();
@@ -26,8 +26,9 @@ export const initGuildData = async (
   if (guilds.has(guild.id)) return guilds.get(guild.id);
 
   try {
-    let guildSettings = await getGuildSettings(guild, { themes: 0 });
-    if (!guildSettings) guildSettings = await createGuildSettings(guild);
+    let guildSettings = await DBHelper.getGuildSettings(guild, { themes: 0 });
+    if (!guildSettings)
+      guildSettings = await DBHelper.createGuildSettings(guild);
 
     const guildData = <GuildData>{
       textChannel: null,

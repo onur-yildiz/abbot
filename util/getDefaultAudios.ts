@@ -1,6 +1,6 @@
 import fs from "fs";
 
-export default () => {
+export default (): string[] => {
   return fs
     .readdirSync("./assets/audio")
     .filter((audio) => audio.endsWith(".mp3"))
