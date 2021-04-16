@@ -4,7 +4,7 @@ import {
   NOTHING_IS_PLAYING,
   RESUMING,
 } from "../../constants/messages";
-import { checkAvailability } from "../../util/checker";
+import { checkVoiceChannelAvailability } from "../../util/checker";
 import { getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
@@ -15,7 +15,7 @@ export = <Command>{
   guildOnly: true,
   args: Args.none,
   async execute(message: Message) {
-    const error = checkAvailability(message);
+    const error = checkVoiceChannelAvailability(message);
     if (error) return message.channel.send(error.toBold());
 
     const guildData = getAndUpdateGuildData(

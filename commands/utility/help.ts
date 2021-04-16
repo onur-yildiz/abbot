@@ -1,7 +1,7 @@
 import fs from "fs";
 import Discord, { Command, Message } from "discord.js";
 import { commands, defaultPrefix, guilds } from "../../global/globals";
-import { getGuildSettings } from "../../db/dbHelper";
+import DBHelper from "../../db/dbHelper";
 import { awaitDone } from "../../util/messageUtil";
 
 export = <Command>{
@@ -94,7 +94,7 @@ export = <Command>{
       let argList = command.argList;
 
       if (command.name === "horn" && message.channel.type !== "dm") {
-        const guildSettings = await getGuildSettings(message.guild);
+        const guildSettings = await DBHelper.getGuildSettings(message.guild);
         argList = argList.concat(Array.from(guildSettings.audioAliases.keys()));
       }
 

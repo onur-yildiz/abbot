@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import { getGuildSettings, saveGuildSettings } from "../../db/dbHelper";
+import DBHelper from "../../db/dbHelper";
 import { getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
@@ -20,17 +20,17 @@ export = <Command>{
       message.member.voice.channel
     );
 
-    const guildSettings = await getGuildSettings(message.guild, {
+    const guildSettings = await DBHelper.getGuildSettings(message.guild, {
       [`audioAliases.${alias}`]: 1,
     });
     const exists = checkIfKeyExists(guildSettings.audioAliases, alias);
     console.log(exists);
     if (!exists) return message.reply(`this alias does not exist.`);
     try {
-      await saveGuildSettings(message.guild, {
+      await DBHelper.saveGuildSettings(message.guild, {
         $unset: { [`audioAliases.${alias}`]: "" },
       });
-      await saveGuildSettings(message.guild, {
+      await DBHelper.saveGuildSettings(message.guild, {
         $unset: { [`audioAliases.${alias}`]: "" },
       });
       message.channel.send(

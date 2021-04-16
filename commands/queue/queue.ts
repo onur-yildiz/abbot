@@ -1,7 +1,7 @@
 import Discord, { Command, Message } from "discord.js";
 
 import { ERROR_EXECUTION_ERROR, QUEUE_EMPTY } from "../../constants/messages";
-import { checkAvailability } from "../../util/checker";
+import { checkVoiceChannelAvailability } from "../../util/checker";
 import { getAndUpdateGuildData } from "../../util/guildActions";
 import { awaitDone } from "../../util/messageUtil";
 
@@ -13,7 +13,7 @@ export = <Command>{
   args: Args.none,
   guildOnly: true,
   async execute(message: Message) {
-    const error = checkAvailability(message);
+    const error = checkVoiceChannelAvailability(message);
     if (error) return message.channel.send(error.toBold());
 
     const guildData = getAndUpdateGuildData(

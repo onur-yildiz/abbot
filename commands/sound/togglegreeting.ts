@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import { saveGuildSettings } from "../../db/dbHelper";
+import DBHelper from "../../db/dbHelper";
 import { getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
@@ -19,7 +19,7 @@ export = <Command>{
 
     try {
       guildData.greetingEnabled = !guildData.greetingEnabled;
-      await saveGuildSettings(message.guild, {
+      await DBHelper.saveGuildSettings(message.guild, {
         greetingEnabled: guildData.greetingEnabled,
       });
       message.channel.send(

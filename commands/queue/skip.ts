@@ -1,6 +1,6 @@
 import { Command, Message } from "discord.js";
 import { QUEUE_EMPTY_SKIP, SKIPPED } from "../../constants/messages";
-import { checkAvailability } from "../../util/checker";
+import { checkVoiceChannelAvailability } from "../../util/checker";
 import { getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
@@ -12,7 +12,7 @@ export = <Command>{
   guildOnly: true,
   cooldown: 1,
   async execute(message: Message) {
-    const error = checkAvailability(message);
+    const error = checkVoiceChannelAvailability(message);
     if (error != null) return message.channel.send(error);
 
     let guildData = getAndUpdateGuildData(
