@@ -1,6 +1,6 @@
 import { VoiceState } from "discord.js";
 import DBHelper from "../db/dbHelper";
-import { initGuildData } from "../util/guildActions";
+import { fetchGuildData, resetQueue } from "../util/guildActions";
 
 const defaultTheme = "./assets/audio/ww.mp3";
 
@@ -9,17 +9,22 @@ export const voiceStateUpdateHandler = async (
   newVoiceState: VoiceState
 ) => {
   try {
+    const guild = newVoiceState.member.guild;
+    const guildData = await fetchGuildData(
+      guild,
+      null,
+      newVoiceState.member.voice.channel
+    );
+    if (newVoiceState.member.user.bot) {
+      if (!newVoiceState.channel) resetQueue(guildData);
+      return;
+    }
     if (
-      newVoiceState.member.user.bot ||
       newVoiceState.channelID == null ||
       newVoiceState.channelID == oldVoiceState.channelID
     ) {
       return;
     }
-    const guildData = await initGuildData(
-      newVoiceState.member.guild,
-      newVoiceState.member.voice.channel
-    );
     if (guildData.queueActive || !guildData.greetingEnabled) {
       return;
     }
