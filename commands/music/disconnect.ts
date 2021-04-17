@@ -1,7 +1,8 @@
 import { Command, Message } from "discord.js";
 import { DISCONNECTED } from "../../constants/messages";
+import { guilds } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
-import { getAndUpdateGuildData, deleteGuild } from "../../util/guildActions";
+import { getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "disconnect",
@@ -23,7 +24,7 @@ export = <Command>{
     if (guildData.connection.dispatcher != null)
       guildData.connection.dispatcher.destroy();
     guildData.connection.disconnect();
-    deleteGuild(message.guild);
+    guilds.delete(message.guild.id);
     return message.channel.send(DISCONNECTED.toBold());
   },
 };

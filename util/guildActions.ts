@@ -15,10 +15,6 @@ export const connect = async (guildData: GuildData) => {
   return guildData;
 };
 
-export const deleteGuild = (guild: Guild): boolean => {
-  return guilds.delete(guild.id);
-};
-
 export const initGuildData = async (
   guild: Guild,
   voiceChannel?: VoiceChannel
