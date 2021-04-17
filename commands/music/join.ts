@@ -1,7 +1,7 @@
 import { Command, Message } from "discord.js";
 import { ERROR_CONNECTING } from "../../constants/messages";
 import { checkUserInAChannel } from "../../util/checker";
-import { connect, getAndUpdateGuildData } from "../../util/guildActions";
+import { connectToVoiceChannel, fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "join",
@@ -14,14 +14,13 @@ export = <Command>{
     const error = checkUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());
 
-    const guildData = getAndUpdateGuildData(
-      message.guild,
-      message.channel,
-      message.member.voice.channel
-    );
-
     try {
-      await connect(guildData);
+      const guildData = await fetchGuildData(
+        message.guild,
+        message.channel,
+        message.member.voice.channel
+      );
+      await connectToVoiceChannel(guildData);
     } catch (error) {
       message.reply(ERROR_CONNECTING.toBold());
       console.error(error);

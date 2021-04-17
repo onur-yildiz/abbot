@@ -9,21 +9,39 @@ import {
 import { guilds } from "../global/globals";
 import DBHelper from "../db/dbHelper";
 
-export const connect = async (guildData: GuildData) => {
+export const connectToVoiceChannel = async (guildData: GuildData) => {
   const connection = await guildData.voiceChannel.join();
   guildData.connection = connection;
   return guildData;
 };
 
-export const deleteGuild = (guild: Guild): boolean => {
-  return guilds.delete(guild.id);
+export const disconnectFromVoiceChannel = async (guild: Guild) => {
+  const guildData = await fetchGuildData(guild);
+  resetQueue(guildData);
+  guildData.voiceChannel.leave();
+  guildData.connection = null;
+  return guildData;
 };
 
-export const initGuildData = async (
+export const resetQueue = (guildData: GuildData) => {
+  if (guildData.connection.dispatcher != null)
+    guildData.connection.dispatcher.destroy();
+  guildData.songs = [];
+  guildData.queueActive = false;
+  guildData.lastTrackStart = null;
+};
+
+export const fetchGuildData = async (
   guild: Guild,
-  voiceChannel?: VoiceChannel
+  newTextChannel?: TextChannel | DMChannel | NewsChannel,
+  newVoiceChannel?: VoiceChannel
 ): Promise<GuildData> => {
-  if (guilds.has(guild.id)) return guilds.get(guild.id);
+  if (guilds.has(guild.id)) {
+    const guildData = guilds.get(guild.id);
+    if (newTextChannel) guildData.textChannel = newTextChannel;
+    if (newVoiceChannel) guildData.voiceChannel = newVoiceChannel;
+    return guildData;
+  }
 
   try {
     let guildSettings = await DBHelper.getGuildSettings(guild, { themes: 0 });
@@ -31,8 +49,8 @@ export const initGuildData = async (
       guildSettings = await DBHelper.createGuildSettings(guild);
 
     const guildData = <GuildData>{
-      textChannel: null,
-      voiceChannel: voiceChannel ? voiceChannel : null,
+      textChannel: newTextChannel ? newTextChannel : null,
+      voiceChannel: newVoiceChannel ? newVoiceChannel : null,
       connection: null,
       songs: [],
       volume: 1,
@@ -50,16 +68,4 @@ export const initGuildData = async (
     console.error(error);
     return;
   }
-};
-
-export const getAndUpdateGuildData = (
-  guild: Guild,
-  textChannel: TextChannel | DMChannel | NewsChannel,
-  voiceChannel: VoiceChannel
-): GuildData => {
-  const guildId = guild.id;
-  const guildData = guilds.get(guildId);
-  if (textChannel) guildData.textChannel = textChannel;
-  if (voiceChannel) guildData.voiceChannel = voiceChannel;
-  return guildData;
 };

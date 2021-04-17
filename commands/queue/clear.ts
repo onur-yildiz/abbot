@@ -1,7 +1,11 @@
 import { Command, Message } from "discord.js";
-import { QUEUE_CLEARED, QUEUE_EMPTY_CLEAR } from "../../constants/messages";
+import {
+  ERROR_EXECUTION_ERROR,
+  QUEUE_CLEARED,
+  QUEUE_EMPTY_CLEAR,
+} from "../../constants/messages";
 import { checkVoiceChannelAvailability } from "../../util/checker";
-import { getAndUpdateGuildData } from "../../util/guildActions";
+import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "clear",
@@ -10,20 +14,25 @@ export = <Command>{
   usage: "",
   args: Args.none,
   guildOnly: true,
-  execute(message: Message) {
+  async execute(message: Message) {
     const error = checkVoiceChannelAvailability(message);
     if (error) return message.channel.send(error.toBold());
 
-    const guildData = getAndUpdateGuildData(
-      message.guild,
-      message.channel,
-      message.member.voice.channel
-    );
+    try {
+      const guildData = await fetchGuildData(
+        message.guild,
+        message.channel,
+        message.member.voice.channel
+      );
 
-    if (guildData.songs.length == 0)
-      return message.channel.send(QUEUE_EMPTY_CLEAR.toBold());
+      if (guildData.songs.length == 0)
+        return message.channel.send(QUEUE_EMPTY_CLEAR.toBold());
 
-    guildData.songs.splice(1, guildData.songs.length - 1);
-    return message.channel.send(QUEUE_CLEARED.toBold());
+      guildData.songs.splice(1, guildData.songs.length - 1);
+      return message.channel.send(QUEUE_CLEARED.toBold());
+    } catch (error) {
+      message.reply(ERROR_EXECUTION_ERROR.toBold());
+      console.error(error);
+    }
   },
 };

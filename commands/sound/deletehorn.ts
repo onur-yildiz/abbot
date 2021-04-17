@@ -1,6 +1,5 @@
 import { Command, Message } from "discord.js";
 import DBHelper from "../../db/dbHelper";
-import { getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "deletehorn",
@@ -13,12 +12,6 @@ export = <Command>{
   cooldown: 5,
   async execute(message: Message, args: string[]) {
     const alias = args[1];
-
-    const guildData = getAndUpdateGuildData(
-      message.guild,
-      message.channel,
-      message.member.voice.channel
-    );
 
     const guildSettings = await DBHelper.getGuildSettings(message.guild, {
       [`audioAliases.${alias}`]: 1,

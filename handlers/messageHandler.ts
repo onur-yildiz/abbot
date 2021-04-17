@@ -2,7 +2,7 @@ import Discord, { Client, Message, NewsChannel, TextChannel } from "discord.js";
 import { ERROR_EXECUTION_ERROR } from "../constants/messages";
 import { commands, cooldowns, defaultPrefix, guilds } from "../global/globals";
 import { getCommandContent, getCommandName } from "../util/commandParser";
-import { initGuildData } from "../util/guildActions";
+import { fetchGuildData } from "../util/guildActions";
 import { sendDefaultHelpMessage } from "../util/messageUtil";
 
 export const messageHandler = async (client: Client, message: Message) => {
@@ -11,7 +11,7 @@ export const messageHandler = async (client: Client, message: Message) => {
   let curPrefix = defaultPrefix;
   try {
     if (message.channel.type !== "dm") {
-      if (!guilds.has(message.guild.id)) await initGuildData(message.guild);
+      if (!guilds.has(message.guild.id)) await fetchGuildData(message.guild);
       curPrefix = guilds.get(message.guild.id).prefix;
     }
   } catch (error) {

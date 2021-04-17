@@ -5,7 +5,7 @@ import {
   RESUMING,
 } from "../../constants/messages";
 import { checkVoiceChannelAvailability } from "../../util/checker";
-import { getAndUpdateGuildData } from "../../util/guildActions";
+import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "resume",
@@ -18,18 +18,18 @@ export = <Command>{
     const error = checkVoiceChannelAvailability(message);
     if (error) return message.channel.send(error.toBold());
 
-    const guildData = getAndUpdateGuildData(
-      message.guild,
-      message.channel,
-      message.member.voice.channel
-    );
-
-    const dispatcher = guildData.connection.dispatcher;
-    if (!dispatcher.paused)
-      return message.channel.send(ALREADY_PLAYING.toBold());
-
     let responseMessage: Message;
     try {
+      const guildData = await fetchGuildData(
+        message.guild,
+        message.channel,
+        message.member.voice.channel
+      );
+
+      const dispatcher = guildData.connection.dispatcher;
+      if (!dispatcher.paused)
+        return message.channel.send(ALREADY_PLAYING.toBold());
+
       if (guildData.queueActive) {
         responseMessage = await message.channel.send(RESUMING.toBold());
         dispatcher.emit("resume");

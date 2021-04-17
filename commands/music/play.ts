@@ -6,7 +6,7 @@ import {
   checkVoiceChannelAvailability,
   checkUserInAChannel,
 } from "../../util/checker";
-import { connect, getAndUpdateGuildData } from "../../util/guildActions";
+import { connectToVoiceChannel, fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "play",
@@ -17,29 +17,29 @@ export = <Command>{
   args: Args.flexible,
   cooldown: 1,
   async execute(message: Message, args?: string[]) {
-    const guildData = getAndUpdateGuildData(
-      message.guild,
-      message.channel,
-      message.member.voice.channel
-    );
-
-    const error = guildData.queueActive
-      ? checkVoiceChannelAvailability(message)
-      : checkUserInAChannel(message);
-    if (error) return message.channel.send(error.toBold());
-
-    //resume if paused
-    const dispatcher = guildData.connection
-      ? guildData.connection.dispatcher
-      : null;
-    if (!args[1] && dispatcher && dispatcher.paused) {
-      guildData.connection.dispatcher.resume();
-      return message.channel.send(RESUMING.toBold());
-    }
-
-    const commandContent = args[1];
-
     try {
+      const guildData = await fetchGuildData(
+        message.guild,
+        message.channel,
+        message.member.voice.channel
+      );
+
+      const error = guildData.queueActive
+        ? checkVoiceChannelAvailability(message)
+        : checkUserInAChannel(message);
+      if (error) return message.channel.send(error.toBold());
+
+      //resume if paused
+      const dispatcher = guildData.connection
+        ? guildData.connection.dispatcher
+        : null;
+      if (!args[1] && dispatcher && dispatcher.paused) {
+        guildData.connection.dispatcher.resume();
+        return message.channel.send(RESUMING.toBold());
+      }
+
+      const commandContent = args[1];
+
       const song = await fetchSong(commandContent);
 
       if (guildData.queueActive) {
@@ -65,7 +65,7 @@ export = <Command>{
       guildData.songs.push(song);
       guildData.queueActive = true;
 
-      await connect(guildData);
+      await connectToVoiceChannel(guildData);
       play(message, guildData);
     } catch (error) {
       console.error(error);
