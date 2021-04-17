@@ -3,7 +3,6 @@ import DBHelper from "../../db/dbHelper";
 import { urlReachable } from "../../util/urlReachable";
 import { SETHORN_NOT_ALLOWED } from "../../constants/messages";
 import getDefaultAudios from "../../util/getDefaultAudios";
-import { getAndUpdateGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "sethorn",
@@ -23,12 +22,6 @@ export = <Command>{
 
     if (audios.includes(alias))
       return message.channel.send(SETHORN_NOT_ALLOWED.toBold());
-
-    const guildData = getAndUpdateGuildData(
-      message.guild,
-      message.channel,
-      message.member.voice.channel
-    );
 
     const regexUrl = new RegExp(
       `(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`

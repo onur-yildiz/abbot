@@ -1,7 +1,7 @@
 import { Command, Message } from "discord.js";
 import { QUEUE_EMPTY_SKIP, SKIPPED } from "../../constants/messages";
 import { checkVoiceChannelAvailability } from "../../util/checker";
-import { getAndUpdateGuildData } from "../../util/guildActions";
+import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "skip",
@@ -15,18 +15,19 @@ export = <Command>{
     const error = checkVoiceChannelAvailability(message);
     if (error != null) return message.channel.send(error);
 
-    let guildData = getAndUpdateGuildData(
-      message.guild,
-      message.channel,
-      message.member.voice.channel
-    );
-
-    const dispatcher = guildData.connection.dispatcher;
-    const isQueueEmpty = (): boolean => guildData.songs.length === 0;
-    if (isQueueEmpty()) return message.channel.send(QUEUE_EMPTY_SKIP.toBold());
-
     let responseMessage: Message;
     try {
+      let guildData = await fetchGuildData(
+        message.guild,
+        message.channel,
+        message.member.voice.channel
+      );
+
+      const dispatcher = guildData.connection.dispatcher;
+      const isQueueEmpty = (): boolean => guildData.songs.length === 0;
+      if (isQueueEmpty())
+        return message.channel.send(QUEUE_EMPTY_SKIP.toBold());
+
       if (dispatcher != null) {
         responseMessage = await message.channel.send(SKIPPED.toBold());
         dispatcher.emit("skip");

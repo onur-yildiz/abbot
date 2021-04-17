@@ -1,11 +1,12 @@
 import { Command, Message } from "discord.js";
 import {
   ALREADY_PAUSED,
+  ERROR_EXECUTION_ERROR,
   NOTHING_IS_PLAYING,
   PAUSED,
 } from "../../constants/messages";
 import { checkVoiceChannelAvailability } from "../../util/checker";
-import { getAndUpdateGuildData } from "../../util/guildActions";
+import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "pause",
@@ -18,17 +19,22 @@ export = <Command>{
     const error = checkVoiceChannelAvailability(message);
     if (error) return message.channel.send(error.toBold());
 
-    const guildData = getAndUpdateGuildData(
-      message.guild,
-      message.channel,
-      message.member.voice.channel
-    );
+    try {
+      const guildData = await fetchGuildData(
+        message.guild,
+        message.channel,
+        message.member.voice.channel
+      );
 
-    if (guildData.connection.dispatcher.paused)
-      return message.channel.send(ALREADY_PAUSED.toBold());
-    if (guildData.queueActive) {
-      guildData.connection.dispatcher.pause();
-      message.channel.send(PAUSED.toBold());
-    } else message.channel.send(NOTHING_IS_PLAYING.toItalic());
+      if (guildData.connection.dispatcher.paused)
+        return message.channel.send(ALREADY_PAUSED.toBold());
+      if (guildData.queueActive) {
+        guildData.connection.dispatcher.pause();
+        message.channel.send(PAUSED.toBold());
+      } else message.channel.send(NOTHING_IS_PLAYING.toItalic());
+    } catch (error) {
+      message.reply(ERROR_EXECUTION_ERROR.toBold());
+      console.error(error);
+    }
   },
 };

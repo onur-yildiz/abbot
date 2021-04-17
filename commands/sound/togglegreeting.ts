@@ -1,6 +1,6 @@
 import { Command, Message } from "discord.js";
 import DBHelper from "../../db/dbHelper";
-import { getAndUpdateGuildData } from "../../util/guildActions";
+import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "togglegreeting",
@@ -11,13 +11,13 @@ export = <Command>{
   permissions: ["ADMINISTRATOR", "MOVE_MEMBERS"],
   guildOnly: true,
   async execute(message: Message) {
-    const guildData = getAndUpdateGuildData(
-      message.guild,
-      message.channel,
-      message.member.voice.channel
-    );
-
     try {
+      const guildData = await fetchGuildData(
+        message.guild,
+        message.channel,
+        message.member.voice.channel
+      );
+
       guildData.greetingEnabled = !guildData.greetingEnabled;
       await DBHelper.saveGuildSettings(message.guild, {
         greetingEnabled: guildData.greetingEnabled,

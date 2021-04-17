@@ -1,8 +1,7 @@
 import { Command, Message } from "discord.js";
 import { DISCONNECTED } from "../../constants/messages";
-import { guilds } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
-import { getAndUpdateGuildData } from "../../util/guildActions";
+import { disconnectFromVoiceChannel } from "../../util/guildActions";
 
 export = <Command>{
   name: "disconnect",
@@ -11,20 +10,15 @@ export = <Command>{
   usage: "",
   args: Args.none,
   guildOnly: true,
-  execute(message: Message) {
+  async execute(message: Message) {
     const error = checkVoiceChannelAvailability(message);
     if (error) return message.channel.send(error.toBold());
 
-    const guildData = getAndUpdateGuildData(
-      message.guild,
-      message.channel,
-      message.member.voice.channel
-    );
-
-    if (guildData.connection.dispatcher != null)
-      guildData.connection.dispatcher.destroy();
-    guildData.connection.disconnect();
-    guilds.delete(message.guild.id);
-    return message.channel.send(DISCONNECTED.toBold());
+    try {
+      disconnectFromVoiceChannel(message.guild);
+      return message.channel.send(DISCONNECTED.toBold());
+    } catch (error) {
+      console.error(error);
+    }
   },
 };

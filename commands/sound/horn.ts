@@ -7,7 +7,7 @@ import { urlReachable } from "../../util/urlReachable";
 import DBHelper from "../../db/dbHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { checkUserInAChannel } from "../../util/checker";
-import { connect, getAndUpdateGuildData } from "../../util/guildActions";
+import { connectToVoiceChannel, fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "horn",
@@ -22,16 +22,16 @@ export = <Command>{
     if (error) return message.channel.send(error.toBold());
 
     const commandContent = args[1];
-    const guildData = getAndUpdateGuildData(
-      message.guild,
-      message.channel,
-      message.member.voice.channel
-    );
-
-    if (guildData.queueActive)
-      return message.channel.send(HORN_PLAYING_MUSIC.toBold());
-
     try {
+      const guildData = await fetchGuildData(
+        message.guild,
+        message.channel,
+        message.member.voice.channel
+      );
+
+      if (guildData.queueActive)
+        return message.channel.send(HORN_PLAYING_MUSIC.toBold());
+
       let audioPath = "";
       const audios = getDefaultAudios();
       if (audios.includes(`${commandContent}`))
@@ -53,7 +53,7 @@ export = <Command>{
       }
 
       console.log(audioPath);
-      await connect(guildData);
+      await connectToVoiceChannel(guildData);
       const dispatcher = guildData.connection
         .play(audioPath)
         .on("finish", () => {})
