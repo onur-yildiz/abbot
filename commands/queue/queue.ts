@@ -45,7 +45,7 @@ export = <Command>{
         .addFields(...queue)
         .setTimestamp();
       const responseMessage = await message.channel.send(embed);
-      awaitDone(responseMessage, message.author);
+      awaitDone(responseMessage, message);
     } catch (error) {
       console.error(ERROR_EXECUTION_ERROR);
     }

@@ -1,5 +1,10 @@
 import Discord, { Client, Message, NewsChannel, TextChannel } from "discord.js";
-import { ERROR_EXECUTION_ERROR } from "../constants/messages";
+import {
+  ERROR_EXECUTION_ERROR,
+  REPLY_CANT_EXECUTE_DM,
+  REPLY_NOT_ALLOWED,
+  REPLY_NO_ARGS,
+} from "../constants/messages";
 import { commands, cooldowns, defaultPrefix, guilds } from "../global/globals";
 import { getCommandContent, getCommandName } from "../util/commandParser";
 import { fetchGuildData } from "../util/guildActions";
@@ -11,8 +16,9 @@ export const messageHandler = async (client: Client, message: Message) => {
   let curPrefix = defaultPrefix;
   try {
     if (message.channel.type !== "dm") {
-      if (!guilds.has(message.guild.id)) await fetchGuildData(message.guild);
-      curPrefix = guilds.get(message.guild.id).prefix;
+      if (!guilds.has(message.guild.id)) {
+        curPrefix = (await fetchGuildData(message.guild)).prefix;
+      } else curPrefix = guilds.get(message.guild.id).prefix;
     }
   } catch (error) {
     console.error(error);
@@ -30,22 +36,22 @@ export const messageHandler = async (client: Client, message: Message) => {
   const command =
     commands.get(commandName) ||
     commands.find((cmd) => cmd.aliases.includes(commandName));
-  if (command == null) return;
+  if (!command) return;
 
   if (command.guildOnly && message.channel.type === "dm")
-    return message.reply("I can't execute that command inside DMs!");
+    return message.reply(REPLY_CANT_EXECUTE_DM);
 
-  if (command.permissions != null) {
+  if (command.permissions) {
     const authorPerms = (<TextChannel | NewsChannel>(
       message.channel
     )).permissionsFor(message.author);
     if (!authorPerms || !authorPerms.any(command.permissions)) {
-      return message.reply("you are not allowed to do this!");
+      return message.reply(REPLY_NOT_ALLOWED);
     }
   }
 
   if (command.args === Args.required && commandContent == "")
-    return message.reply("you did not provide any arguments!");
+    return message.reply(REPLY_NO_ARGS);
 
   if (!cooldowns.has(command.name)) {
     cooldowns.set(command.name, new Discord.Collection());

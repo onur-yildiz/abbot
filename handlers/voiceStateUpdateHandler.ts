@@ -1,6 +1,11 @@
 import { VoiceState } from "discord.js";
 import DBHelper from "../db/dbHelper";
-import { fetchGuildData, resetQueue } from "../util/guildActions";
+import {
+  connectToVoiceChannel,
+  disconnectFromVoiceChannel,
+  fetchGuildData,
+  resetQueue,
+} from "../util/guildActions";
 
 const defaultTheme = "./assets/audio/ww.mp3";
 
@@ -20,21 +25,18 @@ export const voiceStateUpdateHandler = async (
       return;
     }
     if (
-      newVoiceState.channelID == null ||
+      !newVoiceState.channelID ||
       newVoiceState.channelID == oldVoiceState.channelID
-    ) {
+    )
       return;
-    }
-    if (guildData.queueActive || !guildData.greetingEnabled) {
-      return;
-    }
+    if (guildData.queueActive || !guildData.greetingEnabled) return;
 
     const theme = await getTheme(newVoiceState);
-    const connection = await newVoiceState.channel.join();
-    const dispatcher = connection
+    await connectToVoiceChannel(guildData);
+    const dispatcher = guildData.connection
       .play(theme)
       .on("finish", () => {
-        connection.disconnect();
+        disconnectFromVoiceChannel(guildData);
       })
       .on("error", (error) => console.error(error));
     dispatcher.setVolumeLogarithmic(1);

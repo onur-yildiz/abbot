@@ -13,7 +13,7 @@ export = <Command>{
   cooldown: 1,
   async execute(message: Message) {
     const error = checkVoiceChannelAvailability(message);
-    if (error != null) return message.channel.send(error);
+    if (error) return message.channel.send(error);
 
     let responseMessage: Message;
     try {
@@ -24,11 +24,11 @@ export = <Command>{
       );
 
       const dispatcher = guildData.connection.dispatcher;
-      const isQueueEmpty = (): boolean => guildData.songs.length === 0;
+      const isQueueEmpty = (): boolean => guildData.songs.length === 1; // songs[0] is the currently played track.
       if (isQueueEmpty())
         return message.channel.send(QUEUE_EMPTY_SKIP.toBold());
 
-      if (dispatcher != null) {
+      if (dispatcher) {
         responseMessage = await message.channel.send(SKIPPED.toBold());
         dispatcher.emit("skip");
       }

@@ -4,7 +4,7 @@ import { getCommandContent, getCommandName } from "../../util/commandParser";
 describe("commandParser", () => {
   describe("getCommandContent", () => {
     describe("with default prefix", () => {
-      it("should return expectedly", () => {
+      it("return expectedly", () => {
         const commandMessage = ".play    Frank's choice    ";
         const expectedValue = "Frank's choice";
 
@@ -16,7 +16,7 @@ describe("commandParser", () => {
 
     describe("with custom prefix", () => {
       const customPrefix = "tst ";
-      it("should return expectedly", () => {
+      it("return expectedly", () => {
         const commandMessage = "tst play    Frank's choice    ";
         const expectedValue = "Frank's choice";
 
@@ -29,7 +29,7 @@ describe("commandParser", () => {
 
   describe("getCommandName", () => {
     describe("with default prefix", () => {
-      it("should return expectedly", () => {
+      it("return expectedly", () => {
         const commandMessage = ".play    Frank's choice    ";
         const expectedValue = "play";
 
@@ -38,7 +38,7 @@ describe("commandParser", () => {
         );
       });
 
-      it("should return as lowercase", () => {
+      it("return as lowercase", () => {
         const commandMessage = ".hOrN    Frank's choice    ";
         const expectedValue = "horn";
 
@@ -47,7 +47,7 @@ describe("commandParser", () => {
         );
       });
 
-      it("should return '' if wrong prefix", () => {
+      it("return '' if wrong prefix", () => {
         const commandMessage = "pls hOrN    Frank's choice    ";
         const expectedValue = "";
 
@@ -59,7 +59,7 @@ describe("commandParser", () => {
 
     describe("with custom prefix", () => {
       const customPrefix = "tst ";
-      it("should return expectedly", () => {
+      it("return expectedly", () => {
         const commandMessage = "tst pLaY    Frank's choice    ";
         const expectedValue = "play";
 
@@ -68,7 +68,7 @@ describe("commandParser", () => {
         );
       });
 
-      it("should return as lowercase", () => {
+      it("return as lowercase", () => {
         const commandMessage = "tst hOrN    Frank's choice    ";
         const expectedValue = "horn";
 
@@ -77,7 +77,7 @@ describe("commandParser", () => {
         );
       });
 
-      it("should return '' if wrong prefix", () => {
+      it("return '' if wrong prefix", () => {
         const commandMessage = "!!hOrN    Frank's choice    ";
         const expectedValue = "";
 

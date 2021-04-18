@@ -56,10 +56,12 @@ export = <Command>{
       await connectToVoiceChannel(guildData);
       const dispatcher = guildData.connection
         .play(audioPath)
-        .on("finish", () => {})
+        .on("finish", () => {
+          r.remove();
+        })
         .on("error", (error) => console.error(error));
       dispatcher.setVolumeLogarithmic(guildData.volume);
-      await message.react("✅");
+      const r = await message.react("📣");
     } catch (error) {
       console.error(error);
       message.reply(ERROR_EXECUTION_ERROR);

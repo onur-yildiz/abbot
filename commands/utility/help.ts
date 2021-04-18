@@ -77,7 +77,7 @@ export = <Command>{
       commands.get(commandContent) ||
       commands.find((c) => c.aliases && c.aliases.includes(commandContent));
 
-    if (command == null) {
+    if (!command) {
       return message.reply("that's not a valid command!");
     }
 
@@ -113,7 +113,7 @@ export = <Command>{
 
     try {
       const responseMessage = await message.channel.send(embed);
-      awaitDone(responseMessage, message.author);
+      awaitDone(responseMessage, message);
     } catch (error) {
       console.error(error);
     }

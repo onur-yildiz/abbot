@@ -15,8 +15,7 @@ export const connectToVoiceChannel = async (guildData: GuildData) => {
   return guildData;
 };
 
-export const disconnectFromVoiceChannel = async (guild: Guild) => {
-  const guildData = await fetchGuildData(guild);
+export const disconnectFromVoiceChannel = async (guildData: GuildData) => {
   resetQueue(guildData);
   guildData.voiceChannel.leave();
   guildData.connection = null;
@@ -24,7 +23,7 @@ export const disconnectFromVoiceChannel = async (guild: Guild) => {
 };
 
 export const resetQueue = (guildData: GuildData) => {
-  if (guildData.connection.dispatcher != null)
+  if (guildData.connection.dispatcher)
     guildData.connection.dispatcher.destroy();
   guildData.songs = [];
   guildData.queueActive = false;

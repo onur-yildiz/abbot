@@ -36,6 +36,10 @@ const ALREADY_PLAYING = "Already playing. :zzz:";
 const SKIPPED = "Skipped :track_next:";
 const PONG = "Pong :ping_pong:";
 
+const REPLY_CANT_EXECUTE_DM = "I can't execute that command inside DMs!";
+const REPLY_NOT_ALLOWED = "you are not allowed to do this!";
+const REPLY_NO_ARGS = "you did not provide any arguments!";
+
 export {
   JOIN_CHANNEL_GENERIC,
   JOIN_CHANNEL_PLAY,
@@ -61,4 +65,7 @@ export {
   ALREADY_PLAYING,
   SKIPPED,
   PONG,
+  REPLY_CANT_EXECUTE_DM,
+  REPLY_NOT_ALLOWED,
+  REPLY_NO_ARGS,
 };

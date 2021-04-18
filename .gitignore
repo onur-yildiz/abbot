@@ -1,6 +1,5 @@
 node_modules
 dist
-Procfile
 
 .env
 .vscode

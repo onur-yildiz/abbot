@@ -21,7 +21,7 @@ export = <Command>{
       commands.get(reloadCommandName) ||
       commands.find((cmd) => cmd.aliases.includes(reloadCommandName));
 
-    if (command == null)
+    if (!command)
       return message.channel.send(
         `There is no command with name or alias \`${reloadCommandName}\`, ${message.author}!`
       );

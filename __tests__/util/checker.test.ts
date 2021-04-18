@@ -19,7 +19,7 @@ describe("checker", () => {
   });
 
   describe("#checkVoiceChannelAvailability", () => {
-    it("should return null if both in same channel and bot has perms", () => {
+    it("return null if both in same channel and bot has perms", () => {
       message = ({
         member: {
           voice: {
@@ -43,7 +43,7 @@ describe("checker", () => {
       expect(checkVoiceChannelAvailability(message)).toBeNull();
     });
 
-    it("should return BOT_NOT_IN_SAME_CHANNEL if in different channels", () => {
+    it("return BOT_NOT_IN_SAME_CHANNEL if in different channels", () => {
       message = ({
         member: {
           voice: {
@@ -220,7 +220,7 @@ describe("checker", () => {
   });
 
   describe("#checkUserInAChannel", () => {
-    it("should return null if user in a channel", () => {
+    it("return null if user in a channel", () => {
       message = ({
         member: {
           voice: {
