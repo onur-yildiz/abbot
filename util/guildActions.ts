@@ -17,8 +17,9 @@ export const connectToVoiceChannel = async (guildData: GuildData) => {
 
 export const disconnectFromVoiceChannel = async (guildData: GuildData) => {
   resetQueue(guildData);
-  guildData.voiceChannel.leave();
+  guildData.connection.disconnect();
   guildData.connection = null;
+  guildData.voiceChannel = null;
   return guildData;
 };
 

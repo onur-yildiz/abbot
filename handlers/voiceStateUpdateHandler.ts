@@ -15,7 +15,7 @@ export const voiceStateUpdateHandler = async (
 ) => {
   try {
     const guild = newVoiceState.member.guild;
-    const guildData = await fetchGuildData(
+    let guildData = await fetchGuildData(
       guild,
       null,
       newVoiceState.member.voice.channel
@@ -36,7 +36,7 @@ export const voiceStateUpdateHandler = async (
     const dispatcher = guildData.connection
       .play(theme)
       .on("finish", () => {
-        disconnectFromVoiceChannel(guildData);
+        guildData.connection.disconnect();
       })
       .on("error", (error) => console.error(error));
     dispatcher.setVolumeLogarithmic(1);

@@ -54,6 +54,7 @@ export = <Command>{
 
       console.log(audioPath);
       await connectToVoiceChannel(guildData);
+      const r = await message.react("📣");
       const dispatcher = guildData.connection
         .play(audioPath)
         .on("finish", () => {
@@ -61,7 +62,6 @@ export = <Command>{
         })
         .on("error", (error) => console.error(error));
       dispatcher.setVolumeLogarithmic(guildData.volume);
-      const r = await message.react("📣");
     } catch (error) {
       console.error(error);
       message.reply(ERROR_EXECUTION_ERROR);
