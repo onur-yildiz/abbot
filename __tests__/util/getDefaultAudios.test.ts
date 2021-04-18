@@ -13,7 +13,7 @@ describe("getDefaultAudios", () => {
     require("fs").__setMockFiles(MOCK_FILE_INFO);
   });
 
-  it("should return file names without extensions", () => {
+  it("return file names without extensions", () => {
     expect(getDefaultAudios()).toStrictEqual(MOCK_FILE_NAMES);
   });
 });

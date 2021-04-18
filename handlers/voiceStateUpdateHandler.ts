@@ -20,14 +20,11 @@ export const voiceStateUpdateHandler = async (
       return;
     }
     if (
-      newVoiceState.channelID == null ||
+      !newVoiceState.channelID ||
       newVoiceState.channelID == oldVoiceState.channelID
-    ) {
+    )
       return;
-    }
-    if (guildData.queueActive || !guildData.greetingEnabled) {
-      return;
-    }
+    if (guildData.queueActive || !guildData.greetingEnabled) return;
 
     const theme = await getTheme(newVoiceState);
     const connection = await newVoiceState.channel.join();

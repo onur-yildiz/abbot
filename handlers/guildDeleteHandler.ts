@@ -4,8 +4,10 @@ import { guilds } from "../global/globals";
 
 export const guildDeleteHandler = async (guild: Guild) => {
   try {
-    guilds.delete(guild.id);
-    await DBHelper.deleteGuildSettings(guild);
+    if (guilds.has(guild.id)) {
+      guilds.delete(guild.id);
+      await DBHelper.deleteGuildSettings(guild);
+    } else throw new Error(`This guild does not exist in guilds: ${guild.id}`);
   } catch (error) {
     console.error(error);
   }
