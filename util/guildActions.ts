@@ -24,7 +24,7 @@ export const disconnectFromVoiceChannel = async (guild: Guild) => {
 };
 
 export const resetQueue = (guildData: GuildData) => {
-  if (guildData.connection.dispatcher != null)
+  if (guildData.connection.dispatcher)
     guildData.connection.dispatcher.destroy();
   guildData.songs = [];
   guildData.queueActive = false;

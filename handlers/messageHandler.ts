@@ -36,12 +36,12 @@ export const messageHandler = async (client: Client, message: Message) => {
   const command =
     commands.get(commandName) ||
     commands.find((cmd) => cmd.aliases.includes(commandName));
-  if (command == null) return;
+  if (!command) return;
 
   if (command.guildOnly && message.channel.type === "dm")
     return message.reply(REPLY_CANT_EXECUTE_DM);
 
-  if (command.permissions != null) {
+  if (command.permissions) {
     const authorPerms = (<TextChannel | NewsChannel>(
       message.channel
     )).permissionsFor(message.author);

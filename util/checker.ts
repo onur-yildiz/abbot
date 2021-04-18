@@ -25,20 +25,7 @@ export const checkVoiceChannelAvailability = (
 };
 
 export const checkUserInAChannel = (message: Message): string | null => {
-  if (message.member.voice == null || message.member.voice.channel == null)
+  if (!message.member.voice || !message.member.voice.channel)
     return JOIN_CHANNEL_GENERIC;
   return null;
 };
-
-// export const checkVoiceChannelAvailability = (message: Message): string | null => {
-//   const userVoice = message.member.voice;
-//   const botVoice = message.guild.voice;
-//   if (botVoice == null || botVoice.channel == null) return BOT_NOT_IN_CHANNEL;
-//   if (
-//     !userVoice ||
-//     !userVoice.channel ||
-//     userVoice.channel.id != botVoice.channel.id
-//   )
-//     return JOIN_CHANNEL_GENERIC;
-//   return null;
-// };
