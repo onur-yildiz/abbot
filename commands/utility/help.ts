@@ -43,11 +43,11 @@ export = <Command>{
       });
 
       embed = new Discord.MessageEmbed()
-        .attachFiles(["./assets/images/github.png"])
+        .attachFiles(["./assets/images/discord.png"])
         .setAuthor(
-          "Repo",
-          "attachment://github.png",
-          "https://github.com/onur-yildiz/abbot"
+          "Abbot",
+          "attachment://discord.png",
+          "https://dc-abbot.herokuapp.com/"
         )
         .setColor("#222222")
         .setTitle("Commands")
@@ -107,6 +107,12 @@ export = <Command>{
     });
 
     embed = new Discord.MessageEmbed()
+      .attachFiles(["./assets/images/discord.png"])
+      .setAuthor(
+        "Abbot",
+        "attachment://discord.png",
+        "https://dc-abbot.herokuapp.com/"
+      )
       .setColor("#222222")
       .setTitle(command.name)
       .addFields(...data);
