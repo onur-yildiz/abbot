@@ -1,8 +1,8 @@
 import { VoiceState } from "discord.js";
 import dbHelper from "../db/dbHelper";
+import { isPermitted } from "../util/checker";
 import {
   connectToVoiceChannel,
-  disconnectFromVoiceChannel,
   fetchGuildData,
   resetQueue,
 } from "../util/guildActions";
@@ -24,6 +24,11 @@ export const voiceStateUpdateHandler = async (
       if (!newVoiceState.channel) resetQueue(guildData);
       return;
     }
+    if (
+      newVoiceState.channel &&
+      !isPermitted(newVoiceState.channel, newVoiceState.guild)
+    )
+      return;
     if (
       !newVoiceState.channelID ||
       newVoiceState.channelID == oldVoiceState.channelID

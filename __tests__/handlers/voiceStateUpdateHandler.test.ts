@@ -8,11 +8,27 @@ import { resetQueue } from "../../util/guildActions";
 jest.mock("../../util/guildActions");
 jest.mock("discord.js");
 
+const { Permissions } = jest.requireActual("discord.js");
+
+const mockSetVolume = jest.fn();
+const voiceConnection: VoiceConnection = ({
+  play: jest.fn().mockReturnValue({
+    setVolumeLogarithmic: null,
+    on: jest.fn().mockReturnValue({
+      setVolumeLogarithmic: null,
+      on: jest.fn().mockReturnValue({
+        setVolumeLogarithmic: mockSetVolume,
+        on: null,
+      }),
+    }),
+  }),
+} as unknown) as VoiceConnection;
+
 Object.defineProperty(ga, "fetchGuildData", {
   value: jest.fn().mockReturnValue(<GuildData>{
     textChannel: null,
     voiceChannel: null,
-    connection: null,
+    connection: voiceConnection,
     songs: [],
     volume: 1,
     queueActive: false,
@@ -34,21 +50,13 @@ Object.defineProperty(dbHelper, "saveGuildSettings", {
 });
 
 describe("voiceStateUpdateHandler", () => {
-  const mockSetVolume = jest.fn();
+  const perms = new Permissions().add("CONNECT").add("SPEAK");
+  const mockPermissionsFor = jest.fn((): Readonly<Permissions> => perms);
   // .play, .on, .on
-  const voiceConnection: VoiceConnection = ({
-    play: jest.fn().mockReturnValue({
-      setVolumeLogarithmic: null,
-      on: jest.fn().mockReturnValue({
-        setVolumeLogarithmic: null,
-        on: jest.fn().mockReturnValue({
-          setVolumeLogarithmic: mockSetVolume,
-          on: null,
-        }),
-      }),
-    }),
-  } as unknown) as VoiceConnection;
   const oldVoiceState: VoiceState = ({
+    guild: {
+      me: {},
+    },
     member: {
       id: "user-id",
       guild: {},
@@ -60,7 +68,10 @@ describe("voiceStateUpdateHandler", () => {
         channel: {},
       },
     },
-    channel: { join: jest.fn().mockReturnValue(voiceConnection) },
+    channel: {
+      join: jest.fn().mockReturnValue(voiceConnection),
+      permissionsFor: mockPermissionsFor,
+    },
     channelID: "0",
   } as unknown) as VoiceState;
   const newVoiceState: VoiceState = ({

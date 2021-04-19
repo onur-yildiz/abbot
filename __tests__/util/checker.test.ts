@@ -106,7 +106,7 @@ describe("checker", () => {
       });
     });
 
-    describe("false permissions", () => {
+    describe("#isPermitted", () => {
       test("if no `CONNECT` perm", () => {
         message = ({
           member: {
@@ -246,3 +246,5 @@ describe("checker", () => {
     });
   });
 });
+
+test.todo("isPermitted func");
