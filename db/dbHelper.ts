@@ -1,6 +1,15 @@
 import { Guild } from "discord.js";
-import { UpdateQuery } from "mongoose";
+import mongoose from "mongoose";
+import { uri } from "../global/globals";
 import { GuildSettings, IGuildSettings } from "./dbModels";
+
+const connectToDatabase = async () => {
+  await mongoose.connect(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  });
+};
 
 const createGuildSettings = async (guild: Guild) => {
   try {
@@ -14,7 +23,7 @@ const createGuildSettings = async (guild: Guild) => {
 
 const saveGuildSettings = async (
   guild: Guild,
-  updateQuery: UpdateQuery<IGuildSettings>
+  updateQuery: mongoose.UpdateQuery<IGuildSettings>
 ) => {
   try {
     await GuildSettings.findOneAndUpdate({ guildId: guild.id }, updateQuery, {
@@ -50,6 +59,7 @@ const deleteGuildSettings = async (guild: Guild) => {
 };
 
 export default {
+  connectToDatabase,
   createGuildSettings,
   saveGuildSettings,
   getGuildSettings,

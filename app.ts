@@ -1,13 +1,13 @@
 import Discord from "discord.js";
-import mongoose from "mongoose";
 import fs from "fs";
 import "ffmpeg";
 
-import { commands, token, uri } from "./global/globals";
+import { commands, token } from "./global/globals";
 import { voiceStateUpdateHandler } from "./handlers/voiceStateUpdateHandler";
 import "./extensions/string";
 import { guildDeleteHandler } from "./handlers/guildDeleteHandler";
 import { messageHandler } from "./handlers/messageHandler";
+import DBHelper from "./db/dbHelper";
 
 const commandFolders = fs.readdirSync("./commands");
 for (const folder of commandFolders) {
@@ -20,34 +20,34 @@ for (const folder of commandFolders) {
   }
 }
 
-const client = new Discord.Client();
-mongoose
-  .connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-  })
-  .then((res) => {
+const runApp = async () => {
+  const client = new Discord.Client();
+  try {
+    await DBHelper.connectToDatabase();
     console.log("Connected to database.");
     client.login(token);
-  })
-  .catch((error) => console.error(error));
-
-client.once("ready", async () => {
-  try {
-    await client.user.setPresence({
-      activity: { type: "PLAYING", name: `Type @${client.user.username}` },
-    });
-    console.log("Ready!");
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
-});
 
-client.once("disconnect", () => {
-  console.log("Disconnected.");
-});
+  client.once("ready", async () => {
+    try {
+      await client.user.setPresence({
+        activity: { type: "PLAYING", name: `Type @${client.user.username}` },
+      });
+      console.log("Ready!");
+    } catch (error) {
+      console.log(error);
+    }
+  });
 
-client.on("voiceStateUpdate", voiceStateUpdateHandler);
-client.on("guildDelete", guildDeleteHandler);
-client.on("message", messageHandler.bind(this, client));
+  client.once("disconnect", () => {
+    console.log("Disconnected.");
+  });
+
+  client.on("voiceStateUpdate", voiceStateUpdateHandler);
+  client.on("guildDelete", guildDeleteHandler);
+  client.on("message", messageHandler.bind(this, client));
+};
+
+runApp();
