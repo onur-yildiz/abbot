@@ -35,6 +35,7 @@ const RESUMING = "Resuming :play_pause:";
 const ALREADY_PLAYING = "Already playing. :zzz:";
 const SKIPPED = "Skipped :track_next:";
 const PONG = "Pong :ping_pong:";
+const NO_SAVED_ARGS = "There are no saved arguments for this command.";
 
 const REPLY_CANT_EXECUTE_DM = "I can't execute that command inside DMs!";
 const REPLY_NOT_ALLOWED = "you are not allowed to do this!";
@@ -65,6 +66,7 @@ export {
   ALREADY_PLAYING,
   SKIPPED,
   PONG,
+  NO_SAVED_ARGS,
   REPLY_CANT_EXECUTE_DM,
   REPLY_NOT_ALLOWED,
   REPLY_NO_ARGS,

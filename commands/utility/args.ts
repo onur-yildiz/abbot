@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import { ERROR_EXECUTION_ERROR } from "../../constants/messages";
+import { ERROR_EXECUTION_ERROR, NO_SAVED_ARGS } from "../../constants/messages";
 import DBHelper from "../../db/dbHelper";
 import { commands } from "../../global/globals";
 
@@ -15,17 +15,18 @@ export = <Command>{
     const commandContent = args[1];
 
     try {
+      const data: string[] = [];
       if (
         commands.get("horn").aliases.includes(commandContent) ||
         commandContent === "horn"
       ) {
-        const data: string[] = [];
         const guildSettings = await DBHelper.getGuildSettings(message.guild);
         for (const key of guildSettings.audioAliases.keys()) data.push(key);
-
         data.map((d) => d.toInlineCodeBg());
-        return message.channel.send(data.join(", "));
       }
+      if (data.length === 0)
+        return message.channel.send(NO_SAVED_ARGS.toBold());
+      return message.channel.send(data.join(", "));
     } catch (error) {
       message.reply(ERROR_EXECUTION_ERROR.toBold());
       console.error(error);
