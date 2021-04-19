@@ -1,6 +1,6 @@
 # Abbot
 
-**A discord music/soundhorn bot with special snyder cut wonder woman themed greeting.** 🙂
+**A discord music/soundhorn bot with the special Snyder Cut Wonder Woman theme greeting.** 🙂
 
 ## Commands
 
@@ -157,7 +157,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `clbm`, `clrbotmsg`, `clbotmsg`
 
-&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Clear the bot messages. (**\*message cache is limited to **200\*\*\*)
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Clear the bot messages. (**\*message cache is limited to**200\*\*\*)
 
 &nbsp;&nbsp;&nbsp;&nbsp; \*\*Cooldown\*\*: 8 second(s)
 
