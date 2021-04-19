@@ -22,11 +22,10 @@ export = <Command>{
       ) {
         const guildSettings = await dbHelper.getGuildSettings(message.guild);
         for (const key of guildSettings.audioAliases.keys()) data.push(key);
-        data.map((d) => d.toInlineCodeBg());
       }
       if (data.length === 0)
         return message.channel.send(NO_SAVED_ARGS.toBold());
-      return message.channel.send(data.join(", "));
+      return message.channel.send(data.join(", ").toInlineCodeBg());
     } catch (error) {
       message.reply(ERROR_EXECUTION_ERROR.toBold());
       console.error(error);
