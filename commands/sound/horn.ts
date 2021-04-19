@@ -35,7 +35,7 @@ export = <Command>{
       let audioPath = "";
       const audios = getDefaultAudios();
       if (audios.includes(`${commandContent}`))
-        audioPath = `./assets/audio/${commandContent}`;
+        audioPath = `./assets/audio/${commandContent}.mp3`;
       else {
         const guildSettings = await DBHelper.getGuildSettings(message.guild, {
           [`audioAliases.${commandContent}`]: 1,
