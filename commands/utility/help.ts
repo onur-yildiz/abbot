@@ -47,7 +47,7 @@ export = <Command>{
         .setAuthor(
           "Abbot",
           "attachment://discord.png",
-          "https://dc-abbot.herokuapp.com/"
+          "https://onur-yildiz.github.io/abbot/"
         )
         .setColor("#222222")
         .setTitle("Commands")
@@ -111,7 +111,7 @@ export = <Command>{
       .setAuthor(
         "Abbot",
         "attachment://discord.png",
-        "https://dc-abbot.herokuapp.com/"
+        "https://onur-yildiz.github.io/abbot/"
       )
       .setColor("#222222")
       .setTitle(command.name)
