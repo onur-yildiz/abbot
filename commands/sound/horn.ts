@@ -52,7 +52,9 @@ export = <Command>{
         }
       }
 
-      console.log(audioPath);
+      console.log(
+        `Horn: ${audioPath} @${message.guild.name}<${message.guild.id}`
+      );
       await connectToVoiceChannel(guildData);
       const r = await message.react("📣");
       const dispatcher = guildData.connection

@@ -24,8 +24,7 @@ export = <Command>{
       );
 
       const dispatcher = guildData.connection.dispatcher;
-      const isQueueEmpty = (): boolean => guildData.songs.length === 1; // songs[0] is the currently played track.
-      if (isQueueEmpty())
+      if (guildData.songs.length === 0)
         return message.channel.send(QUEUE_EMPTY_SKIP.toBold());
 
       if (dispatcher) {

@@ -76,41 +76,9 @@ export = <Command>{
 
 const play = async (message: Message, guildData: GuildData) => {
   const currentSong = guildData.songs[0];
-  const dispatcher = guildData.connection
-    .play(ytdl(currentSong.url, { filter: "audioonly" }))
-    .on("start", () => {
-      guildData.lastTrackStart = Date.now();
-      console.log(
-        `Playing: ${currentSong.url} @${message.guild.name}<${message.guild.id}>`
-      );
-    })
-    .on("skip", () => {
-      if (!dispatcher.paused) dispatcher.emit("finish");
-      else guildData.songs.shift();
-    })
-    .on("resume", () => {
-      if (guildData.songs.length === 0) {
-        guildData.queueActive = false;
-        // if currentSong is not skipped, resume.
-      } else if (currentSong === guildData.songs[0]) {
-        dispatcher.resume();
-      } else {
-        responseMessage.delete();
-        play(message, guildData);
-      }
-    })
-    .on("finish", () => {
-      responseMessage.delete();
-      guildData.songs.shift();
-      if (guildData.songs.length === 0) guildData.queueActive = false;
-      else play(message, guildData);
-    })
-    .on("error", (error) => console.error(error));
-  dispatcher.setVolumeLogarithmic(guildData.volume);
-
   const embed = new Discord.MessageEmbed()
     .setColor("#222222")
-    .setAuthor("Now Playing :notes:")
+    .setAuthor("Now Playing 🎶")
     .setTitle(currentSong.title)
     .setThumbnail(currentSong.thumbnailUrl)
     .setDescription(
@@ -120,8 +88,44 @@ const play = async (message: Message, guildData: GuildData) => {
     )
     .addField("Channel", currentSong.channel, true)
     .addField("Duration", currentSong.duration, true);
-
-  const responseMessage = await message.channel.send(embed);
+  let responseMessage: Message;
+  try {
+    responseMessage = await message.channel.send(embed);
+    const dispatcher = guildData.connection
+      .play(ytdl(currentSong.url, { filter: "audioonly" }))
+      .on("start", () => {
+        guildData.lastTrackStart = Date.now();
+        console.log(
+          `Play: ${currentSong.url} @${message.guild.name}<${message.guild.id}>`
+        );
+      })
+      .on("skip", () => {
+        if (!dispatcher.paused) dispatcher.emit("finish");
+        else guildData.songs.shift();
+      })
+      .on("resume", () => {
+        if (guildData.songs.length === 0) {
+          guildData.queueActive = false;
+          // if currentSong is not skipped, resume.
+        } else if (currentSong === guildData.songs[0]) {
+          dispatcher.resume();
+        } else {
+          responseMessage.delete();
+          play(message, guildData);
+        }
+      })
+      .on("finish", () => {
+        responseMessage.delete();
+        guildData.songs.shift();
+        if (guildData.songs.length === 0) guildData.queueActive = false;
+        else play(message, guildData);
+      })
+      .on("error", (error) => console.error(error));
+    dispatcher.setVolumeLogarithmic(guildData.volume);
+  } catch (error) {
+    responseMessage.delete();
+    console.error(error);
+  }
 };
 
 const fetchSong = async (commandContent: string): Promise<Song> => {
@@ -136,7 +140,7 @@ const fetchSong = async (commandContent: string): Promise<Song> => {
       title: songInfo.videoDetails.title,
       url: songInfo.videoDetails.video_url,
       thumbnailUrl: songInfo.videoDetails.thumbnails[0].url,
-      desc: songInfo.videoDetails.description,
+      desc: songInfo.videoDetails.description || "",
       channel: songInfo.videoDetails.author.name,
       duration: hhmmss(parseInt(songInfo.videoDetails.lengthSeconds)),
     };
@@ -153,7 +157,7 @@ const fetchSong = async (commandContent: string): Promise<Song> => {
       title: (<ytsr.Video>songInfo.items[0]).title,
       url: (<ytsr.Video>songInfo.items[0]).url,
       thumbnailUrl: (<ytsr.Video>songInfo.items[0]).thumbnails[0].url,
-      desc: (<ytsr.Video>songInfo.items[0]).description,
+      desc: (<ytsr.Video>songInfo.items[0]).description || "",
       channel: (<ytsr.Video>songInfo.items[0]).author.name,
       duration: (<ytsr.Video>songInfo.items[0]).duration,
     };
