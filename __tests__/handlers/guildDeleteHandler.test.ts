@@ -1,5 +1,5 @@
 import { Guild } from "discord.js";
-import DBHelper from "../../db/dbHelper";
+import dbHelper from "../../db/dbHelper";
 import { guilds } from "../../global/globals";
 import { guildDeleteHandler } from "../../handlers/guildDeleteHandler";
 
@@ -13,7 +13,7 @@ describe("guildDeleteHandler", () => {
   guilds.set(guild.id, null);
 
   beforeAll(() => {
-    DBHelper.deleteGuildSettings = jest.fn();
+    dbHelper.deleteGuildSettings = jest.fn();
   });
 
   beforeEach(() => {
@@ -23,7 +23,7 @@ describe("guildDeleteHandler", () => {
   it("call `deleteGuildSettings` and delete from `guilds`", async () => {
     await guildDeleteHandler(guild);
     expect(guilds.has(guild.id)).toBe(false);
-    expect(DBHelper.deleteGuildSettings).toBeCalledWith(guild);
+    expect(dbHelper.deleteGuildSettings).toBeCalledWith(guild);
   });
 
   it("throw if `guild` does not exist in `guilds`", async () => {

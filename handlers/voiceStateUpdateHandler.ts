@@ -1,5 +1,5 @@
 import { VoiceState } from "discord.js";
-import DBHelper from "../db/dbHelper";
+import dbHelper from "../db/dbHelper";
 import {
   connectToVoiceChannel,
   disconnectFromVoiceChannel,
@@ -47,12 +47,12 @@ export const voiceStateUpdateHandler = async (
 
 const getTheme = async (voiceState: VoiceState) => {
   const userId = voiceState.member.id;
-  const guildSettings = await DBHelper.getGuildSettings(voiceState.guild, {
+  const guildSettings = await dbHelper.getGuildSettings(voiceState.guild, {
     [`themes.${userId}`]: 1,
   });
 
   if (!guildSettings || !guildSettings.themes.has(userId)) {
-    await DBHelper.saveGuildSettings(voiceState.guild, {
+    await dbHelper.saveGuildSettings(voiceState.guild, {
       $set: { [`themes.${userId}`]: defaultTheme },
     });
     return defaultTheme;

@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import DBHelper from "../../db/dbHelper";
+import dbHelper from "../../db/dbHelper";
 
 export = <Command>{
   name: "deletehorn",
@@ -13,17 +13,17 @@ export = <Command>{
   async execute(message: Message, args: string[]) {
     const alias = args[1];
 
-    const guildSettings = await DBHelper.getGuildSettings(message.guild, {
+    const guildSettings = await dbHelper.getGuildSettings(message.guild, {
       [`audioAliases.${alias}`]: 1,
     });
     const exists = checkIfKeyExists(guildSettings.audioAliases, alias);
     console.log(exists);
     if (!exists) return message.reply(`this alias does not exist.`);
     try {
-      await DBHelper.saveGuildSettings(message.guild, {
+      await dbHelper.saveGuildSettings(message.guild, {
         $unset: { [`audioAliases.${alias}`]: "" },
       });
-      await DBHelper.saveGuildSettings(message.guild, {
+      await dbHelper.saveGuildSettings(message.guild, {
         $unset: { [`audioAliases.${alias}`]: "" },
       });
       message.channel.send(

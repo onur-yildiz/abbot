@@ -1,6 +1,6 @@
 import { Command, Message } from "discord.js";
 import { ERROR_EXECUTION_ERROR, NO_SAVED_ARGS } from "../../constants/messages";
-import DBHelper from "../../db/dbHelper";
+import dbHelper from "../../db/dbHelper";
 import { commands } from "../../global/globals";
 
 export = <Command>{
@@ -20,7 +20,7 @@ export = <Command>{
         commands.get("horn").aliases.includes(commandContent) ||
         commandContent === "horn"
       ) {
-        const guildSettings = await DBHelper.getGuildSettings(message.guild);
+        const guildSettings = await dbHelper.getGuildSettings(message.guild);
         for (const key of guildSettings.audioAliases.keys()) data.push(key);
         data.map((d) => d.toInlineCodeBg());
       }

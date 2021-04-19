@@ -1,5 +1,5 @@
 import { GuildData, VoiceConnection, VoiceState } from "discord.js";
-import DBHelper from "../../db/dbHelper";
+import dbHelper from "../../db/dbHelper";
 import { defaultPrefix } from "../../global/globals";
 import { voiceStateUpdateHandler } from "../../handlers/voiceStateUpdateHandler";
 import * as ga from "../../util/guildActions";
@@ -23,13 +23,13 @@ Object.defineProperty(ga, "fetchGuildData", {
   }),
 });
 
-Object.defineProperty(DBHelper, "getGuildSettings", {
+Object.defineProperty(dbHelper, "getGuildSettings", {
   value: jest.fn().mockReturnValue({
     themes: new Map().set("user-id", "test-theme"),
   }),
 });
 
-Object.defineProperty(DBHelper, "saveGuildSettings", {
+Object.defineProperty(dbHelper, "saveGuildSettings", {
   value: jest.fn(),
 });
 
@@ -80,7 +80,7 @@ describe("voiceStateUpdateHandler", () => {
   });
 
   it("run successfully with default theme if guildSettings.themes empty", async () => {
-    Object.defineProperty(DBHelper, "getGuildSettings", {
+    Object.defineProperty(dbHelper, "getGuildSettings", {
       value: jest.fn().mockReturnValue({
         themes: new Map(),
       }),
@@ -93,7 +93,7 @@ describe("voiceStateUpdateHandler", () => {
   });
 
   it("run successfully with default theme if guildSettings falsy", async () => {
-    Object.defineProperty(DBHelper, "getGuildSettings", {
+    Object.defineProperty(dbHelper, "getGuildSettings", {
       value: jest.fn(),
     });
 

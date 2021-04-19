@@ -7,7 +7,7 @@ import { voiceStateUpdateHandler } from "./handlers/voiceStateUpdateHandler";
 import "./extensions/string";
 import { guildDeleteHandler } from "./handlers/guildDeleteHandler";
 import { messageHandler } from "./handlers/messageHandler";
-import DBHelper from "./db/dbHelper";
+import dbHelper from "./db/dbHelper";
 
 const commandFolders = fs.readdirSync("./commands");
 for (const folder of commandFolders) {
@@ -23,7 +23,7 @@ for (const folder of commandFolders) {
 const runApp = async () => {
   const client = new Discord.Client();
   try {
-    await DBHelper.connectToDatabase();
+    await dbHelper.connectToDatabase();
     console.log("Connected to database.");
     client.login(token);
   } catch (error) {
