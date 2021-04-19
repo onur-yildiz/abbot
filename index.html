@@ -13,11 +13,22 @@
         class="unselectable"
         href="https://github.com/onur-yildiz/abbot"
         target="_blank"
-        ><img
+      >
+        <img
           class="sm-avatar"
           src="assets/images/github.png"
           draggable="false"
-      /></a>
+        />
+      </a>
+    </div>
+    <div class="sticker s2">
+      <a
+        class="unselectable"
+        href="https://github.com/onur-yildiz/abbot/blob/23e8e34e759874f74dbd7fbfe99cbbf4a9163669/readme.md"
+        target="_blank"
+      >
+        <img class="sm-avatar" src="assets/images/info.png" draggable="false" />
+      </a>
     </div>
     <div
       class="card-container unselectable"
@@ -25,7 +36,7 @@
     >
       <img
         class="round avatar"
-        src="assets/images/ww.png"
+        src="assets/images/abbot.png"
         alt="bot-avatar"
         draggable="false"
       />
@@ -34,7 +45,7 @@
       <div class="desc">
         <p>
           A discord music/soundhorn bot with special snyder cut wonder woman
-          theme greeting. :)
+          theme greeting. 🙂
         </p>
       </div>
       <div class="tags">
@@ -49,6 +60,12 @@
         </ul>
       </div>
     </div>
+    <iframe
+      src="https://discord.com/widget?id=829120956580495380&theme=dark"
+      allowtransparency="true"
+      frameborder="0"
+      sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+    ></iframe>
   </body>
 
   <style>
@@ -69,6 +86,18 @@
 
       min-height: 100vh;
       margin: 0;
+    }
+
+    iframe {
+      position: absolute;
+      top: auto;
+      right: 0;
+      width: 20%;
+      min-width: 350px;
+      max-width: 50%;
+      height: 60%;
+      min-height: 500px;
+      max-height: 100%;
     }
 
     h3 {
@@ -108,7 +137,7 @@
       position: relative;
       width: 20%;
       min-width: 350px;
-      max-width: 100%;
+      max-width: 50%;
       text-align: center;
       box-shadow: 0 2em 2em -1em #000;
       cursor: pointer;
@@ -167,6 +196,11 @@
       position: absolute;
       top: 5%;
       left: 5%;
+      z-index: 5;
+    }
+
+    .sticker.s2 {
+      left: 10%;
     }
 
     .tags {
@@ -200,6 +234,14 @@
 
     .tags ul li:hover a {
       color: #fff;
+    }
+
+    @media screen and (max-width: 700px) {
+      iframe {
+        position: inherit;
+        padding-top: 5em;
+        height: min-content;
+      }
     }
   </style>
 </html>
