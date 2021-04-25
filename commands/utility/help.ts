@@ -9,7 +9,7 @@ export = <Command>{
   description: "List all of my commands or info about a specific command.",
   aliases: ["commands", "hlp"],
   guildOnly: false,
-  usage: "?[command name]?",
+  usage: "[?command name?]",
   args: Args.flexible,
   cooldown: 1,
   async execute(message: Message, args?: string[]) {
