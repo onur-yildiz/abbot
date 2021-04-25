@@ -21,7 +21,7 @@ export = <Command>{
         commandContent === "horn"
       ) {
         const guildSettings = await dbHelper.getGuildSettings(message.guild);
-        for (const key of guildSettings.audioAliases.keys()) data.push(key);
+        data.push(...[...guildSettings.audioAliases.keys()].sort());
       }
       if (data.length === 0)
         return message.channel.send(NO_SAVED_ARGS.toBold());

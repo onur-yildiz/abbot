@@ -95,7 +95,7 @@ export = <Command>{
 
       if (command.name === "horn" && message.channel.type !== "dm") {
         const guildSettings = await dbHelper.getGuildSettings(message.guild);
-        argList = argList.concat(Array.from(guildSettings.audioAliases.keys()));
+        argList = argList.concat([...guildSettings.audioAliases.keys()].sort());
       }
 
       argList = argList.map((arg) => arg.toInlineCodeBg());
