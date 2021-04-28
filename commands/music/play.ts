@@ -41,6 +41,7 @@ export = <Command>{
       const commandContent = args[1];
 
       const song = await fetchSong(commandContent);
+      if (!song) return message.channel.send("Nothing found.");
 
       if (guildData.queueActive) {
         const estimatedTime = calculateEta(
@@ -148,8 +149,9 @@ const fetchSong = async (commandContent: string): Promise<Song> => {
     const searchQuery = commandContent;
 
     const filters = await ytsr.getFilters(searchQuery);
-
     const filter = filters.get("Type").get("Video");
+    if (!filter.url) return null;
+
     const songInfo: ytsr.Result = await ytsr(filter.url, {
       limit: 1,
     });
