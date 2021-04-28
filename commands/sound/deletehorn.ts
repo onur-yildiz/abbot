@@ -17,7 +17,6 @@ export = <Command>{
       [`audioAliases.${alias}`]: 1,
     });
     const exists = checkIfKeyExists(guildSettings.audioAliases, alias);
-    console.log(exists);
     if (!exists) return message.reply(`this alias does not exist.`);
     try {
       await dbHelper.saveGuildSettings(message.guild, {
