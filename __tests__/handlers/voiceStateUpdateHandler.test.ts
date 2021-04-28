@@ -55,7 +55,9 @@ describe("voiceStateUpdateHandler", () => {
   // .play, .on, .on
   const oldVoiceState: VoiceState = ({
     guild: {
-      me: {},
+      me: {
+        id: "user-id",
+      },
     },
     member: {
       id: "user-id",

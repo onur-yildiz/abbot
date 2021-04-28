@@ -21,9 +21,14 @@ export const voiceStateUpdateHandler = async (
       newVoiceState.member.voice.channel
     );
     if (newVoiceState.member.user.bot) {
-      if (!newVoiceState.channel) resetQueue(guildData);
+      if (
+        newVoiceState.guild.me.id === newVoiceState.member.id &&
+        !newVoiceState.channel
+      )
+        resetQueue(guildData);
       return;
     }
+    if (guildData.queueActive || !guildData.greetingEnabled) return;
     if (
       newVoiceState.channel &&
       !isPermitted(newVoiceState.channel, newVoiceState.guild)
@@ -34,7 +39,6 @@ export const voiceStateUpdateHandler = async (
       newVoiceState.channelID == oldVoiceState.channelID
     )
       return;
-    if (guildData.queueActive || !guildData.greetingEnabled) return;
 
     const theme = await getTheme(newVoiceState);
     await connectToVoiceChannel(guildData);
