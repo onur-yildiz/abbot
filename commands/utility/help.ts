@@ -83,13 +83,21 @@ export = <Command>{
 
     if (command.aliases)
       data.push({ name: `Aliases:`, value: `${command.aliases.join(", ")}` });
+
     if (command.description)
       data.push({ name: `Description:`, value: `${command.description}` });
+
     if (command.usage)
       data.push({
         name: `Usage:`,
         value: `${prefix}${command.name} ${command.usage}`,
       });
+
+    data.push({
+      name: `Cooldown:`,
+      value: `${command.cooldown || 3} second(s)`,
+    });
+
     if (command.argList) {
       let argList = command.argList;
 
@@ -99,12 +107,17 @@ export = <Command>{
       }
 
       argList = argList.map((arg) => arg.toInlineCodeBg());
-      data.push({ name: `Arguments:`, value: `${argList.join(" ")}` });
+      let argsStr = argList.join(" ");
+      if (argsStr.length > 1024)
+        data.push({
+          name: `Arguments:`,
+          value:
+            `Argument list is too long.\nType ` +
+            ` ${prefix}args horn `.toInlineCodeBg() +
+            ` (aliases accepted) to see all arguments.`,
+        });
+      else data.push({ name: `Arguments:`, value: `${argsStr}` });
     }
-    data.push({
-      name: `Cooldown:`,
-      value: `${command.cooldown || 3} second(s)`,
-    });
 
     embed = new Discord.MessageEmbed()
       .attachFiles(["./assets/images/discord.png"])
