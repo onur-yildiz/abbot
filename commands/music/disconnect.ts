@@ -1,5 +1,6 @@
 import { Command, Message } from "discord.js";
 import { DISCONNECTED } from "../../constants/messages";
+import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
 import {
   disconnectFromVoiceChannel,
@@ -22,7 +23,7 @@ export = <Command>{
       disconnectFromVoiceChannel(guildData);
       return message.channel.send(DISCONNECTED.toBold());
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     }
   },
 };

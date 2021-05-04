@@ -1,5 +1,6 @@
 import { Command, Message, NewsChannel, TextChannel } from "discord.js";
 import { ERROR_CLEAR_MESSAGES } from "../../constants/messages";
+import { logger } from "../../global/globals";
 
 export = <Command>{
   name: "clearmessage",
@@ -24,7 +25,7 @@ export = <Command>{
         responseMessage.delete();
       }, 3000);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.reply(ERROR_CLEAR_MESSAGES);
     }
   },

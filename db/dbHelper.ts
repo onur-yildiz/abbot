@@ -1,6 +1,7 @@
 import { Guild } from "discord.js";
 import mongoose from "mongoose";
-import { uri } from "../global/globals";
+import winston from "winston";
+import { logger, uri } from "../global/globals";
 import { GuildSettings, IGuildSettings } from "./dbModels";
 
 const connectToDatabase = async () => {
@@ -8,7 +9,16 @@ const connectToDatabase = async () => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
+    useCreateIndex: true,
   });
+
+  logger.add(
+    new winston.transports.MongoDB({
+      db: uri,
+      storeHost: true,
+      options: { useNewUrlParser: true, useUnifiedTopology: true },
+    })
+  );
 };
 
 const createGuildSettings = async (guild: Guild) => {
@@ -17,7 +27,7 @@ const createGuildSettings = async (guild: Guild) => {
       guildId: guild.id,
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };
 
@@ -30,7 +40,7 @@ const saveGuildSettings = async (
       upsert: true,
     });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };
 
@@ -46,7 +56,7 @@ const getGuildSettings = async (
       projection
     ).exec();
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };
 
@@ -54,7 +64,7 @@ const deleteGuildSettings = async (guild: Guild) => {
   try {
     await GuildSettings.findOneAndDelete({ guildId: guild.id });
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };
 

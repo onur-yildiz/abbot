@@ -1,6 +1,6 @@
 import fs from "fs";
 import Discord, { Command, Message } from "discord.js";
-import { commands, defaultPrefix, guilds } from "../../global/globals";
+import { commands, defaultPrefix, guilds, logger } from "../../global/globals";
 import dbHelper from "../../db/dbHelper";
 import { awaitDone } from "../../util/messageUtil";
 
@@ -63,7 +63,7 @@ export = <Command>{
         if (message.channel.type === "dm") return;
         return message.reply("I've sent you a DM with all my commands!");
       } catch (error) {
-        console.error(
+        logger.error(
           `Could not send help DM to ${message.author.tag}.\n`,
           error
         );
@@ -134,7 +134,7 @@ export = <Command>{
       const responseMessage = await message.channel.send(embed);
       awaitDone(responseMessage, message);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     }
   },
 };

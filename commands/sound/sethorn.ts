@@ -3,6 +3,7 @@ import dbHelper from "../../db/dbHelper";
 import { urlReachable } from "../../util/urlReachable";
 import { SETHORN_NOT_ALLOWED } from "../../constants/messages";
 import getDefaultAudios from "../../util/getDefaultAudios";
+import { logger } from "../../global/globals";
 
 export = <Command>{
   name: "sethorn",
@@ -47,6 +48,9 @@ export = <Command>{
           message.channel.send(
             `Horn alias ${oldAlias.toInlineCodeBg()} is changed to ${alias.toInlineCodeBg()}:mega::mega:`
           );
+          logger.info(
+            `Horn alias changed ::: ${oldAlias} -->> ${alias} @${message.guild.name}<${message.guild.id}>`
+          );
         } else {
           await dbHelper.saveGuildSettings(message.guild, {
             $set: { [`audioAliases.${alias}`]: url },
@@ -58,9 +62,18 @@ export = <Command>{
                   `\nRemoved URL: ${guildSettings.audioAliases.get(alias)}`
               : `New horn alias ${alias.toInlineCodeBg()} :mega::mega:`
           );
+
+          logger.info(
+            (aliasAlreadyExists
+              ? `Horn URL changed ::: ${alias}: ${guildSettings.audioAliases.get(
+                  alias
+                )} <<-- ${url}`
+              : `New horn ::: ${alias}: ${url}`) +
+              ` @${message.guild.name}<${message.guild.id}>`
+          );
         }
       } catch (error) {
-        console.error(error);
+        logger.error(error);
       }
     }
   },

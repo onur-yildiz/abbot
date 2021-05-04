@@ -1,5 +1,6 @@
 import { Command, Message } from "discord.js";
 import dbHelper from "../../db/dbHelper";
+import { logger } from "../../global/globals";
 
 export = <Command>{
   name: "deletehorn",
@@ -28,8 +29,11 @@ export = <Command>{
       message.channel.send(
         `${alias.toInlineCodeBg()} is deleted. :wastebasket:`
       );
+      logger.info(
+        `Horn deleted ::: ${alias} @${message.guild.name}<${message.guild.id}`
+      );
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     }
   },
 };

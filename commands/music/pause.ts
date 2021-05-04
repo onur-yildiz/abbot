@@ -5,6 +5,7 @@ import {
   NOTHING_IS_PLAYING,
   PAUSED,
 } from "../../constants/messages";
+import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
 import { fetchGuildData } from "../../util/guildActions";
 
@@ -34,7 +35,7 @@ export = <Command>{
       } else message.channel.send(NOTHING_IS_PLAYING.toItalic());
     } catch (error) {
       message.reply(ERROR_EXECUTION_ERROR.toBold());
-      console.error(error);
+      logger.error(error);
     }
   },
 };

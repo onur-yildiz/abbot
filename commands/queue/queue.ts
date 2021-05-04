@@ -1,6 +1,7 @@
 import Discord, { Command, Message } from "discord.js";
 
 import { ERROR_EXECUTION_ERROR, QUEUE_EMPTY } from "../../constants/messages";
+import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
 import { fetchGuildData } from "../../util/guildActions";
 import { awaitDone } from "../../util/messageUtil";
@@ -47,7 +48,7 @@ export = <Command>{
       const responseMessage = await message.channel.send(embed);
       awaitDone(responseMessage, message);
     } catch (error) {
-      console.error(ERROR_EXECUTION_ERROR);
+      logger.error(ERROR_EXECUTION_ERROR);
     }
   },
 };

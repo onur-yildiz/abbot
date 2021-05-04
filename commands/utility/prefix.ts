@@ -1,6 +1,6 @@
 import { Command, Message } from "discord.js";
 import dbHelper from "../../db/dbHelper";
-import { defaultPrefix, guilds } from "../../global/globals";
+import { defaultPrefix, guilds, logger } from "../../global/globals";
 
 export = <Command>{
   name: "prefix",
@@ -33,7 +33,7 @@ export = <Command>{
         `The prefix is changed to ${newPrefix.toInlineCodeBg()}`
       );
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     }
   },
 };

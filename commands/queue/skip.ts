@@ -1,5 +1,6 @@
 import { Command, Message } from "discord.js";
 import { QUEUE_EMPTY_SKIP, SKIPPED } from "../../constants/messages";
+import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
 import { fetchGuildData } from "../../util/guildActions";
 
@@ -33,7 +34,7 @@ export = <Command>{
       }
     } catch (error) {
       responseMessage.edit("Could not skip!".toBold());
-      console.log(error);
+      logger.log(error);
     }
   },
 };

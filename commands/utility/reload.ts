@@ -1,7 +1,7 @@
 import fs from "fs";
 
 import { Command, Message } from "discord.js";
-import { commands } from "../../global/globals";
+import { commands, logger } from "../../global/globals";
 
 //! PICKS CHANGES IN DIST/COMMANDS/
 //! IF YOU WANT TO CHANGE 'EXECUTE' FUNCTION OF A COMMAND, YOU SHOULD CHANGE THE ORIGINAL .TS FILE AND RECOMPILE!
@@ -38,7 +38,7 @@ export = <Command>{
       commands.set(newCommand.name, newCommand);
       message.channel.send(`Command \`${command.name}\` was reloaded!`);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.channel.send(
         `There was an error while reloading \`${command.name}\`:\n\`${error.message}\``
       );

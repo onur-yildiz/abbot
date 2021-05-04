@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 import dbHelper from "../db/dbHelper";
-import { guilds } from "../global/globals";
+import { guilds, logger } from "../global/globals";
 
 export const guildDeleteHandler = async (guild: Guild) => {
   try {
@@ -9,6 +9,6 @@ export const guildDeleteHandler = async (guild: Guild) => {
       await dbHelper.deleteGuildSettings(guild);
     } else throw new Error(`This guild does not exist in guilds: ${guild.id}`);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };

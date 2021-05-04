@@ -1,7 +1,7 @@
 import { Command, Message } from "discord.js";
 import { ERROR_EXECUTION_ERROR, NO_SAVED_ARGS } from "../../constants/messages";
 import dbHelper from "../../db/dbHelper";
-import { commands } from "../../global/globals";
+import { commands, logger } from "../../global/globals";
 
 export = <Command>{
   name: "args",
@@ -28,7 +28,7 @@ export = <Command>{
       return message.channel.send(data.join(", ").toInlineCodeBg());
     } catch (error) {
       message.reply(ERROR_EXECUTION_ERROR.toBold());
-      console.error(error);
+      logger.error(error);
     }
   },
 };

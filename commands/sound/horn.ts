@@ -8,6 +8,7 @@ import dbHelper from "../../db/dbHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { checkUserInAChannel } from "../../util/checker";
 import { connectToVoiceChannel, fetchGuildData } from "../../util/guildActions";
+import { logger } from "../../global/globals";
 
 export = <Command>{
   name: "horn",
@@ -21,7 +22,7 @@ export = <Command>{
     const error = checkUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());
 
-    const commandContent = args[1];
+    const alias = args[1];
     try {
       const guildData = await fetchGuildData(
         message.guild,
@@ -34,26 +35,24 @@ export = <Command>{
 
       let audioPath = "";
       const audios = getDefaultAudios();
-      if (audios.includes(`${commandContent}`))
-        audioPath = `./assets/audio/${commandContent}.mp3`;
+      if (audios.includes(`${alias}`))
+        audioPath = `./assets/audio/${alias}.mp3`;
       else {
         const guildSettings = await dbHelper.getGuildSettings(message.guild, {
-          [`audioAliases.${commandContent}`]: 1,
+          [`audioAliases.${alias}`]: 1,
         });
-        if (guildSettings.audioAliases.has(commandContent)) {
-          audioPath = guildSettings.audioAliases.get(commandContent);
+        if (guildSettings.audioAliases.has(alias)) {
+          audioPath = guildSettings.audioAliases.get(alias);
           if (!(await urlReachable(audioPath))) return;
         } else {
           return message.reply(
-            "No audio named " +
-              `${commandContent}`.toInlineCodeBg() +
-              " was found."
+            "No audio named " + `${alias}`.toInlineCodeBg() + " was found."
           );
         }
       }
 
-      console.log(
-        `Horn: ${audioPath} @${message.guild.name}<${message.guild.id}`
+      logger.info(
+        `Horn ::: ${alias}: ${audioPath} @${message.guild.name}<${message.guild.id}>`
       );
       guildData.connection?.dispatcher?.end();
       await connectToVoiceChannel(guildData);
@@ -63,10 +62,10 @@ export = <Command>{
         .on("finish", () => {
           r.remove();
         })
-        .on("error", (error) => console.error(error));
+        .on("error", (error) => logger.error(error));
       dispatcher.setVolumeLogarithmic(guildData.volume);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.reply(ERROR_EXECUTION_ERROR);
     }
   },

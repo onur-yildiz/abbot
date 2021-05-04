@@ -1,5 +1,6 @@
 import { VoiceState } from "discord.js";
 import dbHelper from "../db/dbHelper";
+import { logger } from "../global/globals";
 import { isPermitted } from "../util/checker";
 import {
   connectToVoiceChannel,
@@ -47,10 +48,10 @@ export const voiceStateUpdateHandler = async (
       .on("finish", () => {
         guildData.connection.disconnect();
       })
-      .on("error", (error) => console.error(error));
+      .on("error", (error) => logger.error(error));
     dispatcher.setVolumeLogarithmic(1);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 };
 

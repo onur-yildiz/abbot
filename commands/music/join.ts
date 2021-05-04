@@ -1,5 +1,6 @@
 import { Command, Message } from "discord.js";
 import { ERROR_CONNECTING } from "../../constants/messages";
+import { logger } from "../../global/globals";
 import { checkUserInAChannel } from "../../util/checker";
 import { connectToVoiceChannel, fetchGuildData } from "../../util/guildActions";
 
@@ -23,7 +24,7 @@ export = <Command>{
       await connectToVoiceChannel(guildData);
     } catch (error) {
       message.reply(ERROR_CONNECTING.toBold());
-      console.error(error);
+      logger.error(error);
     }
   },
 };

@@ -4,6 +4,7 @@ import {
   QUEUE_CLEARED,
   QUEUE_EMPTY_CLEAR,
 } from "../../constants/messages";
+import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
 import { fetchGuildData } from "../../util/guildActions";
 
@@ -32,7 +33,7 @@ export = <Command>{
       return message.channel.send(QUEUE_CLEARED.toBold());
     } catch (error) {
       message.reply(ERROR_EXECUTION_ERROR.toBold());
-      console.error(error);
+      logger.error(error);
     }
   },
 };

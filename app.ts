@@ -2,7 +2,7 @@ import Discord from "discord.js";
 import fs from "fs";
 import "ffmpeg";
 
-import { commands, token } from "./global/globals";
+import { commands, logger, token } from "./global/globals";
 import { voiceStateUpdateHandler } from "./handlers/voiceStateUpdateHandler";
 import "./extensions/string";
 import { guildDeleteHandler } from "./handlers/guildDeleteHandler";
@@ -24,10 +24,10 @@ const runApp = async () => {
   const client = new Discord.Client();
   try {
     await dbHelper.connectToDatabase();
-    console.log("Connected to database.");
+    logger.info("Connected to database.");
     client.login(token);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 
   client.once("ready", async () => {
@@ -35,14 +35,14 @@ const runApp = async () => {
       await client.user.setPresence({
         activity: { type: "PLAYING", name: `Type @${client.user.username}` },
       });
-      console.log("Ready!");
+      logger.info("Ready!");
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   });
 
   client.once("disconnect", () => {
-    console.log("Disconnected.");
+    logger.info("Disconnected.");
   });
 
   client.on("voiceStateUpdate", voiceStateUpdateHandler);

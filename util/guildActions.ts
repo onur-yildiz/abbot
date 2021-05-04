@@ -6,7 +6,7 @@ import {
   TextChannel,
   VoiceChannel,
 } from "discord.js";
-import { guilds } from "../global/globals";
+import { guilds, logger } from "../global/globals";
 import dbHelper from "../db/dbHelper";
 
 export const connectToVoiceChannel = async (guildData: GuildData) => {
@@ -65,7 +65,7 @@ export const fetchGuildData = async (
     guilds.set(guild.id, guildData);
     return guildData;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     return;
   }
 };

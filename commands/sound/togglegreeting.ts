@@ -1,5 +1,6 @@
 import { Command, Message } from "discord.js";
 import dbHelper from "../../db/dbHelper";
+import { logger } from "../../global/globals";
 import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
@@ -29,8 +30,13 @@ export = <Command>{
             : "disabled :x:"
         }`.toBold()
       );
+      logger.info(
+        `Greeting ::: ` +
+          (guildData.greetingEnabled ? "enabled" : "disabled") +
+          ` @${message.guild.name}<${message.guild.id}`
+      );
     } catch (error) {
-      console.error(error);
+      logger.error(error);
     }
   },
 };

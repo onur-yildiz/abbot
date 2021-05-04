@@ -2,6 +2,7 @@ import Discord, { Command, GuildData, Message } from "discord.js";
 import ytdl from "ytdl-core";
 import ytsr from "ytsr";
 import { RESUMING, ERROR_COMMAND_NOT_VALID } from "../../constants/messages";
+import { logger } from "../../global/globals";
 import {
   checkVoiceChannelAvailability,
   checkUserInAChannel,
@@ -69,7 +70,7 @@ export = <Command>{
       await connectToVoiceChannel(guildData);
       play(message, guildData);
     } catch (error) {
-      console.error(error);
+      logger.error(error);
       message.reply(ERROR_COMMAND_NOT_VALID);
     }
   },
@@ -96,8 +97,8 @@ const play = async (message: Message, guildData: GuildData) => {
       .play(ytdl(currentSong.url, { filter: "audioonly" }))
       .on("start", () => {
         guildData.lastTrackStart = Date.now();
-        console.log(
-          `Play: ${currentSong.url} @${message.guild.name}<${message.guild.id}>`
+        logger.info(
+          `Play ::: ${currentSong.url} @${message.guild.name}<${message.guild.id}>`
         );
       })
       .on("skip", () => {
@@ -121,11 +122,11 @@ const play = async (message: Message, guildData: GuildData) => {
         if (guildData.songs.length === 0) guildData.queueActive = false;
         else play(message, guildData);
       })
-      .on("error", (error) => console.error(error));
+      .on("error", (error) => logger.error(error));
     dispatcher.setVolumeLogarithmic(guildData.volume);
   } catch (error) {
     responseMessage.delete();
-    console.error(error);
+    logger.error(error);
   }
 };
 

@@ -5,7 +5,13 @@ import {
   REPLY_NOT_ALLOWED,
   REPLY_NO_ARGS,
 } from "../constants/messages";
-import { commands, cooldowns, defaultPrefix, guilds } from "../global/globals";
+import {
+  commands,
+  cooldowns,
+  defaultPrefix,
+  guilds,
+  logger,
+} from "../global/globals";
 import { getCommandContent, getCommandName } from "../util/commandParser";
 import { fetchGuildData } from "../util/guildActions";
 import { sendDefaultHelpMessage } from "../util/messageUtil";
@@ -21,7 +27,7 @@ export const messageHandler = async (client: Client, message: Message) => {
       } else curPrefix = guilds.get(message.guild.id).prefix;
     }
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     return;
   }
 
@@ -81,7 +87,7 @@ export const messageHandler = async (client: Client, message: Message) => {
     if (command.args === Args.none) await command.execute(message);
     else await command.execute(message, [commandName, commandContent]);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     message.reply(ERROR_EXECUTION_ERROR.toBold());
   }
 };

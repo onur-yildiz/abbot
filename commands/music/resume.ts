@@ -4,6 +4,7 @@ import {
   NOTHING_IS_PLAYING,
   RESUMING,
 } from "../../constants/messages";
+import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
 import { fetchGuildData } from "../../util/guildActions";
 
@@ -36,7 +37,7 @@ export = <Command>{
       } else message.channel.send(NOTHING_IS_PLAYING.toBold());
     } catch (error) {
       responseMessage.edit("Could not resume!");
-      console.error(error);
+      logger.error(error);
     }
   },
 };

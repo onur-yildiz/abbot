@@ -4,6 +4,7 @@ import { ERROR_SAVE_THEME } from "../../constants/messages";
 import { IGuildSettings } from "../../db/dbModels";
 import dbHelper from "../../db/dbHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
+import { logger } from "../../global/globals";
 
 const defaultAlias = "ww";
 
@@ -50,7 +51,7 @@ export = <Command>{
       message.react("✅");
     } catch (error) {
       message.reply(ERROR_SAVE_THEME);
-      console.log(error);
+      logger.log(error);
     }
   },
 };
