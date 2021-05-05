@@ -21,7 +21,7 @@ export = <Command>{
     const url = commandContent[0];
     const audios = getDefaultAudios();
 
-    if (audios.includes(alias))
+    if (audios.includes(alias) || alias === "reset")
       return message.channel.send(SETHORN_NOT_ALLOWED.toBold());
 
     const regexUrl = new RegExp(
