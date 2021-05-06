@@ -8,6 +8,7 @@ import "./extensions/string";
 import { guildDeleteHandler } from "./handlers/guildDeleteHandler";
 import { messageHandler } from "./handlers/messageHandler";
 import dbHelper from "./db/dbHelper";
+import { guildMemberSpeakingHandler } from "./handlers/guildMemberSpeakingHandler";
 
 const commandFolders = fs.readdirSync("./commands");
 for (const folder of commandFolders) {
@@ -48,6 +49,7 @@ const runApp = async () => {
   client.on("voiceStateUpdate", voiceStateUpdateHandler);
   client.on("guildDelete", guildDeleteHandler);
   client.on("message", messageHandler.bind(this, client));
+  client.on("guildMemberSpeaking", guildMemberSpeakingHandler);
 };
 
 runApp();

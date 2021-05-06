@@ -9,6 +9,7 @@ declare module "discord.js" {
     greetingEnabled: boolean;
     prefix: string;
     lastTrackStart: number;
+    annoyanceList: Map<string, string>;
     quitTimer?: NodeJS.Timeout;
   };
 

@@ -60,6 +60,7 @@ export const fetchGuildData = async (
       audioAliases: guildSettings.audioAliases,
       prefix: guildSettings.prefix,
       lastTrackStart: null,
+      annoyanceList: new Map<string, string>(),
     };
 
     if (guilds.size > 1000) guilds.delete(guilds.keys().next().value);
