@@ -22,6 +22,12 @@ export = <Command>{
         message.member.voice.channel
       );
       await connectToVoiceChannel(guildData);
+
+      // Hacky way to solve bot appearing always speaking after joining the voice channel.
+      const dispatcher = guildData.connection.play("./assets/audio/ww.mp3");
+      setTimeout(() => {
+        dispatcher.end();
+      }, 10);
     } catch (error) {
       message.reply(ERROR_CONNECTING.toBold());
       logger.error(error);
