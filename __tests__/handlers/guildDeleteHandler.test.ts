@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 import dbHelper from "../../db/dbHelper";
-import { guilds } from "../../global/globals";
+import { guilds, logger } from "../../global/globals";
 import { guildDeleteHandler } from "../../handlers/guildDeleteHandler";
 
 describe("guildDeleteHandler", () => {
@@ -27,8 +27,8 @@ describe("guildDeleteHandler", () => {
   });
 
   it("throw if `guild` does not exist in `guilds`", async () => {
-    const mockConsoleError = jest.spyOn(console, "error").mockImplementation();
+    logger.error = jest.fn();
     await guildDeleteHandler(guild2);
-    expect(mockConsoleError).toBeCalled();
+    expect(logger.error).toBeCalled();
   });
 });

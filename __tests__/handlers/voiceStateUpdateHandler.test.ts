@@ -36,6 +36,7 @@ Object.defineProperty(ga, "fetchGuildData", {
     audioAliases: [],
     prefix: defaultPrefix,
     lastTrackStart: null,
+    annoyanceList: new Map<string, string>(),
   }),
 });
 

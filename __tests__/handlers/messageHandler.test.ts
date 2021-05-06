@@ -1,6 +1,6 @@
 import { Client, GuildData, Message } from "discord.js";
 import { ERROR_EXECUTION_ERROR } from "../../constants/messages";
-import { commands, guilds } from "../../global/globals";
+import { commands, guilds, logger } from "../../global/globals";
 import { messageHandler } from "../../handlers/messageHandler";
 import * as parser from "../../util/commandParser";
 import "../../extensions/string";
@@ -94,10 +94,10 @@ describe("messageHandler", () => {
     Object.defineProperty(parser, "getCommandName", {
       value: jest.fn().mockReturnValue("error"),
     });
-    console.error = jest.fn();
+    logger.error = jest.fn();
 
     await messageHandler(client, message);
-    expect(console.error).toBeCalled();
+    expect(logger.error).toBeCalled();
     expect(message.reply).toBeCalledWith(ERROR_EXECUTION_ERROR.toBold());
   });
 
