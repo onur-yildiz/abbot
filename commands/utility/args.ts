@@ -2,6 +2,7 @@ import { Command, Message } from "discord.js";
 import { ERROR_EXECUTION_ERROR, NO_SAVED_ARGS } from "../../constants/messages";
 import dbHelper from "../../db/dbHelper";
 import { commands, logger } from "../../global/globals";
+import getDefaultAudios from "../../util/getDefaultAudios";
 
 export = <Command>{
   name: "args",
@@ -21,10 +22,12 @@ export = <Command>{
         commandContent === "horn"
       ) {
         const guildSettings = await dbHelper.getGuildSettings(message.guild);
-        data.push(...[...guildSettings.audioAliases.keys()].sort());
+        data.push(...[...guildSettings.audioAliases.keys()]);
+        data.push(...getDefaultAudios());
       }
       if (data.length === 0)
         return message.channel.send(NO_SAVED_ARGS.toBold());
+      data.sort();
       return message.channel.send(data.join(", ").toInlineCodeBg());
     } catch (error) {
       message.reply(ERROR_EXECUTION_ERROR.toBold());
