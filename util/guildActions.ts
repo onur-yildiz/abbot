@@ -16,19 +16,20 @@ export const connectToVoiceChannel = async (guildData: GuildData) => {
 };
 
 export const disconnectFromVoiceChannel = async (guildData: GuildData) => {
-  resetQueue(guildData);
+  resetState(guildData);
   guildData.connection.disconnect();
   guildData.connection = null;
   guildData.voiceChannel = null;
   return guildData;
 };
 
-export const resetQueue = (guildData: GuildData) => {
+export const resetState = (guildData: GuildData) => {
   if (guildData.connection && guildData.connection.dispatcher)
     guildData.connection.dispatcher.destroy();
   guildData.songs = [];
   guildData.queueActive = false;
   guildData.lastTrackStart = null;
+  guildData.quitTimer && clearTimeout(guildData.quitTimer);
 };
 
 export const fetchGuildData = async (

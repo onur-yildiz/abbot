@@ -3,7 +3,7 @@ import dbHelper from "../../db/dbHelper";
 import { defaultPrefix } from "../../global/globals";
 import { voiceStateUpdateHandler } from "../../handlers/voiceStateUpdateHandler";
 import * as ga from "../../util/guildActions";
-import { resetQueue } from "../../util/guildActions";
+import { resetState } from "../../util/guildActions";
 
 jest.mock("../../util/guildActions");
 jest.mock("discord.js");
@@ -126,7 +126,7 @@ describe("voiceStateUpdateHandler", () => {
       jest.clearAllMocks();
     });
 
-    it("call resetQueue", async () => {
+    it("call resetState", async () => {
       const _newVoiceState: VoiceState = ({
         ...newVoiceState,
         channel: undefined,
@@ -135,7 +135,7 @@ describe("voiceStateUpdateHandler", () => {
       expect(
         await voiceStateUpdateHandler(oldVoiceState, _newVoiceState)
       ).toBeUndefined();
-      expect(resetQueue).toBeCalledTimes(1);
+      expect(resetState).toBeCalledTimes(1);
       expect(voiceConnection.play).not.toBeCalled();
       expect(mockSetVolume).not.toBeCalled();
     });

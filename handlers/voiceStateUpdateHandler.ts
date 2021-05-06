@@ -5,7 +5,7 @@ import { isPermitted } from "../util/checker";
 import {
   connectToVoiceChannel,
   fetchGuildData,
-  resetQueue,
+  resetState,
 } from "../util/guildActions";
 
 const defaultTheme = "./assets/audio/ww.mp3";
@@ -26,7 +26,7 @@ export const voiceStateUpdateHandler = async (
         newVoiceState.guild.me.id === newVoiceState.member.id &&
         !newVoiceState.channel
       )
-        resetQueue(guildData);
+        resetState(guildData);
       return;
     }
     if (guildData.queueActive || !guildData.greetingEnabled) return;
@@ -35,19 +35,35 @@ export const voiceStateUpdateHandler = async (
       !isPermitted(newVoiceState.channel, newVoiceState.guild)
     )
       return;
+
+    if (!newVoiceState.channelID) {
+      if (oldVoiceState.channel.members.has(oldVoiceState.guild.me.id)) {
+        const hasUsersInChannel = oldVoiceState.channel.members.some(
+          (member) => member.user.bot === false
+        );
+        if (!hasUsersInChannel) {
+          guildData.quitTimer && clearTimeout(guildData.quitTimer);
+          guildData.quitTimer = setTimeout(() => {
+            guildData.connection.disconnect();
+            resetState(guildData);
+          }, 1000);
+        }
+      }
+      return;
+    }
+
     if (
-      !newVoiceState.channelID ||
-      newVoiceState.channelID == oldVoiceState.channelID
+      newVoiceState.channelID == oldVoiceState.channelID ||
+      newVoiceState.channelID == oldVoiceState.guild.afkChannelID
     )
       return;
 
+    if (guildData.quitTimer) clearTimeout(guildData.quitTimer);
     const theme = await getTheme(newVoiceState);
     await connectToVoiceChannel(guildData);
     const dispatcher = guildData.connection
       .play(theme)
-      .on("finish", () => {
-        guildData.connection.disconnect();
-      })
+      .on("finish", () => {})
       .on("error", (error) => logger.error(error));
     dispatcher.setVolumeLogarithmic(1);
   } catch (error) {

@@ -9,6 +9,7 @@ declare module "discord.js" {
     greetingEnabled: boolean;
     prefix: string;
     lastTrackStart: number;
+    quitTimer?: NodeJS.Timeout;
   };
 
   type Guilds = Map<string, GuildData>;
