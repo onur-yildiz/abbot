@@ -9,6 +9,8 @@ export const guildMemberSpeakingHandler = async (
   try {
     const guildData = await fetchGuildData(guildMember.guild);
 
+    if (guildData.queueActive) return;
+
     const annoyTheme = guildData.annoyanceList.get(guildMember.id);
     if (annoyTheme?.length > 0 && speaking.bitfield) {
       guildData.connection?.play(annoyTheme);
