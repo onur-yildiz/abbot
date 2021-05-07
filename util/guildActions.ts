@@ -60,6 +60,7 @@ export const fetchGuildData = async (
       audioAliases: guildSettings.audioAliases,
       prefix: guildSettings.prefix,
       lastTrackStart: null,
+      arbitrarySoundsEnabled: false,
       annoyanceList: new Map<string, string>(),
     };
 

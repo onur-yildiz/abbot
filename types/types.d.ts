@@ -10,6 +10,8 @@ declare module "discord.js" {
     prefix: string;
     lastTrackStart: number;
     annoyanceList: Map<string, string>;
+    arbitrarySoundsEnabled: boolean;
+    arbitrarySoundsTimer?: NodeJS.Timeout;
     quitTimer?: NodeJS.Timeout;
   };
 
