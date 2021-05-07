@@ -17,15 +17,17 @@ export = <Command>{
     const amount = parseInt(amountText);
     if (isNaN(amount)) return;
 
+    let timer: NodeJS.Timeout;
     try {
       (<TextChannel | NewsChannel>message.channel).bulkDelete(amount + 1);
       const responseMessage = await message.channel.send(
         (`${amount}`.toBold() + ` messages deleted.`).toItalic()
       );
-      setTimeout(() => {
+      timer = setTimeout(() => {
         responseMessage.delete();
       }, 3000);
     } catch (error) {
+      timer && clearTimeout(timer);
       logger.error(error);
       message.reply(ERROR_CLEAR_MESSAGES);
     }

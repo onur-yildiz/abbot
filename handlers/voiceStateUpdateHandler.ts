@@ -21,7 +21,10 @@ export const voiceStateUpdateHandler = async (
       null,
       newVoiceState.member.voice.channel
     );
+
+    // if user is a bot, return
     if (newVoiceState.member.user.bot) {
+      // if the bot is abbot and it is disconnected somehow, reset necessary properties before return.
       if (
         newVoiceState.guild.me.id === newVoiceState.member.id &&
         !newVoiceState.channel
@@ -29,13 +32,18 @@ export const voiceStateUpdateHandler = async (
         resetState(guildData);
       return;
     }
-    if (guildData.queueActive || !guildData.greetingEnabled) return;
+
     if (
-      newVoiceState.channel &&
-      !isPermitted(newVoiceState.channel, newVoiceState.guild)
+      guildData.queueActive ||
+      !guildData.greetingEnabled ||
+      (newVoiceState.channel &&
+        !isPermitted(newVoiceState.channel, newVoiceState.guild))
     )
       return;
 
+    // if someone is disconnected and abbot was in the same voice channel,
+    // check if there is any human left in the voice channel,
+    // if no human left, set 60 seconds timeout then disconnect from voice channel.
     if (!newVoiceState.channelID) {
       if (oldVoiceState.channel.members.has(oldVoiceState.guild.me.id)) {
         const hasUsersInChannel = oldVoiceState.channel.members.some(
@@ -58,7 +66,7 @@ export const voiceStateUpdateHandler = async (
     )
       return;
 
-    if (guildData.quitTimer) clearTimeout(guildData.quitTimer);
+    guildData.quitTimer && clearTimeout(guildData.quitTimer);
     const theme = await getTheme(newVoiceState);
     await connectToVoiceChannel(guildData);
     const dispatcher = guildData.connection
@@ -77,7 +85,7 @@ const getTheme = async (voiceState: VoiceState) => {
     [`themes.${userId}`]: 1,
   });
 
-  if (!guildSettings || !guildSettings.themes.has(userId)) {
+  if (!guildSettings?.themes.has(userId)) {
     await dbHelper.saveGuildSettings(voiceState.guild, {
       $set: { [`themes.${userId}`]: defaultTheme },
     });

@@ -43,6 +43,10 @@ const setPrefix = async (message: Message, prefix: string): Promise<void> => {
   guilds.get(message.guild.id).prefix = prefix;
 };
 
+// valid format: "/..../",
+// max 4 chars,
+// starts and ends with '/',
+// only 4th char can be a space
 const isValidFormat = (prefix: string): boolean => {
   if (!(prefix.startsWith("/") && prefix.endsWith("/"))) return false;
   prefix = prefix.slice(1, prefix.length - 1);

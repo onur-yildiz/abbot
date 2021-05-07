@@ -31,10 +31,8 @@ export = <Command>{
       if (error) return message.channel.send(error.toBold());
 
       //resume if paused
-      const dispatcher = guildData.connection
-        ? guildData.connection.dispatcher
-        : null;
-      if (!args[1] && dispatcher && dispatcher.paused) {
+      const dispatcher = guildData.connection?.dispatcher;
+      if (!args[1] && dispatcher?.paused) {
         guildData.connection.dispatcher.resume();
         return message.channel.send(RESUMING.toBold());
       }
@@ -45,11 +43,11 @@ export = <Command>{
       if (!song) return message.channel.send("Nothing found.");
 
       if (guildData.queueActive) {
+        guildData.songs.push(song);
         const estimatedTime = calculateEta(
           guildData.songs,
           guildData.lastTrackStart
         );
-        guildData.songs.push(song);
         const embed = new Discord.MessageEmbed()
           .setColor("#222222")
           .setAuthor("Added to the Queue")
@@ -64,9 +62,9 @@ export = <Command>{
           .addField("Position in queue", guildData.songs.indexOf(song));
         return message.channel.send(embed);
       }
+
       guildData.songs.push(song);
       guildData.queueActive = true;
-
       await connectToVoiceChannel(guildData);
       play(message, guildData);
     } catch (error) {
@@ -90,6 +88,7 @@ const play = async (message: Message, guildData: GuildData) => {
     )
     .addField("Channel", currentSong.channel, true)
     .addField("Duration", currentSong.duration, true);
+
   let responseMessage: Message;
   try {
     responseMessage = await message.channel.send(embed);
@@ -135,6 +134,7 @@ const fetchSong = async (commandContent: string): Promise<Song> => {
   const regexUrl = new RegExp(
     `(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
   );
+
   if (regexUrl.test(commandContent)) {
     const url = regexUrl.exec(commandContent)[0];
     const songInfo: ytdl.videoInfo = await ytdl.getInfo(url);
@@ -148,7 +148,6 @@ const fetchSong = async (commandContent: string): Promise<Song> => {
     };
   } else {
     const searchQuery = commandContent;
-
     const filters = await ytsr.getFilters(searchQuery);
     const filter = filters.get("Type").get("Video");
     if (!filter.url) return null;

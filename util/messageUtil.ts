@@ -16,11 +16,11 @@ export const awaitDone = async (botMessage: Message, userMessage: Message) => {
   const options = { time: 60000 };
   const collector = botMessage.createReactionCollector(filter, options);
 
-  collector.on("collect", (r) => {
+  collector.on("collect", () => {
     botMessage.delete();
     userMessage.delete();
   });
-  collector.on("end", (collected) => {
+  collector.on("end", () => {
     if (!botMessage.deleted) r.remove();
   });
 };

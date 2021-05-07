@@ -22,11 +22,13 @@ export = <Command>{
         commandContent === "horn"
       ) {
         const guildSettings = await dbHelper.getGuildSettings(message.guild);
-        data.push(...[...guildSettings.audioAliases.keys()]);
+        data.push(...guildSettings.audioAliases.keys());
         data.push(...getDefaultAudios());
       }
+
       if (data.length === 0)
         return message.channel.send(NO_SAVED_ARGS.toBold());
+
       data.sort();
       return message.channel.send(data.join(", ").toInlineCodeBg());
     } catch (error) {

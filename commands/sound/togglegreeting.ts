@@ -23,6 +23,7 @@ export = <Command>{
       await dbHelper.saveGuildSettings(message.guild, {
         greetingEnabled: guildData.greetingEnabled,
       });
+
       message.channel.send(
         `Greeting is ${
           guildData.greetingEnabled
@@ -30,6 +31,7 @@ export = <Command>{
             : "disabled :x:"
         }`.toBold()
       );
+
       logger.info(
         `Greeting ::: ` +
           (guildData.greetingEnabled ? "enabled" : "disabled") +

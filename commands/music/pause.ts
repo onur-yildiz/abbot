@@ -29,6 +29,7 @@ export = <Command>{
 
       if (guildData.connection.dispatcher.paused)
         return message.channel.send(ALREADY_PAUSED.toBold());
+
       if (guildData.queueActive) {
         guildData.connection.dispatcher.pause();
         message.channel.send(PAUSED.toBold());

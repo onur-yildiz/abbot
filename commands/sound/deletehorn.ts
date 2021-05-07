@@ -14,21 +14,21 @@ export = <Command>{
   async execute(message: Message, args: string[]) {
     const alias = args[1];
 
-    const guildSettings = await dbHelper.getGuildSettings(message.guild, {
-      [`audioAliases.${alias}`]: 1,
-    });
-    const exists = checkIfKeyExists(guildSettings.audioAliases, alias);
-    if (!exists) return message.reply(`this alias does not exist.`);
     try {
-      await dbHelper.saveGuildSettings(message.guild, {
-        $unset: { [`audioAliases.${alias}`]: "" },
+      const guildSettings = await dbHelper.getGuildSettings(message.guild, {
+        [`audioAliases.${alias}`]: 1,
       });
+
+      const exists = checkIfKeyExists(guildSettings.audioAliases, alias);
+      if (!exists) return message.reply(`this alias does not exist.`);
+
       await dbHelper.saveGuildSettings(message.guild, {
         $unset: { [`audioAliases.${alias}`]: "" },
       });
       message.channel.send(
         `${alias.toInlineCodeBg()} is deleted. :wastebasket:`
       );
+
       logger.info(
         `Horn deleted ::: ${alias} @${message.guild.name}<${message.guild.id}`
       );

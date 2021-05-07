@@ -27,15 +27,18 @@ export = <Command>{
     const regexUrl = new RegExp(
       `(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
     );
+
     if (regexUrl.test(url) && urlReachable(url)) {
-      const guildSettings = await dbHelper.getGuildSettings(message.guild, {
-        audioAliases: 1,
-      });
-      const urlAlreadyExists = checkIfValueExists(
-        guildSettings.audioAliases,
-        url
-      );
       try {
+        const guildSettings = await dbHelper.getGuildSettings(message.guild, {
+          audioAliases: 1,
+        });
+
+        const urlAlreadyExists = checkIfValueExists(
+          guildSettings.audioAliases,
+          url
+        );
+
         if (urlAlreadyExists) {
           const oldAlias = getOldKey(guildSettings.audioAliases, url);
           if (oldAlias === alias)

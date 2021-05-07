@@ -63,6 +63,7 @@ export const fetchGuildData = async (
       annoyanceList: new Map<string, string>(),
     };
 
+    // TODO: make a better solution for memory saving.
     if (guilds.size > 1000) guilds.delete(guilds.keys().next().value);
     guilds.set(guild.id, guildData);
     return guildData;

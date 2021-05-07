@@ -39,6 +39,7 @@ export = <Command>{
           value: `${song.duration} • ${song.channel}`,
         })
       );
+
       const embed = new Discord.MessageEmbed()
         .setColor("#222222")
         .setTitle("Queue")

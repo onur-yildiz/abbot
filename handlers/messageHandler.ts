@@ -51,7 +51,7 @@ export const messageHandler = async (client: Client, message: Message) => {
     const authorPerms = (<TextChannel | NewsChannel>(
       message.channel
     )).permissionsFor(message.author);
-    if (!authorPerms || !authorPerms.has(command.permissions)) {
+    if (!authorPerms?.has(command.permissions)) {
       return message.reply(
         REPLY_NOT_ALLOWED +
           ` Permission(s) needed: ${command.permissions.toString()}`
