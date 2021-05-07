@@ -46,7 +46,7 @@ export const voiceStateUpdateHandler = async (
           guildData.quitTimer = setTimeout(() => {
             guildData.connection.disconnect();
             resetState(guildData);
-          }, 1000);
+          }, 60000);
         }
       }
       return;
