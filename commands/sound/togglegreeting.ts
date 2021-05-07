@@ -9,7 +9,7 @@ export = <Command>{
   description: "Clears the queue.",
   usage: "",
   args: Args.none,
-  permissions: ["ADMINISTRATOR", "MOVE_MEMBERS"],
+  permissions: "ADMINISTRATOR",
   guildOnly: true,
   async execute(message: Message) {
     try {

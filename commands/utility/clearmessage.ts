@@ -7,6 +7,7 @@ export = <Command>{
   aliases: ["clm", "clrmsg"],
   description: "Clear the past [?] messages.",
   usage: "[message amount]",
+  permissions: "MANAGE_MESSAGES",
   guildOnly: true,
   args: Args.required,
   cooldown: 8,

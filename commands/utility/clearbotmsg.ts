@@ -5,6 +5,7 @@ export = <Command>{
   aliases: ["clbm", "clrbotmsg", "clbotmsg"],
   description: "Clear the bot messages. (message cache is limited to 200)",
   usage: "",
+  permissions: "MANAGE_MESSAGES",
   args: Args.none,
   guildOnly: true,
   cooldown: 8,

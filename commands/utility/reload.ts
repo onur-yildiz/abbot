@@ -13,6 +13,7 @@ export = <Command>{
   guildOnly: false,
   usage: "[command]",
   args: Args.required,
+  permissions: "ADMINISTRATOR",
   description:
     "Reloads and updates the command if it was changed by my developers.",
   execute(message: Message, args: string[]) {

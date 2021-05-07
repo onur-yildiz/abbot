@@ -10,6 +10,7 @@ export = <Command>{
   description:
     "Annoy someone whenever they speak. (toggle to activate/deactivate, blocktoggle to deactivate for yourself)",
   usage: "[@user] [horn alias]\nOR " + "[@user] reset\nOR " + "(un)block",
+  permissions: "MOVE_MEMBERS",
   args: Args.required,
   guildOnly: true,
   cooldown: 5,
