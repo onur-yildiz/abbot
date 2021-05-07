@@ -56,8 +56,9 @@ export = <Command>{
       }
 
       try {
+        if (userId === message.guild.me.id) throw null;
         await message.guild.members.fetch(userId);
-      } catch (error) {
+      } catch (_) {
         return message.reply(`user not valid or does not exist in the server.`);
       }
 
