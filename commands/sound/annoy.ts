@@ -28,15 +28,14 @@ export = <Command>{
 
     try {
       const guildData = await fetchGuildData(message.guild, message.channel);
-      let annoyList = guildData.annoyanceList;
 
       if (args[1] === "toggle") {
-        if (annoyList) annoyList = null;
-        else annoyList = new Map<string, string>();
+        if (guildData.annoyanceList) guildData.annoyanceList = null;
+        else guildData.annoyanceList = new Map<string, string>();
         return message.react("✅");
       }
 
-      if (!annoyList) {
+      if (!guildData.annoyanceList) {
         return message.reply(
           `annoy disabled. type ` +
             `${guildData.prefix}annoy toggle`.toInlineCodeBg() +
@@ -45,23 +44,23 @@ export = <Command>{
       }
 
       if (args[1] === "block") {
-        annoyList.set(message.member.id, "");
+        guildData.annoyanceList.set(message.member.id, "");
         return message.react("✅");
       }
 
       if (args[1] === "unblock") {
-        if (annoyList.get(message.member.id)?.length === 0) {
-          annoyList.delete(message.member.id);
+        if (guildData.annoyanceList.get(message.member.id)?.length === 0) {
+          guildData.annoyanceList.delete(message.member.id);
           return message.react("✅");
         } else return message.react("💤");
       }
 
       if (args[1] === "reset") {
-        annoyList.delete(message.member.id);
+        guildData.annoyanceList.delete(message.member.id);
         return message.react("✅");
       }
 
-      if (annoyList.get(userId)?.length === 0) {
+      if (guildData.annoyanceList.get(userId)?.length === 0) {
         return message.reply(`this user is annoyed enough. 🙂`);
       }
 
@@ -73,7 +72,7 @@ export = <Command>{
       }
 
       if (alias === "reset") {
-        annoyList.delete(userId);
+        guildData.annoyanceList.delete(userId);
         return message.react("✅");
       }
 
@@ -83,10 +82,14 @@ export = <Command>{
       });
       const guildAliases = Array.from(guildSettings.audioAliases.keys());
 
-      if (botAliases.includes(alias))
-        annoyList.set(userId, `./assets/audio/${alias}.mp3`);
+      if (botAliases.includes(alias)) {
+        guildData.annoyanceList.set(userId, `./assets/audio/${alias}.mp3`);
+      }
       if (guildAliases.includes(alias)) {
-        annoyList.set(userId, guildSettings.audioAliases.get(alias));
+        guildData.annoyanceList.set(
+          userId,
+          guildSettings.audioAliases.get(alias)
+        );
         message.react("✅");
       } else {
         return message.reply(
