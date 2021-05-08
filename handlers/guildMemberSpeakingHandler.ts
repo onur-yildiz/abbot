@@ -37,12 +37,12 @@ const setTimer = (guildMember: GuildMember, guildData: GuildData) => {
     const alias = [...aliases.keys()][Math.trunc(Math.random() * (length - 1))];
     const audioPath = aliases.get(alias);
 
-    // TODO cancel timer and disable arbitrarySounds if queue active or bot not connected to a voice channel, users have to reuse arbitrary command.
-    if (guildData.queueActive) {
-      setTimer(guildMember, guildData);
-    } else {
-      guildData.connection?.play(audioPath);
-      setTimer(guildMember, guildData);
+    if (guildData.queueActive || !guildData.connection) {
+      guildData.arbitrarySoundsEnabled = false;
+      return;
     }
+
+    guildData.connection?.play(audioPath);
+    setTimer(guildMember, guildData);
   }, Math.trunc(Math.random() * (max - min) + min));
 };
