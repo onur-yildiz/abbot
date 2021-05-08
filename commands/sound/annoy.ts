@@ -51,7 +51,7 @@ export = <Command>{
         } else return message.react("💤");
       }
 
-      if (annoyList.get(message.member.id)?.length === 0) {
+      if (annoyList.get(userId)?.length === 0) {
         return message.reply(`this user is annoyed enough. 🙂`);
       }
 
