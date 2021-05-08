@@ -37,6 +37,9 @@
     "heroku-prebuild": "npm install -f",
     "heroku-postbuild": "tsc"
   },
+  "engines" : { 
+    "node" : ">=14.16.1" 
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/onur-yildiz/abbot.git"
