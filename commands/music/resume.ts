@@ -13,7 +13,7 @@ export = <Command>{
   aliases: ["pause"],
   description: "Resumes the paused track.",
   usage: "",
-  guildOnly: true,
+  isGuildOnly: true,
   args: Args.none,
   async execute(message: Message) {
     const error = checkVoiceChannelAvailability(message);
@@ -31,7 +31,7 @@ export = <Command>{
       if (!dispatcher.paused)
         return message.channel.send(ALREADY_PLAYING.toBold());
 
-      if (guildData.queueActive) {
+      if (guildData.isQueueActive) {
         responseMessage = await message.channel.send(RESUMING.toBold());
         dispatcher.emit("resume");
       } else message.channel.send(NOTHING_IS_PLAYING.toBold());

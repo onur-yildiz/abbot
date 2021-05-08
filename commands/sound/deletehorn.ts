@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import dbHelper from "../../db/dbHelper";
+import DBHelper from "../../db/DBHelper";
 import { logger } from "../../global/globals";
 
 export = <Command>{
@@ -8,21 +8,21 @@ export = <Command>{
   description: "Delete a saved alias.",
   usage: "[horn alias]",
   permissions: "MOVE_MEMBERS",
-  guildOnly: true,
+  isGuildOnly: true,
   args: Args.required,
   cooldown: 5,
   async execute(message: Message, args: string[]) {
     const alias = args[1];
 
     try {
-      const guildSettings = await dbHelper.getGuildSettings(message.guild, {
+      const guildSettings = await DBHelper.getGuildSettings(message.guild, {
         [`audioAliases.${alias}`]: 1,
       });
 
-      const exists = checkIfKeyExists(guildSettings.audioAliases, alias);
-      if (!exists) return message.reply(`this alias does not exist.`);
+      const aliasExists = checkAliasExists(guildSettings.audioAliases, alias);
+      if (!aliasExists) return message.reply(`this alias does not exist.`);
 
-      await dbHelper.saveGuildSettings(message.guild, {
+      await DBHelper.saveGuildSettings(message.guild, {
         $unset: { [`audioAliases.${alias}`]: "" },
       });
       message.channel.send(
@@ -38,6 +38,6 @@ export = <Command>{
   },
 };
 
-const checkIfKeyExists = (map: Map<string, string>, key: string): boolean => {
+const checkAliasExists = (map: Map<string, string>, key: string): boolean => {
   return Array.from(map.keys()).includes(key);
 };

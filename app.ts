@@ -7,7 +7,7 @@ import { voiceStateUpdateHandler } from "./handlers/voiceStateUpdateHandler";
 import "./extensions/string";
 import { guildDeleteHandler } from "./handlers/guildDeleteHandler";
 import { messageHandler } from "./handlers/messageHandler";
-import dbHelper from "./db/dbHelper";
+import DBHelper from "./db/DBHelper";
 import { guildMemberSpeakingHandler } from "./handlers/guildMemberSpeakingHandler";
 
 const commandFolders = fs.readdirSync("./commands");
@@ -24,7 +24,7 @@ for (const folder of commandFolders) {
 const runApp = async () => {
   const client = new Discord.Client();
   try {
-    await dbHelper.connectToDatabase();
+    await DBHelper.connectToDatabase();
     logger.info("Connected to database.");
     client.login(token);
   } catch (error) {

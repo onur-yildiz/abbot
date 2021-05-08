@@ -10,7 +10,7 @@ export = <Command>{
   description: "Skip the current song.",
   usage: "",
   args: Args.none,
-  guildOnly: true,
+  isGuildOnly: true,
   cooldown: 1,
   async execute(message: Message) {
     const error = checkVoiceChannelAvailability(message);

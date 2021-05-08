@@ -14,7 +14,7 @@ export = <Command>{
   description: "Clears the queue.",
   usage: "",
   args: Args.none,
-  guildOnly: true,
+  isGuildOnly: true,
   async execute(message: Message) {
     const error = checkVoiceChannelAvailability(message);
     if (error) return message.channel.send(error.toBold());

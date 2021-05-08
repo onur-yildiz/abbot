@@ -7,7 +7,7 @@ export = <Command>{
   description: "Ping!",
   usage: "",
   args: Args.none,
-  guildOnly: false,
+  isGuildOnly: false,
   cooldown: 5,
   execute(message: Message) {
     message.channel.send(PONG);

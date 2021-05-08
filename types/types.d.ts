@@ -5,12 +5,12 @@ declare module "discord.js" {
     connection: VoiceConnection;
     songs: Array<Song>;
     volume: number;
-    queueActive: boolean;
+    isQueueActive: boolean;
     greetingEnabled: boolean;
     prefix: string;
     lastTrackStart: number;
     annoyanceList: Map<string, string>;
-    arbitrarySoundsEnabled: boolean;
+    isArbitrarySoundsEnabled: boolean;
     arbitrarySoundsTimer?: NodeJS.Timeout;
     quitTimer?: NodeJS.Timeout;
   };
@@ -20,7 +20,7 @@ declare module "discord.js" {
   type Command = {
     name: string;
     description: string;
-    guildOnly: boolean;
+    isGuildOnly: boolean;
     aliases: Array<string>;
     usage: string;
     args: Args;

@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import dbHelper from "../../db/dbHelper";
+import DBHelper from "../../db/DBHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { logger } from "../../global/globals";
 import { fetchGuildData } from "../../util/guildActions";
@@ -11,14 +11,14 @@ export = <Command>{
   usage: "",
   permissions: "MOVE_MEMBERS",
   args: Args.none,
-  guildOnly: true,
+  isGuildOnly: true,
   cooldown: 5,
   async execute(message: Message) {
     try {
       const guildData = await fetchGuildData(message.guild, message.channel);
-      guildData.arbitrarySoundsEnabled = !guildData.arbitrarySoundsEnabled;
+      guildData.isArbitrarySoundsEnabled = !guildData.isArbitrarySoundsEnabled;
 
-      if (!guildData.arbitrarySoundsEnabled) {
+      if (!guildData.isArbitrarySoundsEnabled) {
         guildData.arbitrarySoundsTimer &&
           clearTimeout(guildData.arbitrarySoundsTimer);
       }

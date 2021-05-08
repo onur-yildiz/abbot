@@ -7,7 +7,7 @@ import {
   VoiceChannel,
 } from "discord.js";
 import { guilds, logger } from "../global/globals";
-import dbHelper from "../db/dbHelper";
+import DBHelper from "../db/DBHelper";
 
 export const connectToVoiceChannel = async (guildData: GuildData) => {
   const connection = await guildData.voiceChannel.join();
@@ -27,7 +27,7 @@ export const resetState = (guildData: GuildData) => {
   if (guildData.connection && guildData.connection.dispatcher)
     guildData.connection.dispatcher.destroy();
   guildData.songs = [];
-  guildData.queueActive = false;
+  guildData.isQueueActive = false;
   guildData.lastTrackStart = null;
   guildData.quitTimer && clearTimeout(guildData.quitTimer);
 };
@@ -45,9 +45,9 @@ export const fetchGuildData = async (
   }
 
   try {
-    let guildSettings = await dbHelper.getGuildSettings(guild, { themes: 0 });
+    let guildSettings = await DBHelper.getGuildSettings(guild, { themes: 0 });
     if (!guildSettings)
-      guildSettings = await dbHelper.createGuildSettings(guild);
+      guildSettings = await DBHelper.createGuildSettings(guild);
 
     const guildData = <GuildData>{
       textChannel: newTextChannel ? newTextChannel : null,
@@ -55,12 +55,12 @@ export const fetchGuildData = async (
       connection: null,
       songs: [],
       volume: 1,
-      queueActive: false,
+      isQueueActive: false,
       greetingEnabled: guildSettings.greetingEnabled,
       audioAliases: guildSettings.audioAliases,
       prefix: guildSettings.prefix,
       lastTrackStart: null,
-      arbitrarySoundsEnabled: false,
+      isArbitrarySoundsEnabled: false,
       annoyanceList: new Map<string, string>(),
     };
 

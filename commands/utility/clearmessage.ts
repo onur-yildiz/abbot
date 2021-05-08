@@ -8,7 +8,7 @@ export = <Command>{
   description: "Clear the past [?] messages.",
   usage: "[message amount]",
   permissions: "MANAGE_MESSAGES",
-  guildOnly: true,
+  isGuildOnly: true,
   args: Args.required,
   cooldown: 8,
   async execute(message: Message, args: string[]) {

@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import dbHelper from "../../db/dbHelper";
+import DBHelper from "../../db/DBHelper";
 import { logger } from "../../global/globals";
 import { fetchGuildData } from "../../util/guildActions";
 
@@ -10,7 +10,7 @@ export = <Command>{
   usage: "",
   args: Args.none,
   permissions: "ADMINISTRATOR",
-  guildOnly: true,
+  isGuildOnly: true,
   async execute(message: Message) {
     try {
       const guildData = await fetchGuildData(
@@ -20,7 +20,7 @@ export = <Command>{
       );
 
       guildData.greetingEnabled = !guildData.greetingEnabled;
-      await dbHelper.saveGuildSettings(message.guild, {
+      await DBHelper.saveGuildSettings(message.guild, {
         greetingEnabled: guildData.greetingEnabled,
       });
 

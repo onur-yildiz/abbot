@@ -10,7 +10,7 @@ import { commands, logger } from "../../global/globals";
 export = <Command>{
   name: "reload",
   aliases: ["rl"],
-  guildOnly: false,
+  isGuildOnly: false,
   usage: "[command]",
   args: Args.required,
   permissions: "ADMINISTRATOR",

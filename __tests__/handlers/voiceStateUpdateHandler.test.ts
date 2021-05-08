@@ -1,5 +1,5 @@
 import { GuildData, VoiceConnection, VoiceState } from "discord.js";
-import dbHelper from "../../db/dbHelper";
+import DBHelper from "../../db/DBHelper";
 import { defaultPrefix } from "../../global/globals";
 import { voiceStateUpdateHandler } from "../../handlers/voiceStateUpdateHandler";
 import * as ga from "../../util/guildActions";
@@ -31,23 +31,23 @@ Object.defineProperty(ga, "fetchGuildData", {
     connection: voiceConnection,
     songs: [],
     volume: 1,
-    queueActive: false,
+    isQueueActive: false,
     greetingEnabled: true,
     audioAliases: [],
     prefix: defaultPrefix,
     lastTrackStart: null,
-    arbitrarySoundsEnabled: false,
+    isArbitrarySoundsEnabled: false,
     annoyanceList: new Map<string, string>(),
   }),
 });
 
-Object.defineProperty(dbHelper, "getGuildSettings", {
+Object.defineProperty(DBHelper, "getGuildSettings", {
   value: jest.fn().mockReturnValue({
     themes: new Map().set("user-id", "test-theme"),
   }),
 });
 
-Object.defineProperty(dbHelper, "saveGuildSettings", {
+Object.defineProperty(DBHelper, "saveGuildSettings", {
   value: jest.fn(),
 });
 
@@ -95,7 +95,7 @@ describe("voiceStateUpdateHandler", () => {
   });
 
   it("run successfully with default theme if guildSettings.themes empty", async () => {
-    Object.defineProperty(dbHelper, "getGuildSettings", {
+    Object.defineProperty(DBHelper, "getGuildSettings", {
       value: jest.fn().mockReturnValue({
         themes: new Map(),
       }),
@@ -108,7 +108,7 @@ describe("voiceStateUpdateHandler", () => {
   });
 
   it("run successfully with default theme if guildSettings falsy", async () => {
-    Object.defineProperty(dbHelper, "getGuildSettings", {
+    Object.defineProperty(DBHelper, "getGuildSettings", {
       value: jest.fn(),
     });
 
@@ -179,11 +179,11 @@ describe("voiceStateUpdateHandler", () => {
     });
   });
 
-  describe("queueActive and greetingEnabled check", () => {
-    it("return if queueActive true", async () => {
+  describe("isQueueActive and greetingEnabled check", () => {
+    it("return if isQueueActive true", async () => {
       Object.defineProperty(ga, "fetchGuildData", {
         value: jest.fn().mockReturnValue(<GuildData>{
-          queueActive: true,
+          isQueueActive: true,
           greetingEnabled: true,
         }),
       });
@@ -198,7 +198,7 @@ describe("voiceStateUpdateHandler", () => {
     it("return if greetingEnabled false", async () => {
       Object.defineProperty(ga, "fetchGuildData", {
         value: jest.fn().mockReturnValue(<GuildData>{
-          queueActive: false,
+          isQueueActive: false,
           greetingEnabled: false,
         }),
       });

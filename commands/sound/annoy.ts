@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import dbHelper from "../../db/dbHelper";
+import DBHelper from "../../db/DBHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { logger } from "../../global/globals";
 import { fetchGuildData } from "../../util/guildActions";
@@ -17,7 +17,7 @@ export = <Command>{
     "\n'toggle' to activate/deactivate, '(un)block' to change annoy permit for yourself or 'reset' to delete your annoy sound",
   permissions: "MOVE_MEMBERS",
   args: Args.required,
-  guildOnly: true,
+  isGuildOnly: true,
   cooldown: 5,
   async execute(message: Message, args: string[]) {
     const commandWords = args[1].split(" ");
@@ -78,7 +78,7 @@ export = <Command>{
       }
 
       const botAliases = getDefaultAudios();
-      const guildSettings = await dbHelper.getGuildSettings(message.guild, {
+      const guildSettings = await DBHelper.getGuildSettings(message.guild, {
         audioAliases: 1,
       });
       const guildAliases = Array.from(guildSettings.audioAliases.keys());

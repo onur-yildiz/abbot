@@ -1,8 +1,8 @@
 import { Command, Message } from "discord.js";
 import { UpdateQuery } from "mongoose";
 import { ERROR_SAVE_THEME } from "../../constants/messages";
-import { IGuildSettings } from "../../db/dbModels";
-import dbHelper from "../../db/dbHelper";
+import { IGuildSettings } from "../../db/DBModels";
+import DBHelper from "../../db/DBHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { logger } from "../../global/globals";
 
@@ -14,7 +14,7 @@ export = <Command>{
   description: "Set your custom greeting theme from the saved horns.",
   usage: "[horn alias]\nOR reset",
   args: Args.required,
-  guildOnly: true,
+  isGuildOnly: true,
   cooldown: 5,
   async execute(message: Message, args: string[]) {
     let alias = args[1];
@@ -22,7 +22,7 @@ export = <Command>{
 
     const botAliases = getDefaultAudios();
     try {
-      const guildSettings = await dbHelper.getGuildSettings(message.guild, {
+      const guildSettings = await DBHelper.getGuildSettings(message.guild, {
         audioAliases: 1,
       });
       const guildAliases = Array.from(guildSettings.audioAliases.keys());
@@ -48,7 +48,7 @@ export = <Command>{
         );
       }
 
-      await dbHelper.saveGuildSettings(message.guild, query);
+      await DBHelper.saveGuildSettings(message.guild, query);
       message.react("✅");
     } catch (error) {
       message.reply(ERROR_SAVE_THEME);

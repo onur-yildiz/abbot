@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import dbHelper from "../../db/dbHelper";
+import DBHelper from "../../db/DBHelper";
 import { defaultPrefix, guilds, logger } from "../../global/globals";
 
 export = <Command>{
@@ -7,7 +7,7 @@ export = <Command>{
   aliases: ["px"],
   description: "Set a new prefix for the server.",
   usage: '/[new prefix]/ OR "reset"',
-  guildOnly: true,
+  isGuildOnly: true,
   args: Args.required,
   permissions: "ADMINISTRATOR",
   cooldown: 5,
@@ -39,7 +39,7 @@ export = <Command>{
 };
 
 const setPrefix = async (message: Message, prefix: string): Promise<void> => {
-  await dbHelper.saveGuildSettings(message.guild, { prefix: prefix });
+  await DBHelper.saveGuildSettings(message.guild, { prefix: prefix });
   guilds.get(message.guild.id).prefix = prefix;
 };
 

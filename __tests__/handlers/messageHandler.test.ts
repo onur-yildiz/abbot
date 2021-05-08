@@ -46,7 +46,7 @@ describe("messageHandler", () => {
       description: "desc",
       aliases: ["tst", "t"],
       args: Args.none,
-      guildOnly: false,
+      isGuildOnly: false,
       usage: "usage",
       execute: jest.fn(),
     });
@@ -56,7 +56,7 @@ describe("messageHandler", () => {
       description: "desc2",
       aliases: ["tst2", "t2"],
       args: Args.flexible,
-      guildOnly: false,
+      isGuildOnly: false,
       usage: "usage2",
       execute: jest.fn(),
     });
@@ -66,7 +66,7 @@ describe("messageHandler", () => {
       description: "error",
       aliases: ["err", "e"],
       args: Args.flexible,
-      guildOnly: false,
+      isGuildOnly: false,
       usage: "err",
       execute: jest.fn().mockImplementation(() => {
         throw new Error();

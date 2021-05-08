@@ -1,5 +1,5 @@
 import { VoiceState } from "discord.js";
-import dbHelper from "../db/dbHelper";
+import DBHelper from "../db/DBHelper";
 import { logger } from "../global/globals";
 import { isPermitted } from "../util/checker";
 import {
@@ -34,7 +34,7 @@ export const voiceStateUpdateHandler = async (
     }
 
     if (
-      guildData.queueActive ||
+      guildData.isQueueActive ||
       !guildData.greetingEnabled ||
       (newVoiceState.channel &&
         !isPermitted(newVoiceState.channel, newVoiceState.guild))
@@ -81,12 +81,12 @@ export const voiceStateUpdateHandler = async (
 
 const getTheme = async (voiceState: VoiceState) => {
   const userId = voiceState.member.id;
-  const guildSettings = await dbHelper.getGuildSettings(voiceState.guild, {
+  const guildSettings = await DBHelper.getGuildSettings(voiceState.guild, {
     [`themes.${userId}`]: 1,
   });
 
   if (!guildSettings?.themes.has(userId)) {
-    await dbHelper.saveGuildSettings(voiceState.guild, {
+    await DBHelper.saveGuildSettings(voiceState.guild, {
       $set: { [`themes.${userId}`]: defaultTheme },
     });
     return defaultTheme;

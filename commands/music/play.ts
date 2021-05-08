@@ -14,7 +14,7 @@ export = <Command>{
   aliases: ["p", "paly"],
   description: "Play a song with the given url or query from youtube.",
   usage: " [URL/query]",
-  guildOnly: true,
+  isGuildOnly: true,
   args: Args.flexible,
   cooldown: 1,
   async execute(message: Message, args?: string[]) {
@@ -25,7 +25,7 @@ export = <Command>{
         message.member.voice.channel
       );
 
-      const error = guildData.queueActive
+      const error = guildData.isQueueActive
         ? checkVoiceChannelAvailability(message)
         : checkUserInAChannel(message);
       if (error) return message.channel.send(error.toBold());
@@ -42,7 +42,7 @@ export = <Command>{
       const song = await fetchSong(commandContent);
       if (!song) return message.channel.send("Nothing found.");
 
-      if (guildData.queueActive) {
+      if (guildData.isQueueActive) {
         guildData.songs.push(song);
         const estimatedTime = calculateEta(
           guildData.songs,
@@ -64,7 +64,7 @@ export = <Command>{
       }
 
       guildData.songs.push(song);
-      guildData.queueActive = true;
+      guildData.isQueueActive = true;
       await connectToVoiceChannel(guildData);
       play(message, guildData);
     } catch (error) {
@@ -106,7 +106,7 @@ const play = async (message: Message, guildData: GuildData) => {
       })
       .on("resume", () => {
         if (guildData.songs.length === 0) {
-          guildData.queueActive = false;
+          guildData.isQueueActive = false;
           // if currentSong is not skipped, resume.
         } else if (currentSong === guildData.songs[0]) {
           dispatcher.resume();
@@ -118,7 +118,7 @@ const play = async (message: Message, guildData: GuildData) => {
       .on("finish", () => {
         responseMessage.delete();
         guildData.songs.shift();
-        if (guildData.songs.length === 0) guildData.queueActive = false;
+        if (guildData.songs.length === 0) guildData.isQueueActive = false;
         else play(message, guildData);
       })
       .on("error", (error) => logger.error(error));

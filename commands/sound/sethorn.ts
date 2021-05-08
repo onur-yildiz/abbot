@@ -1,6 +1,6 @@
 import { Command, Message } from "discord.js";
-import dbHelper from "../../db/dbHelper";
-import { urlReachable } from "../../util/urlReachable";
+import DBHelper from "../../db/DBHelper";
+import { isUrlReachable } from "../../util/isUrlReachable";
 import { SETHORN_NOT_ALLOWED } from "../../constants/messages";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { logger } from "../../global/globals";
@@ -12,7 +12,7 @@ export = <Command>{
     'Set an alias for an audio url. ( "https://www.example.com/example.mp3" )',
   usage: "[horn alias] [url]",
   permissions: "MOVE_MEMBERS",
-  guildOnly: true,
+  isGuildOnly: true,
   args: Args.required,
   cooldown: 5,
   async execute(message: Message, args: string[]) {
@@ -28,13 +28,13 @@ export = <Command>{
       `(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
     );
 
-    if (regexUrl.test(url) && urlReachable(url)) {
+    if (regexUrl.test(url) && isUrlReachable(url)) {
       try {
-        const guildSettings = await dbHelper.getGuildSettings(message.guild, {
+        const guildSettings = await DBHelper.getGuildSettings(message.guild, {
           audioAliases: 1,
         });
 
-        const urlAlreadyExists = checkIfValueExists(
+        const urlAlreadyExists = checkValueExists(
           guildSettings.audioAliases,
           url
         );
@@ -43,7 +43,7 @@ export = <Command>{
           const oldAlias = getOldKey(guildSettings.audioAliases, url);
           if (oldAlias === alias)
             return message.channel.send(`You entered an existing alias :zzz:`);
-          await dbHelper.saveGuildSettings(message.guild, {
+          await DBHelper.saveGuildSettings(message.guild, {
             $rename: {
               [`audioAliases.${oldAlias}`]: `audioAliases.${alias}`,
             },
@@ -55,7 +55,7 @@ export = <Command>{
             `Horn alias changed ::: ${oldAlias} -->> ${alias} @${message.guild.name}<${message.guild.id}>`
           );
         } else {
-          await dbHelper.saveGuildSettings(message.guild, {
+          await DBHelper.saveGuildSettings(message.guild, {
             $set: { [`audioAliases.${alias}`]: url },
           });
           const aliasAlreadyExists = guildSettings.audioAliases.has(alias);
@@ -82,7 +82,7 @@ export = <Command>{
   },
 };
 
-const checkIfValueExists = (map: Map<string, string>, val: string): boolean => {
+const checkValueExists = (map: Map<string, string>, val: string): boolean => {
   return Array.from(map.values()).includes(val);
 };
 

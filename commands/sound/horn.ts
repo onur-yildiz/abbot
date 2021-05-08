@@ -3,8 +3,8 @@ import {
   HORN_PLAYING_MUSIC,
   ERROR_EXECUTION_ERROR,
 } from "../../constants/messages";
-import { urlReachable } from "../../util/urlReachable";
-import dbHelper from "../../db/dbHelper";
+import { isUrlReachable } from "../../util/isUrlReachable";
+import DBHelper from "../../db/DBHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { checkUserInAChannel } from "../../util/checker";
 import { connectToVoiceChannel, fetchGuildData } from "../../util/guildActions";
@@ -15,7 +15,7 @@ export = <Command>{
   aliases: ["h", "say"],
   description: "Play a sound.",
   usage: "[audio name]",
-  guildOnly: true,
+  isGuildOnly: true,
   args: Args.required,
   argList: getDefaultAudios(),
   async execute(message: Message, args: string[]) {
@@ -30,7 +30,7 @@ export = <Command>{
         message.member.voice.channel
       );
 
-      if (guildData.queueActive)
+      if (guildData.isQueueActive)
         return message.channel.send(HORN_PLAYING_MUSIC.toBold());
 
       let audioPath = "";
@@ -38,12 +38,12 @@ export = <Command>{
       if (audios.includes(`${alias}`))
         audioPath = `./assets/audio/${alias}.mp3`;
       else {
-        const guildSettings = await dbHelper.getGuildSettings(message.guild, {
+        const guildSettings = await DBHelper.getGuildSettings(message.guild, {
           [`audioAliases.${alias}`]: 1,
         });
         if (guildSettings.audioAliases.has(alias)) {
           audioPath = guildSettings.audioAliases.get(alias);
-          if (!(await urlReachable(audioPath))) return;
+          if (!(await isUrlReachable(audioPath))) return;
         } else {
           return message.reply(
             "No audio named " + `${alias}`.toInlineCodeBg() + " was found."

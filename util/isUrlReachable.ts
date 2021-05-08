@@ -1,6 +1,6 @@
 import https from "https";
 
-export const urlReachable = (url: string): Promise<boolean> => {
+export const isUrlReachable = (url: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     const req = https.get(url);
 

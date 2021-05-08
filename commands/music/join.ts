@@ -10,7 +10,7 @@ export = <Command>{
   description: "Make the bot join the voice channel.",
   usage: "",
   args: Args.none,
-  guildOnly: true,
+  isGuildOnly: true,
   async execute(message: Message) {
     const error = checkUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());

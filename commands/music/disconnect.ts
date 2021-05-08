@@ -13,7 +13,7 @@ export = <Command>{
   description: "Disconnects the bot from the voice channel.",
   usage: "",
   args: Args.none,
-  guildOnly: true,
+  isGuildOnly: true,
   async execute(message: Message) {
     const error = checkVoiceChannelAvailability(message);
     if (error) return message.channel.send(error.toBold());

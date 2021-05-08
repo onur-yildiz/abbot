@@ -1,6 +1,6 @@
 import { Command, Message } from "discord.js";
 import { ERROR_EXECUTION_ERROR, NO_SAVED_ARGS } from "../../constants/messages";
-import dbHelper from "../../db/dbHelper";
+import DBHelper from "../../db/DBHelper";
 import { commands, logger } from "../../global/globals";
 import getDefaultAudios from "../../util/getDefaultAudios";
 
@@ -10,7 +10,7 @@ export = <Command>{
   description:
     "Returns the list of saved arguments accepted by the entered command.",
   usage: "[command name]",
-  guildOnly: true,
+  isGuildOnly: true,
   args: Args.required,
   async execute(message: Message, args: string[]) {
     const commandContent = args[1];
@@ -21,7 +21,7 @@ export = <Command>{
         commands.get("horn").aliases.includes(commandContent) ||
         commandContent === "horn"
       ) {
-        const guildSettings = await dbHelper.getGuildSettings(message.guild);
+        const guildSettings = await DBHelper.getGuildSettings(message.guild);
         data.push(...guildSettings.audioAliases.keys());
         data.push(...getDefaultAudios());
       }

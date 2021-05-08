@@ -7,7 +7,7 @@ export = <Command>{
   usage: "",
   permissions: "MANAGE_MESSAGES",
   args: Args.none,
-  guildOnly: true,
+  isGuildOnly: true,
   cooldown: 8,
   async execute(message: Message) {
     const messageCache = message.channel.messages.cache;

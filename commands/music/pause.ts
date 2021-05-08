@@ -14,7 +14,7 @@ export = <Command>{
   aliases: ["pause", "stop"],
   description: "Pauses the current playing track.",
   usage: "",
-  guildOnly: true,
+  isGuildOnly: true,
   args: Args.none,
   async execute(message: Message) {
     const error = checkVoiceChannelAvailability(message);
@@ -30,7 +30,7 @@ export = <Command>{
       if (guildData.connection.dispatcher.paused)
         return message.channel.send(ALREADY_PAUSED.toBold());
 
-      if (guildData.queueActive) {
+      if (guildData.isQueueActive) {
         guildData.connection.dispatcher.pause();
         message.channel.send(PAUSED.toBold());
       } else message.channel.send(NOTHING_IS_PLAYING.toItalic());

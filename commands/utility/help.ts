@@ -1,14 +1,14 @@
 import fs from "fs";
 import Discord, { Command, Message } from "discord.js";
 import { commands, defaultPrefix, guilds, logger } from "../../global/globals";
-import dbHelper from "../../db/dbHelper";
+import DBHelper from "../../db/DBHelper";
 import { awaitDone } from "../../util/messageUtil";
 
 export = <Command>{
   name: "help",
   description: "List all of my commands or info about a specific command.",
   aliases: ["commands", "hlp"],
-  guildOnly: false,
+  isGuildOnly: false,
   usage: "[?command name?]",
   args: Args.flexible,
   cooldown: 1,
@@ -102,7 +102,7 @@ export = <Command>{
       let argList = command.argList;
 
       if (command.name === "horn" && message.channel.type !== "dm") {
-        const guildSettings = await dbHelper.getGuildSettings(message.guild);
+        const guildSettings = await DBHelper.getGuildSettings(message.guild);
         argList = argList.concat([...guildSettings.audioAliases.keys()].sort());
       }
 

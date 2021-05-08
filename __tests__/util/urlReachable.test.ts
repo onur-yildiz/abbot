@@ -1,1 +1,1 @@
-test.todo("urlReachable");
+test.todo("isUrlReachable");

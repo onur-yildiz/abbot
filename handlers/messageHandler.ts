@@ -44,7 +44,7 @@ export const messageHandler = async (client: Client, message: Message) => {
     commands.find((cmd) => cmd.aliases.includes(commandName));
   if (!command) return;
 
-  if (command.guildOnly && message.channel.type === "dm")
+  if (command.isGuildOnly && message.channel.type === "dm")
     return message.reply(REPLY_CANT_EXECUTE_DM);
 
   if (command.permissions) {
