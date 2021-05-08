@@ -7,9 +7,14 @@ import { fetchGuildData } from "../../util/guildActions";
 export = <Command>{
   name: "annoy",
   aliases: ["prank"],
-  description:
-    "Annoy someone whenever they speak. (toggle to activate/deactivate, blocktoggle to deactivate for yourself)",
-  usage: "[@user] [horn alias]\nOR " + "[@user] reset\nOR " + "(un)block",
+  description: "Annoy someone whenever they speak.",
+  usage:
+    "[@user] [horn alias]\nOR " +
+    "[@user] reset\nOR " +
+    "toggle\nOR " +
+    "reset\nOR " +
+    "(un)block" +
+    "\n'toggle' to activate/deactivate, '(un)block' to change annoy permit for yourself or 'reset' to delete your annoy sound",
   permissions: "MOVE_MEMBERS",
   args: Args.required,
   guildOnly: true,
@@ -49,6 +54,11 @@ export = <Command>{
           annoyList.delete(message.member.id);
           return message.react("✅");
         } else return message.react("💤");
+      }
+
+      if (args[1] === "reset") {
+        annoyList.delete(message.member.id);
+        return message.react("✅");
       }
 
       if (annoyList.get(userId)?.length === 0) {
