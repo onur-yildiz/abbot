@@ -8,3 +8,4 @@ dist
 ffmpeg.exe
 
 *.log
+horns_*.yaml
