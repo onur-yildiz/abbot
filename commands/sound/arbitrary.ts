@@ -19,6 +19,7 @@ export = <Command>{
       if (!guildData.isArbitrarySoundsEnabled) {
         guildData.arbitrarySoundsTimer &&
           clearTimeout(guildData.arbitrarySoundsTimer);
+        guildData.arbitrarySoundsTimer = null;
         message.react("🛑");
       } else message.react("⏱");
     } catch (error) {
