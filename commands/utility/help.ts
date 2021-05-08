@@ -112,7 +112,7 @@ export = <Command>{
         data.push({
           name: `Arguments:`,
           value:
-            `Argument list is too long.\nType ` +
+            `Argument list is too long. (${argList.length})\nType ` +
             ` ${prefix}args horn `.toInlineCodeBg() +
             ` (aliases accepted) to see all arguments.`,
         });
