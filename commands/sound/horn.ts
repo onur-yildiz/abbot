@@ -16,13 +16,12 @@ export = <Command>{
   description: "Play a sound.",
   usage: "[audio name]",
   isGuildOnly: true,
-  args: Args.required,
+  args: Args.flexible,
   argList: getDefaultAudios(),
   async execute(message: Message, args: string[]) {
     const error = checkUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());
 
-    const alias = args[1];
     try {
       const guildData = await fetchGuildData(
         message.guild,
@@ -33,21 +32,33 @@ export = <Command>{
       if (guildData.isQueueActive)
         return message.channel.send(HORN_PLAYING_MUSIC.toBold());
 
-      let audioPath = "";
-      const audios = getDefaultAudios();
-      if (audios.includes(`${alias}`))
-        audioPath = `./assets/audio/${alias}.mp3`;
-      else {
+      let alias: string;
+      let audioPath: string;
+      if (!args[1]) {
         const guildSettings = await DBHelper.getGuildSettings(message.guild, {
-          [`audioAliases.${alias}`]: 1,
+          audioAliases: 1,
         });
-        if (guildSettings.audioAliases.has(alias)) {
-          audioPath = guildSettings.audioAliases.get(alias);
-          if (!(await isUrlReachable(audioPath))) return;
-        } else {
-          return message.reply(
-            "No audio named " + `${alias}`.toInlineCodeBg() + " was found."
-          );
+        alias = [...guildSettings.audioAliases.keys()][
+          Math.trunc(Math.random() * (guildSettings.audioAliases.size - 1))
+        ];
+        audioPath = guildSettings.audioAliases.get(alias);
+      } else {
+        alias = args[1];
+        const audios = getDefaultAudios();
+        if (audios.includes(`${alias}`))
+          audioPath = `./assets/audio/${alias}.mp3`;
+        else {
+          const guildSettings = await DBHelper.getGuildSettings(message.guild, {
+            [`audioAliases.${alias}`]: 1,
+          });
+          if (guildSettings.audioAliases.has(alias)) {
+            audioPath = guildSettings.audioAliases.get(alias);
+            if (!(await isUrlReachable(audioPath))) return;
+          } else {
+            return message.reply(
+              "No audio named " + `${alias}`.toInlineCodeBg() + " was found."
+            );
+          }
         }
       }
 
