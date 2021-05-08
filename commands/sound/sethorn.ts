@@ -18,6 +18,9 @@ export = <Command>{
   async execute(message: Message, args: string[]) {
     const commandContent = args[1].split(" ");
     const alias = commandContent.shift().toLowerCase();
+    if (alias.length > 25)
+      message.channel.send("Alias can be maximum 25 characters long.".toBold());
+
     const url = commandContent[0];
     const audios = getDefaultAudios();
 
