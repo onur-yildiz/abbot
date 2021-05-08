@@ -1,6 +1,4 @@
 import { Command, Message } from "discord.js";
-import DBHelper from "../../db/DBHelper";
-import getDefaultAudios from "../../util/getDefaultAudios";
 import { logger } from "../../global/globals";
 import { fetchGuildData } from "../../util/guildActions";
 
@@ -16,14 +14,13 @@ export = <Command>{
   async execute(message: Message) {
     try {
       const guildData = await fetchGuildData(message.guild, message.channel);
-      guildData.isArbitrarySoundsEnabled = !guildData.isArbitrarySoundsEnabled;
 
+      guildData.isArbitrarySoundsEnabled = !guildData.isArbitrarySoundsEnabled;
       if (!guildData.isArbitrarySoundsEnabled) {
         guildData.arbitrarySoundsTimer &&
           clearTimeout(guildData.arbitrarySoundsTimer);
-      }
-
-      message.react("✅");
+        message.react("🛑");
+      } else message.react("⏱");
     } catch (error) {
       message.reply(`an error occured during arbitrary command!`);
       logger.log(error);
