@@ -33,10 +33,9 @@ export = <Command>{
     const attachment: MessageAttachment = message.attachments
       .values()
       .next().value;
-    if (!attachment) return message.reply(REPLY_ATTACH_YAML.toBold());
 
-    const fileURL = attachment.attachment.toString();
-    if (fileURL.endsWith(".yaml") || fileURL.endsWith(".yml")) {
+    const fileURL = attachment?.url;
+    if (fileURL?.endsWith(".yaml") || fileURL?.endsWith(".yml")) {
       const req = https.get(fileURL);
       req.on("response", (res: IncomingMessage) => {
         message.react("⏱");
@@ -86,6 +85,8 @@ export = <Command>{
         logger.error(error);
         message.reply(ERROR_COULD_NOT_DL_FILE.toBold());
       });
+    } else {
+      message.reply(REPLY_ATTACH_YAML.toBold());
     }
   },
 };
