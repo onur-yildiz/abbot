@@ -11,15 +11,16 @@ import { logger } from "../../global/globals";
 export = <Command>{
   name: "importhorn",
   aliases: ["imph"],
-  description: `Import horns from attached yaml file. (Aliases with the same name will be overwritten!)\n
-  ---Example YAML file---\n
-  example: https://www.example.com/media/sounds/media.mp3\n
-  abc: https://www.example.com/some_sound.ogg\n
-  newsound: https://www.example.com/media.mp3\n
-  myhorn: https://www.example.com/media/sounds/horn.ogg\n
+  description: `Import horns from attached yaml file. (Aliases with the same name will be overwritten!)
+
+  ---Example YAML format---
+  example: https://www.example.com/media/sounds/media.mp3
+  abc: https://www.example.com/some_sound.ogg
+  newsound: https://www.example.com/media.mp3
+  myhorn: https://www.example.com/media/sounds/horn.ogg
   ---END---`,
   usage:
-    "Attach your .yaml file to the message and add the command as comment.",
+    "(Attach your .yaml file to the message and add the command as comment)",
   permissions: "MOVE_MEMBERS",
   args: Args.none,
   isGuildOnly: true,
