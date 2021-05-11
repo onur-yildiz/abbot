@@ -68,27 +68,30 @@ export const voiceStateUpdateHandler = async (
 
     guildData.quitTimer && clearTimeout(guildData.quitTimer);
     const theme = await getTheme(newVoiceState);
-    await connectToVoiceChannel(guildData);
-    const dispatcher = guildData.connection
-      .play(theme)
-      .on("finish", () => {})
-      .on("error", (error) => logger.error(error));
-    dispatcher.setVolumeLogarithmic(1);
+    if (theme.length > 0) {
+      await connectToVoiceChannel(guildData);
+      const dispatcher = guildData.connection
+        .play(theme)
+        .on("finish", () => {})
+        .on("error", (error) => logger.error(error));
+      dispatcher.setVolumeLogarithmic(1);
+    }
   } catch (error) {
     logger.error(error);
   }
 };
 
-const getTheme = async (voiceState: VoiceState) => {
+const getTheme = async (voiceState: VoiceState): Promise<string> => {
   const userId = voiceState.member.id;
   const guildSettings = await DBHelper.getGuildSettings(voiceState.guild, {
     [`themes.${userId}`]: 1,
   });
 
   if (!guildSettings?.themes.has(userId)) {
-    await DBHelper.saveGuildSettings(voiceState.guild, {
-      $set: { [`themes.${userId}`]: defaultTheme },
-    });
-    return defaultTheme;
+    // await DBHelper.saveGuildSettings(voiceState.guild, {
+    //   $set: { [`themes.${userId}`]: defaultTheme },
+    // });
+    // return defaultTheme;
+    return "";
   } else return guildSettings.themes.get(userId);
 };
