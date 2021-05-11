@@ -1,21 +1,30 @@
 import { Command, Message, MessageAttachment } from "discord.js";
 import { IncomingMessage } from "http";
 import https from "https";
+import { UpdateQuery } from "mongoose";
 import { parse } from "yaml";
 import { ERROR_EXECUTION_ERROR } from "../../constants/messages";
 import DBHelper from "../../db/DBHelper";
+import { IGuildSettings } from "../../db/DBModels";
 import { logger } from "../../global/globals";
 
 export = <Command>{
   name: "importhorn",
   aliases: ["imph"],
-  description: "Import horns from attached yaml file.",
-  usage: "",
+  description: `Import horns from attached yaml file. (Aliases with the same name will be overwritten!)\n
+  ---Example YAML file---\n
+  example: https://www.example.com/media/sounds/media.mp3\n
+  abc: https://www.example.com/some_sound.ogg\n
+  newsound: https://www.example.com/media.mp3\n
+  myhorn: https://www.example.com/media/sounds/horn.ogg\n
+  ---END---`,
+  usage:
+    "Attach your .yaml file to the message and add the command as comment.",
   permissions: "MOVE_MEMBERS",
   args: Args.none,
   isGuildOnly: true,
   cooldown: 5,
-  async execute(message: Message) {
+  execute(message: Message) {
     const attachment: MessageAttachment = message.attachments
       .values()
       .next().value;
@@ -24,6 +33,7 @@ export = <Command>{
     if (fileURL.endsWith(".yaml") || fileURL.endsWith(".yml")) {
       const req = https.get(fileURL);
       req.on("response", (res: IncomingMessage) => {
+        message.react("⏱");
         if (res.statusCode != 200) return;
         let data = "";
         res.on("data", (chunk) => {
@@ -33,13 +43,26 @@ export = <Command>{
         res.on("end", async () => {
           const parsedData: object = parse(data);
           const horns: [string, string][] = Object.entries(parsedData);
-          for (const horn of horns) {
-            await DBHelper.saveGuildSettings(message.guild, {
-              $set: { [`audioAliases.${horn[0]}`]: horn[1] },
-            });
+          const updateQuery: UpdateQuery<IGuildSettings> = {
+            $set: { audioAliases: new Map<string, string>() },
+          };
+          let importedHornCount = 0;
+          horns.forEach((horn) => {
+            if (typeof horn[0] === "string" && typeof horn[1] === "string") {
+              updateQuery.$set.audioAliases.set(horn[0], horn[1]);
+              importedHornCount++;
+            }
+          });
+
+          try {
+            await DBHelper.saveGuildSettings(message.guild, updateQuery);
+          } catch (error) {
+            logger.error(error);
           }
+
+          message.react("✅");
           logger.info(
-            `${horns.length} horns imported. @${message.guild.name}<${message.guild.id}>`
+            `${importedHornCount} horns imported. @${message.guild.name}<${message.guild.id}>`
           );
         });
       });
