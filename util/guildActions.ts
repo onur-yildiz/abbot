@@ -30,6 +30,9 @@ export const resetState = (guildData: GuildData) => {
   guildData.isQueueActive = false;
   guildData.lastTrackStart = null;
   guildData.quitTimer && clearTimeout(guildData.quitTimer);
+  guildData.isArbitrarySoundsEnabled = false;
+  guildData.arbitrarySoundsTimer &&
+    clearTimeout(guildData.arbitrarySoundsTimer);
 };
 
 export const fetchGuildData = async (

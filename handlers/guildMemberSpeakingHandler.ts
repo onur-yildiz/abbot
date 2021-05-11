@@ -11,7 +11,11 @@ export const guildMemberSpeakingHandler = async (
     const guildData = await fetchGuildData(guildMember.guild);
 
     if (guildData.isQueueActive) return;
-    if (guildData.isArbitrarySoundsEnabled && !guildData.arbitrarySoundsTimer)
+    if (
+      guildData.isArbitrarySoundsEnabled &&
+      !guildData.arbitrarySoundsTimer &&
+      guildData.connection
+    )
       setTimer(guildMember, guildData);
 
     const annoyTheme = guildData.annoyanceList.get(guildMember.id);
@@ -37,8 +41,9 @@ const setTimer = (guildMember: GuildMember, guildData: GuildData) => {
     const alias = [...aliases.keys()][Math.trunc(Math.random() * (length - 1))];
     const audioPath = aliases.get(alias);
 
-    if (guildData.isQueueActive || !guildData.connection) {
+    if (guildData.isQueueActive) {
       guildData.isArbitrarySoundsEnabled = false;
+      guildData.arbitrarySoundsTimer = null;
       return;
     }
 
