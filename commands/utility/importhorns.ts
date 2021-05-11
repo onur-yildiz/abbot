@@ -57,14 +57,14 @@ export = <Command>{
 
           try {
             await DBHelper.saveGuildSettings(message.guild, updateQuery);
+            message.react("✅");
+            logger.info(
+              `${importedHornCount} horns imported. @${message.guild.name}<${message.guild.id}>`
+            );
           } catch (error) {
+            message.reply(ERROR_EXECUTION_ERROR);
             logger.error(error);
           }
-
-          message.react("✅");
-          logger.info(
-            `${importedHornCount} horns imported. @${message.guild.name}<${message.guild.id}>`
-          );
         });
       });
 
