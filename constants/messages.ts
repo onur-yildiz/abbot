@@ -20,8 +20,10 @@ const ERROR_COMMAND_NOT_VALID = "this is not a valid command!";
 const ERROR_SAVE_THEME = "an error occured during saving the theme!";
 const ERROR_EXECUTION_ERROR =
   "there was an error trying to execute that command!";
+const ERROR_COULD_NOT_DL_FILE = "there was an error downloading the file!";
 const ERROR_CONNECTING =
   "an error occured during connecting to the voice channel!";
+const ERROR_DB_CONN = "an error occured during database connection!";
 const ERROR_CLEAR_MESSAGES = "something went wrong deleting the messages.";
 
 const BOT_NOT_IN_CHANNEL = ":x: I am not active in a channel";
@@ -40,6 +42,7 @@ const NO_SAVED_ARGS = "There are no saved arguments for this command.";
 const REPLY_CANT_EXECUTE_DM = "I can't execute that command inside DMs!";
 const REPLY_NOT_ALLOWED = "you are not allowed to do this!";
 const REPLY_NO_ARGS = "you did not provide any arguments!";
+const REPLY_ATTACH_YAML = "please attach a yaml file when using this command!";
 
 export {
   JOIN_CHANNEL_GENERIC,
@@ -54,6 +57,8 @@ export {
   ERROR_COMMAND_NOT_VALID,
   ERROR_SAVE_THEME,
   ERROR_EXECUTION_ERROR,
+  ERROR_COULD_NOT_DL_FILE,
+  ERROR_DB_CONN,
   ERROR_CONNECTING,
   ERROR_CLEAR_MESSAGES,
   BOT_NOT_IN_CHANNEL,
@@ -70,4 +75,5 @@ export {
   REPLY_CANT_EXECUTE_DM,
   REPLY_NOT_ALLOWED,
   REPLY_NO_ARGS,
+  REPLY_ATTACH_YAML,
 };

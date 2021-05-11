@@ -3,7 +3,11 @@ import { IncomingMessage } from "http";
 import https from "https";
 import { UpdateQuery } from "mongoose";
 import { parse } from "yaml";
-import { ERROR_EXECUTION_ERROR } from "../../constants/messages";
+import {
+  ERROR_COULD_NOT_DL_FILE,
+  ERROR_DB_CONN,
+  REPLY_ATTACH_YAML,
+} from "../../constants/messages";
 import DBHelper from "../../db/DBHelper";
 import { IGuildSettings } from "../../db/DBModels";
 import { logger } from "../../global/globals";
@@ -29,6 +33,7 @@ export = <Command>{
     const attachment: MessageAttachment = message.attachments
       .values()
       .next().value;
+    if (!attachment) return message.reply(REPLY_ATTACH_YAML.toBold());
 
     const fileURL = attachment.attachment.toString();
     if (fileURL.endsWith(".yaml") || fileURL.endsWith(".yml")) {
@@ -71,15 +76,15 @@ export = <Command>{
               `${importedHornCount} horns imported. @${message.guild.name}<${message.guild.id}>`
             );
           } catch (error) {
-            message.reply(ERROR_EXECUTION_ERROR);
             logger.error(error);
+            message.reply(ERROR_DB_CONN.toBold());
           }
         });
       });
 
       req.on("error", (error) => {
         logger.error(error);
-        message.reply(ERROR_EXECUTION_ERROR);
+        message.reply(ERROR_COULD_NOT_DL_FILE.toBold());
       });
     }
   },
