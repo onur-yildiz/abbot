@@ -6,8 +6,6 @@ import DBHelper from "../../db/DBHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { logger } from "../../global/globals";
 
-const defaultAlias = "ww";
-
 export = <Command>{
   name: "theme",
   aliases: ["settheme", "mytheme"],
@@ -18,7 +16,13 @@ export = <Command>{
   cooldown: 5,
   async execute(message: Message, args: string[]) {
     let alias = args[1];
-    if (args[1] === "reset") alias = defaultAlias;
+    if (args[1] === "reset") {
+      return await DBHelper.saveGuildSettings(message.guild, {
+        $unset: {
+          [`themes.${message.member.id}`]: "",
+        },
+      });
+    }
 
     const botAliases = getDefaultAudios();
     try {
@@ -37,9 +41,8 @@ export = <Command>{
       else if (guildAliases.includes(alias))
         query = {
           $set: {
-            [`themes.${message.member.id}`]: guildSettings.audioAliases.get(
-              alias
-            ),
+            [`themes.${message.member.id}`]:
+              guildSettings.audioAliases.get(alias),
           },
         };
       else {
