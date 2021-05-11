@@ -17,11 +17,12 @@ export = <Command>{
   async execute(message: Message, args: string[]) {
     let alias = args[1];
     if (args[1] === "reset") {
-      return await DBHelper.saveGuildSettings(message.guild, {
+      await DBHelper.saveGuildSettings(message.guild, {
         $unset: {
           [`themes.${message.member.id}`]: "",
         },
       });
+      return message.react("✅");
     }
 
     const botAliases = getDefaultAudios();
