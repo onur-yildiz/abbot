@@ -8,8 +8,6 @@ import {
   resetState,
 } from "../util/guildActions";
 
-const defaultTheme = "./assets/audio/ww.mp3";
-
 export const voiceStateUpdateHandler = async (
   oldVoiceState: VoiceState,
   newVoiceState: VoiceState
