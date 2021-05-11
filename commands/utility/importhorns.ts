@@ -48,8 +48,17 @@ export = <Command>{
             $set: { audioAliases: new Map<string, string>() },
           };
           let importedHornCount = 0;
+          const regexUrl = new RegExp(
+            `(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
+          );
           horns.forEach((horn) => {
-            if (typeof horn[0] === "string" && horn[0].length <= 25 && typeof horn[1] === "string") {
+            regexUrl.lastIndex = 0;
+            if (
+              typeof horn[0] === "string" &&
+              horn[0].length <= 25 &&
+              typeof horn[1] === "string" &&
+              regexUrl.test(horn[1])
+            ) {
               updateQuery.$set.audioAliases.set(horn[0], horn[1]);
               importedHornCount++;
             }
