@@ -49,7 +49,7 @@ export = <Command>{
           };
           let importedHornCount = 0;
           horns.forEach((horn) => {
-            if (typeof horn[0] === "string" && typeof horn[1] === "string") {
+            if (typeof horn[0] === "string" && horn[0].length <= 25 && typeof horn[1] === "string") {
               updateQuery.$set.audioAliases.set(horn[0], horn[1]);
               importedHornCount++;
             }
