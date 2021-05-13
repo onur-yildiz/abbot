@@ -42,7 +42,11 @@ export const voiceStateUpdateHandler = async (
     // if someone is disconnected and abbot was in the same voice channel,
     // check if there is any human left in the voice channel,
     // if no human left, set 60 seconds timeout then disconnect from voice channel.
-    if (!newVoiceState.channelID) {
+    if (
+      newVoiceState.channel.guild.id != oldVoiceState.channel.guild.id ||
+      !newVoiceState.channel ||
+      newVoiceState.channelID === oldVoiceState.guild.afkChannelID
+    ) {
       if (oldVoiceState.channel.members.has(oldVoiceState.guild.me.id)) {
         const hasUsersInChannel = oldVoiceState.channel.members.some(
           (member) => member.user.bot === false
@@ -58,11 +62,7 @@ export const voiceStateUpdateHandler = async (
       return;
     }
 
-    if (
-      newVoiceState.channelID == oldVoiceState.channelID ||
-      newVoiceState.channelID == oldVoiceState.guild.afkChannelID
-    )
-      return;
+    if (newVoiceState.channelID == oldVoiceState.channelID) return;
 
     guildData.quitTimer && clearTimeout(guildData.quitTimer);
     const theme = await getTheme(newVoiceState);
