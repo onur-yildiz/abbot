@@ -73,6 +73,9 @@ describe("voiceStateUpdateHandler", () => {
       },
     },
     channel: {
+      guild: {
+        id: "guild-id",
+      },
       join: jest.fn().mockReturnValue(voiceConnection),
       permissionsFor: mockPermissionsFor,
     },
