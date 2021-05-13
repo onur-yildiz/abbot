@@ -43,9 +43,9 @@ export const voiceStateUpdateHandler = async (
     // check if there is any human left in the voice channel,
     // if no human left, set 60 seconds timeout then disconnect from voice channel.
     if (
-      newVoiceState.channel.guild.id != oldVoiceState.channel.guild.id ||
-      !newVoiceState.channel ||
-      newVoiceState.channelID === oldVoiceState.guild.afkChannelID
+      oldVoiceState.channel?.members &&
+      (newVoiceState.channel?.guild?.id != oldVoiceState.channel?.guild?.id ||
+        newVoiceState.channelID === oldVoiceState.guild.afkChannelID)
     ) {
       if (oldVoiceState.channel.members.has(oldVoiceState.guild.me.id)) {
         const hasUsersInChannel = oldVoiceState.channel.members.some(
