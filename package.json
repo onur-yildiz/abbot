@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "tsc-watch --onSuccess \"node dist/app.js\"",
-    "test": "jest --runInBand --testLocationInResults",
+    "test": "jest --runInBand --testLocationInResults --detectOpenHandles",
     "heroku-prebuild": "npm install -f",
     "heroku-postbuild": "tsc"
   },
