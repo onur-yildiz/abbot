@@ -1,7 +1,6 @@
 import { Command, Message, MessageAttachment } from "discord.js";
 import { IncomingMessage } from "http";
 import https from "https";
-import { UpdateQuery } from "mongoose";
 import { parse } from "yaml";
 import {
   ERROR_COULD_NOT_DL_FILE,
@@ -9,13 +8,12 @@ import {
   REPLY_ATTACH_YAML,
 } from "../../constants/messages";
 import DBHelper from "../../db/DBHelper";
-import { IGuildSettings } from "../../db/DBModels";
 import { logger } from "../../global/globals";
 
 export = <Command>{
   name: "importhorn",
   aliases: ["imph"],
-  description: `Import horns from attached yaml file. (Aliases with the same name will be overwritten!)
+  description: `Import horns from attached yaml file.\nAliases with the same name will be overwritten. \nDuplicate URLs won't rename alias.
 
   ---Example YAML format---
   example: https://www.example.com/media/sounds/media.mp3
@@ -48,13 +46,12 @@ export = <Command>{
         res.on("end", async () => {
           const parsedData: object = parse(data);
           const horns: [string, string][] = Object.entries(parsedData);
-          const updateQuery: UpdateQuery<IGuildSettings> = {
-            $set: { audioAliases: new Map<string, string>() },
-          };
+
           let importedHornCount = 0;
           const regexUrl = new RegExp(
             `(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
           );
+          const updateObj: object = {};
           horns.forEach((horn) => {
             regexUrl.lastIndex = 0;
             if (
@@ -63,13 +60,18 @@ export = <Command>{
               typeof horn[1] === "string" &&
               regexUrl.test(horn[1])
             ) {
-              updateQuery.$set.audioAliases.set(horn[0], horn[1]);
+              Object.defineProperty(updateObj, `audioAliases.${horn[0]}`, {
+                value: horn[1],
+                enumerable: true,
+              });
               importedHornCount++;
             }
           });
 
           try {
-            await DBHelper.saveGuildSettings(message.guild, updateQuery);
+            await DBHelper.saveGuildSettings(message.guild, {
+              $set: updateObj,
+            });
             message.react("✅");
             logger.info(
               `${importedHornCount} horns imported. @${message.guild.name}<${message.guild.id}>`
