@@ -11,7 +11,7 @@ jest.mock("discord.js");
 const { Permissions } = jest.requireActual("discord.js");
 
 const mockSetVolume = jest.fn();
-const voiceConnection: VoiceConnection = ({
+const voiceConnection: VoiceConnection = {
   play: jest.fn().mockReturnValue({
     setVolumeLogarithmic: null,
     on: jest.fn().mockReturnValue({
@@ -22,7 +22,7 @@ const voiceConnection: VoiceConnection = ({
       }),
     }),
   }),
-} as unknown) as VoiceConnection;
+} as unknown as VoiceConnection;
 
 Object.defineProperty(ga, "fetchGuildData", {
   value: jest.fn().mockReturnValue(<GuildData>{
@@ -55,7 +55,7 @@ describe("voiceStateUpdateHandler", () => {
   const perms = new Permissions().add("CONNECT").add("SPEAK");
   const mockPermissionsFor = jest.fn((): Readonly<Permissions> => perms);
   // .play, .on, .on
-  const oldVoiceState: VoiceState = ({
+  const oldVoiceState: VoiceState = {
     guild: {
       me: {
         id: "user-id",
@@ -77,11 +77,11 @@ describe("voiceStateUpdateHandler", () => {
       permissionsFor: mockPermissionsFor,
     },
     channelID: "0",
-  } as unknown) as VoiceState;
-  const newVoiceState: VoiceState = ({
+  } as unknown as VoiceState;
+  const newVoiceState: VoiceState = {
     ...oldVoiceState,
     channelID: "1",
-  } as unknown) as VoiceState;
+  } as unknown as VoiceState;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -94,7 +94,7 @@ describe("voiceStateUpdateHandler", () => {
     expect(mockSetVolume).toBeCalledTimes(1);
   });
 
-  it("run successfully with default theme if guildSettings.themes empty", async () => {
+  it("do not connect or play theme if guildSettings.themes empty", async () => {
     Object.defineProperty(DBHelper, "getGuildSettings", {
       value: jest.fn().mockReturnValue({
         themes: new Map(),
@@ -102,20 +102,20 @@ describe("voiceStateUpdateHandler", () => {
     });
 
     await voiceStateUpdateHandler(oldVoiceState, newVoiceState);
-    expect(voiceConnection.play).toBeCalledTimes(1);
-    expect(voiceConnection.play).toBeCalledWith("./assets/audio/ww.mp3");
-    expect(mockSetVolume).toBeCalledTimes(1);
+    expect(ga.connectToVoiceChannel).toBeCalledTimes(0);
+    expect(voiceConnection.play).toBeCalledTimes(0);
+    expect(mockSetVolume).toBeCalledTimes(0);
   });
 
-  it("run successfully with default theme if guildSettings falsy", async () => {
+  it("do not connect or play theme if guildSettings falsy", async () => {
     Object.defineProperty(DBHelper, "getGuildSettings", {
       value: jest.fn(),
     });
 
     await voiceStateUpdateHandler(oldVoiceState, newVoiceState);
-    expect(voiceConnection.play).toBeCalledTimes(1);
-    expect(voiceConnection.play).toBeCalledWith("./assets/audio/ww.mp3");
-    expect(mockSetVolume).toBeCalledTimes(1);
+    expect(ga.connectToVoiceChannel).toBeCalledTimes(0);
+    expect(voiceConnection.play).toBeCalledTimes(0);
+    expect(mockSetVolume).toBeCalledTimes(0);
   });
 
   describe("user bot check", () => {
@@ -129,10 +129,10 @@ describe("voiceStateUpdateHandler", () => {
     });
 
     it("call resetState", async () => {
-      const _newVoiceState: VoiceState = ({
+      const _newVoiceState: VoiceState = {
         ...newVoiceState,
         channel: undefined,
-      } as unknown) as VoiceState;
+      } as unknown as VoiceState;
 
       expect(
         await voiceStateUpdateHandler(oldVoiceState, _newVoiceState)
@@ -153,10 +153,10 @@ describe("voiceStateUpdateHandler", () => {
 
   describe("channelID check", () => {
     it("return if channelID same", async () => {
-      const _newVoiceState: VoiceState = ({
+      const _newVoiceState: VoiceState = {
         ...newVoiceState,
         channelID: oldVoiceState.channelID,
-      } as unknown) as VoiceState;
+      } as unknown as VoiceState;
 
       expect(
         await voiceStateUpdateHandler(oldVoiceState, _newVoiceState)
@@ -166,10 +166,10 @@ describe("voiceStateUpdateHandler", () => {
     });
 
     it("return if channelID falsy", async () => {
-      const _newVoiceState: VoiceState = ({
+      const _newVoiceState: VoiceState = {
         ...newVoiceState,
         channelID: undefined,
-      } as unknown) as VoiceState;
+      } as unknown as VoiceState;
 
       expect(
         await voiceStateUpdateHandler(oldVoiceState, _newVoiceState)
