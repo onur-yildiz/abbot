@@ -57,6 +57,7 @@ export = <Command>{
             if (
               typeof horn[0] === "string" &&
               horn[0].length <= 25 &&
+              horn[0].toLowerCase() != "reset" &&
               typeof horn[1] === "string" &&
               regexUrl.test(horn[1])
             ) {
