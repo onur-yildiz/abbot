@@ -19,6 +19,7 @@ export = <Command>{
   args: Args.required,
   isGuildOnly: true,
   cooldown: 5,
+  argList: ["toggle", "block", "unblock", "reset"],
   async execute(message: Message, args: string[]) {
     const commandWords = args[1].split(" ");
 

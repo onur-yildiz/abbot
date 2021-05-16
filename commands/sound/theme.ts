@@ -14,6 +14,7 @@ export = <Command>{
   args: Args.required,
   isGuildOnly: true,
   cooldown: 5,
+  argList: ["reset"],
   async execute(message: Message, args: string[]) {
     let alias = args[1];
     if (args[1] === "reset") {
