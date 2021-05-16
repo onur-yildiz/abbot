@@ -113,6 +113,8 @@ export = <Command>{
       }
 
       argList = argList.map((arg) => arg.toInlineCodeBg());
+
+      //? Only horn arguments can be too long currently, currently this is should be printed only horn command
       let argsStr = argList.join(" ");
       if (argsStr.length > 1024)
         data.push({
