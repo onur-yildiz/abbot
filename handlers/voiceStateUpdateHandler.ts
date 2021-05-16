@@ -86,10 +86,6 @@ const getTheme = async (voiceState: VoiceState): Promise<string> => {
   });
 
   if (!guildSettings?.themes.has(userId)) {
-    // await DBHelper.saveGuildSettings(voiceState.guild, {
-    //   $set: { [`themes.${userId}`]: defaultTheme },
-    // });
-    // return defaultTheme;
     return "";
   } else return guildSettings.themes.get(userId);
 };

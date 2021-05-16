@@ -15,10 +15,11 @@ export const guildMemberSpeakingHandler = async (
       guildData.isArbitrarySoundsEnabled &&
       !guildData.arbitrarySoundsTimer &&
       guildData.connection
-    )
+    ) {
       setTimer(guildMember, guildData);
+    }
 
-    const annoyTheme = guildData.annoyanceList.get(guildMember.id);
+    const annoyTheme = guildData.annoyanceList?.get(guildMember.id);
     if (annoyTheme?.length > 0 && speaking.bitfield) {
       guildData.connection?.play(annoyTheme);
     }
@@ -35,11 +36,11 @@ const setTimer = (guildMember: GuildMember, guildData: GuildData) => {
     const guildSettings = await DBHelper.getGuildSettings(guildMember.guild, {
       audioAliases: 1,
     });
-    const aliases = guildSettings.audioAliases;
 
-    const length = aliases.size;
-    const alias = [...aliases.keys()][Math.trunc(Math.random() * (length - 1))];
-    const audioPath = aliases.get(alias);
+    const alias =
+      guildSettings.audioAliases[
+        Math.trunc(Math.random() * (guildSettings.audioAliases.length - 1))
+      ];
 
     if (guildData.isQueueActive) {
       guildData.isArbitrarySoundsEnabled = false;
@@ -47,7 +48,7 @@ const setTimer = (guildMember: GuildMember, guildData: GuildData) => {
       return;
     }
 
-    guildData.connection?.play(audioPath);
+    guildData.connection?.play(alias.url);
     setTimer(guildMember, guildData);
   }, Math.trunc(Math.random() * (max - min) + min));
 };

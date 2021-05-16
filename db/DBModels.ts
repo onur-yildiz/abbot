@@ -6,7 +6,7 @@ const dbTypes = mongoose.SchemaTypes;
 export interface IGuildSettings extends mongoose.Document {
   guildId: string;
   greetingEnabled: boolean;
-  audioAliases: Map<string, string>;
+  audioAliases: Array<{ name: string; url: string }>;
   themes: Map<string, string>;
   prefix: string;
 }
@@ -22,9 +22,9 @@ const guildSettingsSchema = new mongoose.Schema({
     default: true,
   },
   audioAliases: {
-    type: dbTypes.Map,
+    type: dbTypes.Array,
     require: true,
-    default: new Map<string, string>(),
+    default: new Array<{ name: string; url: string }>(),
   },
   themes: {
     type: dbTypes.Map,

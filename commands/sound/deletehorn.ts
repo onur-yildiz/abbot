@@ -16,15 +16,20 @@ export = <Command>{
 
     try {
       const guildSettings = await DBHelper.getGuildSettings(message.guild, {
-        [`audioAliases.${alias}`]: 1,
+        audioAliases: { $elemMatch: { name: alias } },
       });
 
-      const aliasExists = checkAliasExists(guildSettings.audioAliases, alias);
+      const aliasExists = guildSettings.audioAliases.some(
+        (audioAlias) => audioAlias.name == alias
+      );
       if (!aliasExists) return message.reply(`this alias does not exist.`);
 
-      await DBHelper.saveGuildSettings(message.guild, {
-        $unset: { [`audioAliases.${alias}`]: "" },
-      });
+      await DBHelper.saveGuildSettings(
+        { guildId: message.guild.id },
+        {
+          $pull: { audioAliases: { name: alias } },
+        }
+      );
       message.channel.send(
         `${alias.toInlineCodeBg()} is deleted. :wastebasket:`
       );

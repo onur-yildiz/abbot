@@ -18,8 +18,13 @@ export = <Command>{
         audioAliases: 1,
       });
 
+      const audioAliasMap = new Map<string, string>();
+      for (const audioAlias of guildSettings.audioAliases) {
+        audioAliasMap.set(audioAlias.name, audioAlias.url);
+      }
+
       const filePath = `horns_${message.guild.id}.yaml`;
-      fs.writeFileSync(filePath, stringify(guildSettings.audioAliases));
+      fs.writeFileSync(filePath, stringify(audioAliasMap));
       await message.channel.send({
         files: [filePath],
       });

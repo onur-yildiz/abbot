@@ -99,11 +99,17 @@ export = <Command>{
     });
 
     if (command.argList) {
-      let argList = command.argList;
+      let argList: string[] = command.argList;
 
       if (command.name === "horn" && message.channel.type !== "dm") {
-        const guildSettings = await DBHelper.getGuildSettings(message.guild);
-        argList = argList.concat([...guildSettings.audioAliases.keys()].sort());
+        const guildSettings = await DBHelper.getGuildSettings(message.guild, {
+          audioAliases: 1,
+        });
+
+        for (const audioAlias of guildSettings.audioAliases) {
+          argList.push(audioAlias.name);
+        }
+        argList.sort();
       }
 
       argList = argList.map((arg) => arg.toInlineCodeBg());

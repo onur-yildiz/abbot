@@ -78,17 +78,22 @@ export = <Command>{
 
       const botAliases = getDefaultAudios();
       const guildSettings = await DBHelper.getGuildSettings(message.guild, {
-        audioAliases: 1,
+        audioAliases: { $elemMatch: { name: alias } },
       });
-      const guildAliases = Array.from(guildSettings.audioAliases.keys());
 
       if (botAliases.includes(alias)) {
         guildData.annoyanceList.set(userId, `./assets/audio/${alias}.mp3`);
       }
-      if (guildAliases.includes(alias)) {
+      if (
+        guildSettings.audioAliases.some(
+          (audioAlias) => audioAlias.name == alias
+        )
+      ) {
         guildData.annoyanceList.set(
           userId,
-          guildSettings.audioAliases.get(alias)
+          guildSettings.audioAliases.find(
+            (audioAlias) => audioAlias.name == alias
+          ).url
         );
         message.react("✅");
       } else {

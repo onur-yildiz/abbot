@@ -32,11 +32,11 @@ const createGuildSettings = async (guild: Guild) => {
 };
 
 const saveGuildSettings = async (
-  guild: Guild,
+  filterQuery: mongoose.FilterQuery<IGuildSettings>,
   updateQuery: mongoose.UpdateQuery<IGuildSettings>
 ) => {
   try {
-    await GuildSettings.findOneAndUpdate({ guildId: guild.id }, updateQuery, {
+    await GuildSettings.findOneAndUpdate(filterQuery, updateQuery, {
       upsert: true,
     });
   } catch (error) {

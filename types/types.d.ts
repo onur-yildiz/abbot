@@ -49,6 +49,11 @@ declare type Song = {
   duration: string;
 };
 
+declare type AudioAlias = {
+  name: string;
+  url: string;
+};
+
 declare const enum Args {
   none,
   flexible,

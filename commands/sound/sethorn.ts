@@ -33,47 +33,57 @@ export = <Command>{
 
     if (regexUrl.test(url) && isUrlReachable(url)) {
       try {
-        const guildSettings = await DBHelper.getGuildSettings(message.guild, {
-          audioAliases: 1,
-        });
-
-        const urlAlreadyExists = checkValueExists(
-          guildSettings.audioAliases,
-          url
-        );
-
-        if (urlAlreadyExists) {
-          const oldAlias = getOldKey(guildSettings.audioAliases, url);
-          if (oldAlias === alias)
-            return message.channel.send(`You entered an existing alias :zzz:`);
-          await DBHelper.saveGuildSettings(message.guild, {
-            $rename: {
-              [`audioAliases.${oldAlias}`]: `audioAliases.${alias}`,
+        // TODO pull both in one expression
+        const audioAliasByName = (
+          await DBHelper.getGuildSettings(message.guild, {
+            audioAliases: {
+              $elemMatch: { name: alias },
             },
-          });
+          })
+        ).audioAliases.find((audioAlias) => audioAlias.name == alias);
+
+        const audioAliasByUrl = (
+          await DBHelper.getGuildSettings(message.guild, {
+            audioAliases: {
+              $elemMatch: { url: url },
+            },
+          })
+        ).audioAliases.find((audioAlias) => audioAlias.name == alias);
+
+        if (audioAliasByUrl) {
+          if (audioAliasByUrl.name === alias)
+            return message.channel.send(`You entered an existing alias :zzz:`);
+          await DBHelper.saveGuildSettings(
+            {
+              guildId: message.guild.id,
+              "audioAliases.name": audioAliasByUrl.name,
+            },
+            {
+              $set: {
+                "audioAliases.$.name": alias,
+              },
+            }
+          );
           message.channel.send(
-            `Horn alias ${oldAlias.toInlineCodeBg()} is changed to ${alias.toInlineCodeBg()}:mega::mega:`
+            `Horn alias ${audioAliasByUrl.name.toInlineCodeBg()} is changed to ${alias.toInlineCodeBg()}:mega::mega:`
           );
           logger.info(
-            `Horn alias changed ::: ${oldAlias} -->> ${alias} @${message.guild.name}<${message.guild.id}>`
+            `Horn alias changed ::: ${audioAliasByUrl.name} -->> ${alias} @${message.guild.name}<${message.guild.id}>`
           );
         } else {
           await DBHelper.saveGuildSettings(message.guild, {
-            $set: { [`audioAliases.${alias}`]: url },
+            $push: { audioAliases: { name: alias, url: url } },
           });
-          const aliasAlreadyExists = guildSettings.audioAliases.has(alias);
           message.channel.send(
-            aliasAlreadyExists
+            audioAliasByName
               ? `${alias.toInlineCodeBg()}'s URL has changed. :mega::mega:` +
-                  `\nRemoved URL: ${guildSettings.audioAliases.get(alias)}`
+                  `\nRemoved URL: ${audioAliasByName.url}`
               : `New horn alias ${alias.toInlineCodeBg()} :mega::mega:`
           );
 
           logger.info(
-            (aliasAlreadyExists
-              ? `Horn URL changed ::: ${alias}: ${guildSettings.audioAliases.get(
-                  alias
-                )} <<-- ${url}`
+            (audioAliasByName
+              ? `Horn URL changed ::: ${alias}: ${audioAliasByName.url} <<-- ${url}`
               : `New horn ::: ${alias}: ${url}`) +
               ` @${message.guild.name}<${message.guild.id}>`
           );
@@ -83,10 +93,6 @@ export = <Command>{
       }
     }
   },
-};
-
-const checkValueExists = (map: Map<string, string>, val: string): boolean => {
-  return Array.from(map.values()).includes(val);
 };
 
 const getOldKey = (map: Map<string, string>, keyValue: string): string => {

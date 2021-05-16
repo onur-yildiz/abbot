@@ -27,11 +27,6 @@ export = <Command>{
 
     const botAliases = getDefaultAudios();
     try {
-      const guildSettings = await DBHelper.getGuildSettings(message.guild, {
-        audioAliases: 1,
-      });
-      const guildAliases = Array.from(guildSettings.audioAliases.keys());
-
       let query: UpdateQuery<IGuildSettings>;
       if (botAliases.includes(alias))
         query = {
@@ -39,20 +34,31 @@ export = <Command>{
             [`themes.${message.member.id}`]: `./assets/audio/${alias}.mp3`,
           },
         };
-      else if (guildAliases.includes(alias))
-        query = {
-          $set: {
-            [`themes.${message.member.id}`]:
-              guildSettings.audioAliases.get(alias),
-          },
-        };
       else {
-        return message.reply(
-          `there is no aliases named ${alias.toInlineCodeBg()}!`
-        );
+        const guildSettings = await DBHelper.getGuildSettings(message.guild, {
+          audioAliases: { $elemMatch: { name: alias } },
+        });
+
+        if (
+          guildSettings.audioAliases.some(
+            (audioAlias) => audioAlias.name == alias
+          )
+        ) {
+          query = {
+            $set: {
+              [`themes.${message.member.id}`]: guildSettings.audioAliases.find(
+                (audioAlias) => audioAlias.name == alias
+              ).url,
+            },
+          };
+        } else {
+          return message.reply(
+            `there is no aliases named ${alias.toInlineCodeBg()}!`
+          );
+        }
       }
 
-      await DBHelper.saveGuildSettings(message.guild, query);
+      await DBHelper.saveGuildSettings({ guildId: message.guild.id }, query);
       message.react("✅");
     } catch (error) {
       message.reply(ERROR_SAVE_THEME);

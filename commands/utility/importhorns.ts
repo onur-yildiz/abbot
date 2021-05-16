@@ -51,7 +51,7 @@ export = <Command>{
           const regexUrl = new RegExp(
             `(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
           );
-          const updateObj: object = {};
+          const updateArray: AudioAlias[] = [];
           horns.forEach((horn) => {
             regexUrl.lastIndex = 0;
             if (
@@ -61,18 +61,19 @@ export = <Command>{
               typeof horn[1] === "string" &&
               regexUrl.test(horn[1])
             ) {
-              Object.defineProperty(updateObj, `audioAliases.${horn[0]}`, {
-                value: horn[1],
-                enumerable: true,
-              });
+              updateArray.push(<AudioAlias>{ name: horn[0], url: horn[1] });
               importedHornCount++;
             }
           });
-
           try {
-            await DBHelper.saveGuildSettings(message.guild, {
-              $set: updateObj,
-            });
+            await DBHelper.saveGuildSettings(
+              { guildId: message.guild.id },
+              {
+                $push: {
+                  audioAliases: { $each: [...updateArray] },
+                },
+              }
+            );
             message.react("✅");
             logger.info(
               `${importedHornCount} horns imported. @${message.guild.name}<${message.guild.id}>`

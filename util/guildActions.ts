@@ -48,11 +48,14 @@ export const fetchGuildData = async (
   }
 
   try {
-    let guildSettings = await DBHelper.getGuildSettings(guild, { themes: 0 });
+    let guildSettings = await DBHelper.getGuildSettings(guild, {
+      themes: 0,
+      audioAliases: 0,
+    });
     if (!guildSettings)
       guildSettings = await DBHelper.createGuildSettings(guild);
 
-    const guildData = <GuildData>{
+    const guildData: GuildData = {
       textChannel: newTextChannel ? newTextChannel : null,
       voiceChannel: newVoiceChannel ? newVoiceChannel : null,
       connection: null,
@@ -60,7 +63,6 @@ export const fetchGuildData = async (
       volume: 1,
       isQueueActive: false,
       greetingEnabled: guildSettings.greetingEnabled,
-      audioAliases: guildSettings.audioAliases,
       prefix: guildSettings.prefix,
       lastTrackStart: null,
       isArbitrarySoundsEnabled: false,

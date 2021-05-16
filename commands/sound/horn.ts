@@ -32,44 +32,52 @@ export = <Command>{
       if (guildData.isQueueActive)
         return message.channel.send(HORN_PLAYING_MUSIC.toBold());
 
-      let alias: string;
-      let audioPath: string;
+      let audioAlias: AudioAlias = { name: "", url: "" };
+      audioAlias.name = args[1];
       if (!args[1]) {
         const guildSettings = await DBHelper.getGuildSettings(message.guild, {
           audioAliases: 1,
         });
-        alias = [...guildSettings.audioAliases.keys()][
-          Math.trunc(Math.random() * (guildSettings.audioAliases.size - 1))
-        ];
-        audioPath = guildSettings.audioAliases.get(alias);
+
+        audioAlias =
+          guildSettings.audioAliases[
+            Math.trunc(Math.random() * (guildSettings.audioAliases.length - 1))
+          ];
       } else {
-        alias = args[1];
         const audios = getDefaultAudios();
-        if (audios.includes(`${alias}`))
-          audioPath = `./assets/audio/${alias}.mp3`;
+        if (audios.includes(`${audioAlias.name}`))
+          audioAlias.url = `./assets/audio/${audioAlias.name}.mp3`;
         else {
           const guildSettings = await DBHelper.getGuildSettings(message.guild, {
-            [`audioAliases.${alias}`]: 1,
+            audioAliases: { $elemMatch: { name: audioAlias.name } },
           });
-          if (guildSettings.audioAliases.has(alias)) {
-            audioPath = guildSettings.audioAliases.get(alias);
-            if (!(await isUrlReachable(audioPath))) return;
+          if (
+            guildSettings.audioAliases.some(
+              (element) => element.name == audioAlias.name
+            )
+          ) {
+            audioAlias = guildSettings.audioAliases.find(
+              (element) => element.name == audioAlias.name
+            );
+            if (!(await isUrlReachable(audioAlias.url))) return;
           } else {
             return message.reply(
-              "No audio named " + `${alias}`.toInlineCodeBg() + " was found."
+              "No audio named " +
+                `${audioAlias.name}`.toInlineCodeBg() +
+                " was found."
             );
           }
         }
       }
 
       logger.info(
-        `Horn ::: ${alias}: ${audioPath} @${message.guild.name}<${message.guild.id}>`
+        `Horn ::: ${audioAlias.name}: ${audioAlias.url} @${message.guild.name}<${message.guild.id}>`
       );
       guildData.connection?.dispatcher?.end();
       await connectToVoiceChannel(guildData);
       const r = await message.react("📣");
       const dispatcher = guildData.connection
-        .play(audioPath)
+        .play(audioAlias.url)
         .on("finish", () => {
           r.remove();
         })
