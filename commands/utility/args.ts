@@ -17,18 +17,19 @@ export = <Command>{
 
     try {
       const data: string[] = [];
-      if (
-        commands.get("horn").aliases.includes(commandContent) ||
-        commandContent === "horn"
-      ) {
+      const command =
+        commands.get(commandContent) ||
+        commands.find((cmd) => cmd.aliases.includes(commandContent));
+
+      if (command.name === "horn") {
         const guildSettings = await DBHelper.getGuildSettings(message.guild, {
           audioAliases: 1,
         });
         for (const audioAlias of guildSettings.audioAliases) {
           data.push(audioAlias.name);
         }
-        data.push(...getDefaultAudios());
       }
+      command.argList && data.push(...command.argList);
 
       if (data.length === 0)
         return message.channel.send(NO_SAVED_ARGS.toBold());
