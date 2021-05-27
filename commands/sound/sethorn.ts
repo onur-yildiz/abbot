@@ -71,9 +71,12 @@ export = <Command>{
             `Horn alias changed ::: ${audioAliasByUrl.name} -->> ${alias} @${message.guild.name}<${message.guild.id}>`
           );
         } else {
-          await DBHelper.saveGuildSettings(message.guild, {
-            $push: { audioAliases: { name: alias, url: url } },
-          });
+          await DBHelper.saveGuildSettings(
+            { guildId: message.guild.id },
+            {
+              $push: { audioAliases: { name: alias, url: url } },
+            }
+          );
           message.channel.send(
             audioAliasByName
               ? `${alias.toInlineCodeBg()}'s URL has changed. :mega::mega:` +
