@@ -74,15 +74,16 @@ export = <Command>{
         `Horn ::: ${audioAlias.name}: ${audioAlias.url} @${message.guild.name}<${message.guild.id}>`
       );
       guildData.connection?.dispatcher?.end();
-      await connectToVoiceChannel(guildData);
+      if (guildData.connection?.channel !== message.member.voice?.channel)
+        await connectToVoiceChannel(guildData);
       const r = await message.react("📣");
       const dispatcher = guildData.connection
-        .play(audioAlias.url)
+        ?.play(audioAlias.url)
         .on("finish", () => {
           r.remove();
         })
         .on("error", (error) => logger.error(error));
-      dispatcher.setVolumeLogarithmic(guildData.volume);
+      dispatcher?.setVolumeLogarithmic(guildData.volume);
     } catch (error) {
       logger.error(error);
       message.reply(ERROR_EXECUTION_ERROR);
