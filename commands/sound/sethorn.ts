@@ -1,6 +1,6 @@
 import { Command, Message } from "discord.js";
 import DBHelper from "../../db/DBHelper";
-import { isUrlReachable } from "../../util/isUrlReachable";
+import { isAudioOk } from "../../util/isAudioOk";
 import { SETHORN_NOT_ALLOWED } from "../../constants/messages";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { logger } from "../../global/globals";
@@ -28,72 +28,101 @@ export = <Command>{
       return message.channel.send(SETHORN_NOT_ALLOWED.toBold());
 
     const regexUrl = new RegExp(
-      `(https:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
+      `(https:\\/\\/.)(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*).mp3`
     );
 
-    if (regexUrl.test(url) && isUrlReachable(url)) {
-      try {
-        // TODO pull both in one expression
-        const audioAliasByName = (
-          await DBHelper.getGuildSettings(message.guild, {
-            audioAliases: {
-              $elemMatch: { name: alias },
-            },
-          })
-        ).audioAliases.find((audioAlias) => audioAlias.name == alias);
-
-        const audioAliasByUrl = (
-          await DBHelper.getGuildSettings(message.guild, {
-            audioAliases: {
-              $elemMatch: { url: url },
-            },
-          })
-        ).audioAliases.find((audioAlias) => audioAlias.name == alias);
-
-        if (audioAliasByUrl) {
-          if (audioAliasByUrl.name === alias)
-            return message.channel.send(`You entered an existing alias :zzz:`);
-          await DBHelper.saveGuildSettings(
-            {
-              guildId: message.guild.id,
-              "audioAliases.name": audioAliasByUrl.name,
-            },
-            {
-              $set: {
-                "audioAliases.$.name": alias,
+    if (regexUrl.test(url)) {
+      if (await isAudioOk(url)) {
+        try {
+          // TODO pull both in one expression
+          const audioAliasFoundByName = (
+            await DBHelper.getGuildSettings(message.guild, {
+              audioAliases: {
+                $elemMatch: { name: alias },
               },
-            }
-          );
-          message.channel.send(
-            `Horn alias ${audioAliasByUrl.name.toInlineCodeBg()} is changed to ${alias.toInlineCodeBg()}:mega::mega:`
-          );
-          logger.info(
-            `Horn alias changed ::: ${audioAliasByUrl.name} -->> ${alias} @${message.guild.name}<${message.guild.id}>`
-          );
-        } else {
-          await DBHelper.saveGuildSettings(
-            { guildId: message.guild.id },
-            {
-              $push: { audioAliases: { name: alias, url: url } },
-            }
-          );
-          message.channel.send(
-            audioAliasByName
-              ? `${alias.toInlineCodeBg()}'s URL has changed. :mega::mega:` +
-                  `\nRemoved URL: ${audioAliasByName.url}`
-              : `New horn alias ${alias.toInlineCodeBg()} :mega::mega:`
-          );
+            })
+          ).audioAliases.find((audioAlias) => audioAlias.name == alias);
 
-          logger.info(
-            (audioAliasByName
-              ? `Horn URL changed ::: ${alias}: ${audioAliasByName.url} <<-- ${url}`
-              : `New horn ::: ${alias}: ${url}`) +
-              ` @${message.guild.name}<${message.guild.id}>`
-          );
+          const audioAliasFoundByUrl = (
+            await DBHelper.getGuildSettings(message.guild, {
+              audioAliases: {
+                $elemMatch: { url: url },
+              },
+            })
+          ).audioAliases.find((audioAlias) => audioAlias.name == alias);
+
+          if (audioAliasFoundByUrl) {
+            if (audioAliasFoundByUrl.name === alias)
+              return message.channel.send(
+                `You entered an existing alias :zzz:`
+              );
+            await DBHelper.saveGuildSettings(
+              {
+                guildId: message.guild.id,
+                "audioAliases.name": audioAliasFoundByUrl.name,
+              },
+              {
+                $set: {
+                  "audioAliases.$.name": alias,
+                },
+              }
+            );
+            message.channel.send(
+              `Horn alias ${audioAliasFoundByUrl.name.toInlineCodeBg()} is changed to ${alias.toInlineCodeBg()}:mega::mega:`
+            );
+            logger.info(
+              `Horn alias changed ::: ${audioAliasFoundByUrl.name} -->> ${alias} @${message.guild.name}<${message.guild.id}>`
+            );
+          } else if (audioAliasFoundByName) {
+            await DBHelper.saveGuildSettings(
+              {
+                guildId: message.guild.id,
+                "audioAliases.url": audioAliasFoundByName.url,
+              },
+              {
+                $set: {
+                  "audioAliases.$.url": url,
+                },
+              }
+            );
+            message.channel.send(
+              `${alias.toInlineCodeBg()}'s URL has changed. :mega::mega:\nRemoved URL: ${
+                audioAliasFoundByName.url
+              }`
+            );
+
+            logger.info(
+              `Horn URL changed ::: ${alias}: ${audioAliasFoundByName.url} <<-- ${url} @${message.guild.name}<${message.guild.id}>`
+            );
+          } else {
+            await DBHelper.saveGuildSettings(
+              { guildId: message.guild.id },
+              {
+                $push: { audioAliases: { name: alias, url: url } },
+              }
+            );
+            message.channel.send(
+              `New horn alias ${alias.toInlineCodeBg()} :mega::mega:`
+            );
+
+            logger.info(
+              `New horn ::: ${alias}: ${url} @${message.guild.name}<${message.guild.id}>`
+            );
+          }
+        } catch (error) {
+          logger.error(error);
         }
-      } catch (error) {
-        logger.error(error);
+      } else {
+        message.channel.send(`Audio is inaccessible or more than 15 seconds.`);
+
+        logger.info(`Inaccessible or long audio for sethorn ::: ${url}:`);
       }
+    } else {
+      message.channel.send(
+        `URL or file type is not suitable. Unfortunately, only mp3 files are supported at the moment.\nExample URL: https://www.example.com/example.mp3`
+      );
+
+      logger.info(`Incompatible URL submitted for sethorn ::: ${url}:`);
     }
   },
 };

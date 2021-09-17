@@ -3,7 +3,7 @@ import {
   HORN_PLAYING_MUSIC,
   ERROR_EXECUTION_ERROR,
 } from "../../constants/messages";
-import { isUrlReachable } from "../../util/isUrlReachable";
+import { isAudioOk } from "../../util/isAudioOk";
 import DBHelper from "../../db/DBHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { checkUserInAChannel } from "../../util/checker";
@@ -59,7 +59,7 @@ export = <Command>{
             audioAlias = guildSettings.audioAliases.find(
               (element) => element.name == audioAlias.name
             );
-            if (!(await isUrlReachable(audioAlias.url))) return;
+            if (!(await isAudioOk(audioAlias.url))) return;
           } else {
             return message.reply(
               "No audio named " +
