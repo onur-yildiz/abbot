@@ -56,6 +56,7 @@ export = <Command>{
           .setDescription(
             song.desc.length > 100 ? song.desc.slice(0, 100) + "..." : song.desc
           )
+          .setURL(song.url)
           .addField("Channel", song.channel, true)
           .addField("Duration", song.duration, true)
           .addField("ETA", estimatedTime, true)
@@ -86,6 +87,7 @@ const play = async (message: Message, guildData: GuildData) => {
         ? currentSong.desc.slice(0, 100) + "..."
         : currentSong.desc
     )
+    .setURL(currentSong.url)
     .addField("Channel", currentSong.channel, true)
     .addField("Duration", currentSong.duration, true);
 
