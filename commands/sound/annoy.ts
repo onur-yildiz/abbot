@@ -9,7 +9,7 @@ export = <Command>{
   aliases: ["prank"],
   description: "Annoy someone whenever they speak.",
   usage:
-    "[@user] [horn alias]\nOR " +
+    "[@user] [alias]\nOR " +
     "[@user] reset\nOR " +
     "toggle\nOR " +
     "reset\nOR " +

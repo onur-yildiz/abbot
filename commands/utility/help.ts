@@ -140,7 +140,7 @@ export = <Command>{
 
     try {
       const responseMessage = await message.channel.send(embed);
-      awaitDone(responseMessage, message);
+      if (message.channel.type !== "dm") awaitDone(responseMessage, message);
     } catch (error) {
       logger.error(error);
     }

@@ -8,7 +8,7 @@ import { logger } from "../../global/globals";
 export = <Command>{
   name: "exporthorn",
   aliases: ["exph"],
-  description: "Export saved horns.",
+  description: "Export the saved horns.",
   usage: "",
   isGuildOnly: true,
   args: Args.none,

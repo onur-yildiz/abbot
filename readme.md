@@ -8,7 +8,7 @@
 | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | Music    | [disconnect](#disconnect), [join](#join), [pause](#pause), [play](#play), [resume](#resume)                                                   |
 | Queue    | [clear](#clear), [queue](#queue), [skip](#skip)                                                                                               |
-| Sound    | [deletehorn](#deletehorn), [horn](#horn), [sethorn](#sethorn), [togglegreeting](#togglegreeting)                                              |
+| Sound    | [deletehorn](#deletehorn), [horn](#horn), [sethorn](#sethorn), [togglethemes](#togglethemes)                                                  |
 | Utility  | [args](#args), [clearbotmsg](#clearbotmsg), [clearmessage](#clearmessage), [help](#help), [ping](#ping), [prefix](#prefix), [reload](#reload) |
 
 ### Music
@@ -89,6 +89,36 @@
 
 ---
 
+#### annoy
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `annoy`
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Annoy someone whenever they speak.
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Usage**: .annoy `@user` `alias`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OR `@user` reset
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OR toggle
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OR reset
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OR (un)block
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `toggle` to activate/deactivate, `(un)block to change annoy permit for yourself or 'reset' to delete your annoy sound
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 5 second(s)
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Arguments**: `toggle`, `block`, `unblock`, `reset`
+
+#### arbitrary
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `arb`
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Bot will play sounds from saved horns at arbitrary moments
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 5 second(s)
+
 #### deletehorn
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `dh`, `delhorn`
@@ -107,9 +137,9 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `prefix`horn `audioName`
 
-&nbsp;&nbsp;&nbsp;&nbsp; **Arguments**: `ww`
-
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 3 second(s)
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Arguments**: `ww` (pre-saved audio)
 
 #### sethorn
 
@@ -121,11 +151,25 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 5 second(s)
 
-#### togglegreeting
+#### theme
 
-&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `greeting`, `tg`, `togglegreet`, `greet`
+&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `settheme`, `mytheme`
 
-&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Clears the queue.
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Set your custom greeting theme from the saved horns.
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Usage**: .theme [horn alias]
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OR reset
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 5 second(s)
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Arguments**: `reset`
+
+#### togglethemes
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `togglegreeting`, `tt`, `toggletheme`
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Toggles the themes.
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 3 second(s)
 
@@ -143,6 +187,14 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 3 second(s)
 
+#### clearbotmsg
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `clbm`, `clrbotmsg`, `clbotmsg`
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Clear the bot messages. (**\*message cache is limited to**200\*\*\*)
+
+&nbsp;&nbsp;&nbsp;&nbsp; \*\*Cooldown\*\*: 8 second(s)
+
 #### clearmessage
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `clm`, `clrmsg`
@@ -153,13 +205,13 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 8 second(s)
 
-#### clearbotmsg
+#### exporthorns
 
-&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `clbm`, `clrbotmsg`, `clbotmsg`
+&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `exph`
 
-&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Clear the bot messages. (**\*message cache is limited to**200\*\*\*)
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Export the saved horns.
 
-&nbsp;&nbsp;&nbsp;&nbsp; \*\*Cooldown\*\*: 8 second(s)
+&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 3 second(s)
 
 #### help
 
@@ -170,6 +222,30 @@
 &nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `prefix`help `?commandName?`
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 1 second(s)
+
+#### importhorns
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `imph`
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Import horns from attached yaml file.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aliases with the same name will be overwritten.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Duplicate URLs won't rename alias.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`---Example YAML format---`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;example: https://www.example.com/media/sounds/media.mp3
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abc: https://www.example.com/some_sound.ogg
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;newsound: https://www.example.com/media.mp3
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;myhorn: https://www.example.com/media/sounds/horn.ogg
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`---END---`
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 5 second(s)
 
 #### ping
 

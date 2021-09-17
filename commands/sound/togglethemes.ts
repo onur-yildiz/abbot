@@ -4,9 +4,9 @@ import { logger } from "../../global/globals";
 import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
-  name: "togglegreeting",
-  aliases: ["greeting", "tg", "togglegreet", "greet"],
-  description: "Clears the queue.",
+  name: "togglethemes",
+  aliases: ["togglegreeting", "tt", "toggletheme"],
+  description: "Toggles the themes.",
   usage: "",
   args: Args.none,
   permissions: "ADMINISTRATOR",

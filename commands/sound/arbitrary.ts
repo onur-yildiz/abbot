@@ -4,7 +4,7 @@ import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "arbitrary",
-  aliases: ["randomwake"],
+  aliases: ["arb"],
   description: "Bot will play sounds from saved horns at arbitrary moments",
   usage: "",
   permissions: "MOVE_MEMBERS",
