@@ -93,7 +93,9 @@ const play = async (message: Message, guildData: GuildData) => {
   try {
     responseMessage = await message.channel.send(embed);
     const dispatcher = guildData.connection
-      .play(ytdl(currentSong.url, { filter: "audioonly" }))
+      .play(
+        ytdl(currentSong.url, { filter: "audioonly", highWaterMark: 1 << 25 })
+      )
       .on("start", () => {
         guildData.lastTrackStart = Date.now();
         logger.info(
@@ -122,7 +124,7 @@ const play = async (message: Message, guildData: GuildData) => {
         else play(message, guildData);
       })
       .on("error", (error) => logger.error(error));
-    dispatcher.setVolumeLogarithmic(guildData.volume);
+    dispatcher.setVolumeLogarithmic(0.15);
   } catch (error) {
     responseMessage.delete();
     logger.error(error);
