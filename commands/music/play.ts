@@ -43,11 +43,11 @@ export = <Command>{
       if (!song) return message.channel.send("Nothing found.");
 
       if (guildData.isQueueActive) {
-        guildData.songs.push(song);
         const estimatedTime = calculateEta(
           guildData.songs,
           guildData.lastTrackStart
         );
+        guildData.songs.push(song);
         const embed = new Discord.MessageEmbed()
           .setColor("#222222")
           .setAuthor("Added to the Queue")
