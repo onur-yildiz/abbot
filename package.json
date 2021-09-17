@@ -4,7 +4,7 @@
   "description": "A discord music/soundhorn bot with special snyder cut wonder woman themed greeting. :)",
   "main": "app.ts",
   "dependencies": {
-    "@discordjs/opus": "^0.5.0",
+    "@discordjs/opus": "^0.5.3",
     "discord.js": "^12.5.3",
     "dotenv": "^8.2.0",
     "ffmpeg": "^0.0.4",

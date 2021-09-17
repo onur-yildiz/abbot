@@ -2,10 +2,7 @@ import { Command, Message } from "discord.js";
 import { DISCONNECTED } from "../../constants/messages";
 import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
-import {
-  disconnectFromVoiceChannel,
-  fetchGuildData,
-} from "../../util/guildActions";
+import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "disconnect",
@@ -20,7 +17,7 @@ export = <Command>{
 
     try {
       const guildData = await fetchGuildData(message.guild);
-      disconnectFromVoiceChannel(guildData);
+      guildData.connection.disconnect();
       return message.channel.send(DISCONNECTED.toBold());
     } catch (error) {
       logger.error(error);
