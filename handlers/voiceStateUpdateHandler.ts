@@ -32,7 +32,6 @@ export const voiceStateUpdateHandler = async (
     }
 
     if (
-      guildData.isQueueActive ||
       !guildData.greetingEnabled ||
       (newVoiceState.channel &&
         !isPermitted(newVoiceState.channel, newVoiceState.guild))
@@ -62,7 +61,11 @@ export const voiceStateUpdateHandler = async (
       return;
     }
 
-    if (newVoiceState.channelID == oldVoiceState.channelID) return;
+    if (
+      newVoiceState.channelID == oldVoiceState.channelID ||
+      guildData.isQueueActive
+    )
+      return;
 
     guildData.quitTimer && clearTimeout(guildData.quitTimer);
     const theme = await getTheme(newVoiceState);
