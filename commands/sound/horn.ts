@@ -59,7 +59,12 @@ export = <Command>{
             audioAlias = guildSettings.audioAliases.find(
               (element) => element.name == audioAlias.name
             );
-            if (!(await isAudioOk(audioAlias.url))) return;
+            if (!(await isAudioOk(audioAlias.url))) {
+              logger.info(
+                `Saved audio not OK anymore ::: ${audioAlias.name}: ${audioAlias.url} @${message.guild.name}<${message.guild.id}>`
+              );
+              return;
+            }
           } else {
             return message.reply(
               "No audio named " +
