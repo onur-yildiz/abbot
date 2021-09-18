@@ -22,6 +22,7 @@ export const resetState = (guildData: GuildData) => {
     guildData.connection.dispatcher.destroy();
   guildData.songs = [];
   guildData.isQueueActive = false;
+  guildData.isLoopActive = false;
   guildData.lastTrackStart = null;
   guildData.quitTimer && clearTimeout(guildData.quitTimer);
   guildData.isArbitrarySoundsEnabled = false;
@@ -56,6 +57,7 @@ export const fetchGuildData = async (
       songs: [],
       volume: 1,
       isQueueActive: false,
+      isLoopActive: false,
       greetingEnabled: guildSettings.greetingEnabled,
       prefix: guildSettings.prefix,
       lastTrackStart: null,

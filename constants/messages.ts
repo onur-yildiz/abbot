@@ -37,6 +37,7 @@ const ALREADY_PAUSED = "Already paused :zzz:";
 const NOTHING_IS_PLAYING = "Nothing is playing :zzz:";
 const RESUMING = "Resuming :play_pause:";
 const ALREADY_PLAYING = "Already playing. :zzz:";
+const NOTHING_TO_PLAY = "There is nothing to play :zzz:";
 const SKIPPED = "Skipped :track_next:";
 const PONG = "Pong :ping_pong:";
 const NO_SAVED_ARGS = "There are no saved arguments for this command.";
@@ -72,6 +73,7 @@ export {
   NOTHING_IS_PLAYING,
   RESUMING,
   ALREADY_PLAYING,
+  NOTHING_TO_PLAY,
   SKIPPED,
   PONG,
   NO_SAVED_ARGS,

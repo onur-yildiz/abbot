@@ -32,6 +32,7 @@ Object.defineProperty(ga, "fetchGuildData", {
     songs: [],
     volume: 1,
     isQueueActive: false,
+    isLoopActive: false,
     greetingEnabled: true,
     audioAliases: [],
     prefix: defaultPrefix,

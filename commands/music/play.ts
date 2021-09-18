@@ -1,7 +1,11 @@
 import Discord, { Command, GuildData, Message } from "discord.js";
 import ytdl from "ytdl-core";
 import ytsr from "ytsr";
-import { RESUMING, ERROR_COMMAND_NOT_VALID } from "../../constants/messages";
+import {
+  RESUMING,
+  ERROR_COMMAND_NOT_VALID,
+  NOTHING_TO_PLAY,
+} from "../../constants/messages";
 import { logger } from "../../global/globals";
 import {
   checkVoiceChannelAvailability,
@@ -13,7 +17,7 @@ export = <Command>{
   name: "play",
   aliases: ["p", "paly"],
   description: "Play a song with the given url or query from youtube.",
-  usage: " [URL/query]",
+  usage: "[URL/query]",
   isGuildOnly: true,
   args: Args.flexible,
   cooldown: 1,
@@ -31,13 +35,16 @@ export = <Command>{
       if (error) return message.channel.send(error.toBold());
 
       //resume if paused
+      // ! dispatcher.resume() works correctly only on node v14.16.1 for discordjs 12.5
       const dispatcher = guildData.connection?.dispatcher;
       if (!args[1] && dispatcher?.paused) {
-        guildData.connection.dispatcher.resume();
+        dispatcher.resume();
         return message.channel.send(RESUMING.toBold());
       }
 
       const commandContent = args[1];
+      if (!commandContent && !guildData.isQueueActive)
+        return message.reply(NOTHING_TO_PLAY.toBold());
 
       const song = await fetchSong(commandContent);
       if (!song) return message.channel.send("Nothing found.");
@@ -48,9 +55,8 @@ export = <Command>{
           guildData.lastTrackStart
         );
         guildData.songs.push(song);
-        console.log(guildData.songs.length);
         const embed = new Discord.MessageEmbed()
-          .setColor("#222222")
+          .setColor("#FFD700")
           .setAuthor("Added to the Queue")
           .setTitle(song.title)
           .setThumbnail(song.thumbnailUrl)
@@ -76,10 +82,15 @@ export = <Command>{
   },
 };
 
-const play = async (message: Message, guildData: GuildData) => {
+const play = async (
+  message: Message,
+  guildData: GuildData,
+  seekedSecond: number = 0,
+  startPaused: boolean = false
+) => {
   const currentSong = guildData.songs[0];
   const embed = new Discord.MessageEmbed()
-    .setColor("#222222")
+    .setColor("#FFD700")
     .setAuthor("Now Playing 🎶")
     .setTitle(currentSong.title)
     .setThumbnail(currentSong.thumbnailUrl)
@@ -94,21 +105,30 @@ const play = async (message: Message, guildData: GuildData) => {
 
   let responseMessage: Message;
   try {
-    responseMessage = await message.channel.send(embed);
+    if (seekedSecond === 0) responseMessage = await message.channel.send(embed);
     const dispatcher = guildData.connection
       .play(
-        ytdl(currentSong.url, { filter: "audioonly", highWaterMark: 1 << 25 })
+        ytdl(currentSong.url, {
+          filter: "audioonly",
+          highWaterMark: 1 << 25,
+        }),
+        { seek: seekedSecond }
       )
       .on("start", () => {
-        guildData.lastTrackStart = Date.now();
+        if (seekedSecond === 0) guildData.lastTrackStart = Date.now();
+        else guildData.lastTrackStart = Date.now() - seekedSecond * 1000;
         logger.info(
           `Play ::: ${currentSong.url} @${message.guild.name}<${message.guild.id}>`
         );
       })
       .on("skip", () => {
-        if (!dispatcher.paused) dispatcher.emit("finish");
-        else guildData.songs.shift();
+        dispatcher.emit("finish");
       })
+      .on("seek", (seconds: number) => {
+        if (dispatcher.paused) play(message, guildData, seconds, true);
+        else play(message, guildData, seconds);
+      })
+      // ! dispatcher.resume() works correctly only on node v14.16.1 for discordjs 12.5
       .on("resume", () => {
         if (guildData.songs.length === 0) {
           guildData.isQueueActive = false;
@@ -122,12 +142,14 @@ const play = async (message: Message, guildData: GuildData) => {
       })
       .on("finish", () => {
         responseMessage.delete();
+        if (guildData.isLoopActive) guildData.songs.push(guildData.songs[0]);
         guildData.songs.shift();
         if (guildData.songs.length === 0) guildData.isQueueActive = false;
         else play(message, guildData);
       })
       .on("error", (error) => logger.error(error));
     dispatcher.setVolumeLogarithmic(0.15);
+    if (startPaused) dispatcher.pause();
   } catch (error) {
     responseMessage.delete();
     logger.error(error);

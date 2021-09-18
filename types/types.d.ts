@@ -6,6 +6,7 @@ declare module "discord.js" {
     songs: Array<Song>;
     volume: number;
     isQueueActive: boolean;
+    isLoopActive: boolean;
     greetingEnabled: boolean;
     prefix: string;
     lastTrackStart: number;
