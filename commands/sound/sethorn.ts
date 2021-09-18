@@ -35,7 +35,7 @@ export = <Command>{
       if (await isAudioOk(url)) {
         try {
           // TODO pull both in one expression
-          const audioAliasFoundByName = (
+          const audioFoundByName = (
             await DBHelper.getGuildSettings(message.guild, {
               audioAliases: {
                 $elemMatch: { name: alias },
@@ -43,23 +43,23 @@ export = <Command>{
             })
           ).audioAliases.find((audioAlias) => audioAlias.name == alias);
 
-          const audioAliasFoundByUrl = (
+          const audioFoundByUrl = (
             await DBHelper.getGuildSettings(message.guild, {
               audioAliases: {
                 $elemMatch: { url: url },
               },
             })
-          ).audioAliases.find((audioAlias) => audioAlias.name == alias);
+          ).audioAliases.find((audioAlias) => audioAlias.url == url);
 
-          if (audioAliasFoundByUrl) {
-            if (audioAliasFoundByUrl.name === alias)
+          if (audioFoundByUrl) {
+            if (audioFoundByUrl.name === alias)
               return message.channel.send(
                 `You entered an existing alias :zzz:`
               );
             await DBHelper.saveGuildSettings(
               {
                 guildId: message.guild.id,
-                "audioAliases.name": audioAliasFoundByUrl.name,
+                "audioAliases.name": audioFoundByUrl.name,
               },
               {
                 $set: {
@@ -68,16 +68,16 @@ export = <Command>{
               }
             );
             message.channel.send(
-              `Horn alias ${audioAliasFoundByUrl.name.toInlineCodeBg()} is changed to ${alias.toInlineCodeBg()}:mega::mega:`
+              `Horn alias ${audioFoundByUrl.name.toInlineCodeBg()} is changed to ${alias.toInlineCodeBg()}:mega::mega:`
             );
             logger.info(
-              `Horn alias changed ::: ${audioAliasFoundByUrl.name} -->> ${alias} @${message.guild.name}<${message.guild.id}>`
+              `Horn alias changed ::: ${audioFoundByUrl.name} -->> ${alias} @${message.guild.name}<${message.guild.id}>`
             );
-          } else if (audioAliasFoundByName) {
+          } else if (audioFoundByName) {
             await DBHelper.saveGuildSettings(
               {
                 guildId: message.guild.id,
-                "audioAliases.url": audioAliasFoundByName.url,
+                "audioAliases.url": audioFoundByName.url,
               },
               {
                 $set: {
@@ -87,12 +87,12 @@ export = <Command>{
             );
             message.channel.send(
               `${alias.toInlineCodeBg()}'s URL has changed. :mega::mega:\nRemoved URL: ${
-                audioAliasFoundByName.url
+                audioFoundByName.url
               }`
             );
 
             logger.info(
-              `Horn URL changed ::: ${alias}: ${audioAliasFoundByName.url} <<-- ${url} @${message.guild.name}<${message.guild.id}>`
+              `Horn URL changed ::: ${alias}: ${audioFoundByName.url} <<-- ${url} @${message.guild.name}<${message.guild.id}>`
             );
           } else {
             await DBHelper.saveGuildSettings(
