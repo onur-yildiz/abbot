@@ -48,6 +48,7 @@ export = <Command>{
           guildData.lastTrackStart
         );
         guildData.songs.push(song);
+        console.log(guildData.songs.length);
         const embed = new Discord.MessageEmbed()
           .setColor("#222222")
           .setAuthor("Added to the Queue")
@@ -135,13 +136,15 @@ const play = async (message: Message, guildData: GuildData) => {
 
 const fetchSong = async (commandContent: string): Promise<Song> => {
   let song: Song;
-  const regexUrl = new RegExp(
-    `(http(s)?:\\/\\/.)?(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
-  );
+  // const regexUrl = new RegExp(
+  //   `(https?:\\/\\/)?(www\\.)?([-a-zA-Z0-9@:%._\\+~#=]{2,256})\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
+  // );
 
-  if (regexUrl.test(commandContent)) {
-    const url = regexUrl.exec(commandContent)[0];
-    const songInfo: ytdl.videoInfo = await ytdl.getInfo(url);
+  if (
+    ytdl.validateURL(commandContent) &&
+    !commandContent.includes("open.spotify")
+  ) {
+    const songInfo: ytdl.videoInfo = await ytdl.getInfo(commandContent);
     song = {
       title: songInfo.videoDetails.title,
       url: songInfo.videoDetails.video_url,
