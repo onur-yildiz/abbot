@@ -8,7 +8,7 @@ export const isAudioOk = async (url: string): Promise<boolean> => {
   try {
     const estimator = createEstimator(new FetchDataReader(fetch));
     const duration = await estimator(url);
-    if (!duration || duration > 15) return false;
+    if ((!duration && duration !== 0) || duration > 15) return false;
     return true;
   } catch (error) {
     logger.error(error);
