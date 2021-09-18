@@ -30,6 +30,7 @@ export = <Command>{
       }, 10);
     } catch (error) {
       message.reply(ERROR_CONNECTING.toBold());
+      message.react("❗");
       logger.error(error);
     }
   },

@@ -1,5 +1,5 @@
 import { Command, Message } from "discord.js";
-import { DISCONNECTED } from "../../constants/messages";
+import { ERROR_EXECUTION_ERROR } from "../../constants/messages";
 import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
 import { fetchGuildData } from "../../util/guildActions";
@@ -18,8 +18,9 @@ export = <Command>{
     try {
       const guildData = await fetchGuildData(message.guild);
       guildData.connection.disconnect();
-      return message.channel.send(DISCONNECTED.toBold());
     } catch (error) {
+      message.reply(ERROR_EXECUTION_ERROR.toBold());
+      message.react("❗");
       logger.error(error);
     }
   },

@@ -1,5 +1,8 @@
 import { Command, Message } from "discord.js";
-import { QUEUE_EMPTY_SKIP, SKIPPED } from "../../constants/messages";
+import {
+  ERROR_EXECUTION_ERROR,
+  QUEUE_EMPTY_SKIP,
+} from "../../constants/messages";
 import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
 import { fetchGuildData } from "../../util/guildActions";
@@ -16,7 +19,6 @@ export = <Command>{
     const error = checkVoiceChannelAvailability(message);
     if (error) return message.channel.send(error);
 
-    let responseMessage: Message;
     try {
       let guildData = await fetchGuildData(
         message.guild,
@@ -29,12 +31,13 @@ export = <Command>{
         return message.channel.send(QUEUE_EMPTY_SKIP.toBold());
 
       if (dispatcher) {
-        responseMessage = await message.channel.send(SKIPPED.toBold());
         dispatcher.emit("skip");
+        return message.react("⏭");
       }
     } catch (error) {
-      responseMessage.edit("Could not skip!".toBold());
-      logger.log(error);
+      message.reply(ERROR_EXECUTION_ERROR.toBold());
+      message.react("❗");
+      logger.error(error);
     }
   },
 };

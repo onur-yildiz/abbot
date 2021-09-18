@@ -3,7 +3,6 @@ import {
   ALREADY_PAUSED,
   ERROR_EXECUTION_ERROR,
   NOTHING_IS_PLAYING,
-  PAUSED,
 } from "../../constants/messages";
 import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
@@ -11,7 +10,7 @@ import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "pause",
-  aliases: ["pause", "stop"],
+  aliases: ["stop"],
   description: "Pauses the current playing track.",
   usage: "",
   isGuildOnly: true,
@@ -27,15 +26,17 @@ export = <Command>{
         message.member.voice.channel
       );
 
-      if (guildData.connection.dispatcher.paused)
-        return message.channel.send(ALREADY_PAUSED.toBold());
+      const dispatcher = guildData.connection.dispatcher;
 
       if (guildData.isQueueActive) {
-        guildData.connection.dispatcher.pause();
-        message.channel.send(PAUSED.toBold());
-      } else message.channel.send(NOTHING_IS_PLAYING.toItalic());
+        if (dispatcher.paused)
+          return message.channel.send(ALREADY_PAUSED.toBold());
+        dispatcher.pause();
+        message.react("⏸");
+      } else message.channel.send(NOTHING_IS_PLAYING.toBold());
     } catch (error) {
       message.reply(ERROR_EXECUTION_ERROR.toBold());
+      message.react("❗");
       logger.error(error);
     }
   },

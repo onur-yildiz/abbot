@@ -1,8 +1,8 @@
 import { Command, Message } from "discord.js";
 import {
   ALREADY_PLAYING,
+  ERROR_EXECUTION_ERROR,
   NOTHING_IS_PLAYING,
-  RESUMING,
 } from "../../constants/messages";
 import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
@@ -10,16 +10,16 @@ import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "resume",
-  aliases: ["pause"],
+  aliases: ["continue"],
   description: "Resumes the paused track.",
   usage: "",
   isGuildOnly: true,
   args: Args.none,
   async execute(message: Message) {
+    // ! dispatcher.resume() works correctly only on node v14.16.1 for discordjs 12.5
     const error = checkVoiceChannelAvailability(message);
     if (error) return message.channel.send(error.toBold());
 
-    let responseMessage: Message;
     try {
       const guildData = await fetchGuildData(
         message.guild,
@@ -28,15 +28,16 @@ export = <Command>{
       );
 
       const dispatcher = guildData.connection.dispatcher;
-      if (!dispatcher.paused)
-        return message.channel.send(ALREADY_PLAYING.toBold());
 
       if (guildData.isQueueActive) {
-        responseMessage = await message.channel.send(RESUMING.toBold());
+        if (!dispatcher.paused)
+          return message.channel.send(ALREADY_PLAYING.toBold());
+        await message.react("⏯");
         dispatcher.emit("resume");
       } else message.channel.send(NOTHING_IS_PLAYING.toBold());
     } catch (error) {
-      responseMessage.edit("Could not resume!");
+      message.reply(ERROR_EXECUTION_ERROR.toBold());
+      message.react("❗");
       logger.error(error);
     }
   },

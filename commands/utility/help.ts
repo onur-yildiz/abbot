@@ -49,7 +49,7 @@ export = <Command>{
           "attachment://discord.png",
           "https://onur-yildiz.github.io/abbot/"
         )
-        .setColor("#222222")
+        .setColor("#FFD700")
         .setTitle("Commands")
         .addFields(...data)
         .setFooter(
@@ -134,7 +134,7 @@ export = <Command>{
         "attachment://discord.png",
         "https://onur-yildiz.github.io/abbot/"
       )
-      .setColor("#222222")
+      .setColor("#FFD700")
       .setTitle(command.name)
       .addFields(...data);
 

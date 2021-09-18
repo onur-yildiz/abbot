@@ -3,7 +3,6 @@ import Discord, {
   Command,
   Message,
   MessageReaction,
-  ReactionEmoji,
   User,
 } from "discord.js";
 
@@ -48,10 +47,11 @@ export = <Command>{
 
       const createQueueEmbed = (page: number) => {
         return new Discord.MessageEmbed()
-          .setColor("#222222")
-          .setTitle("Queue")
+          .setColor("#FFD700")
+          .setTitle("Queue" + (guildData.isLoopActive ? " 🔁" : ""))
           .setThumbnail(guildData.songs[0].thumbnailUrl)
           .addFields(queue.slice((page - 1) * 6, page * 6))
+          .setFooter(`${page}/${Math.ceil(queue.length / 6)}`)
           .setTimestamp();
       };
 
@@ -91,7 +91,9 @@ export = <Command>{
         }
       });
     } catch (error) {
-      logger.error(ERROR_EXECUTION_ERROR);
+      message.reply(ERROR_EXECUTION_ERROR.toBold());
+      message.react("❗");
+      logger.error(error);
     }
   },
 };
