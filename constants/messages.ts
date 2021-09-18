@@ -6,7 +6,7 @@ const QUEUE_EMPTY = "The queue is empty :no_entry_sign: :zzz:";
 const QUEUE_EMPTY_SKIP =
   "There is no more items in the queue :no_entry_sign: :zzz:";
 const QUEUE_EMPTY_CLEAR = "The queue is already empty :no_entry_sign: :zzz:";
-const QUEUE_CLEARED = "Cleared :stop_button:";
+const QUEUE_CLEARED = "Cleared :wastebasket:";
 
 const HORN_PLAYING_MUSIC =
   "I am playing music.\nYou have to clear the queue and skip the current track to play audio!"; // TODO make stop/resume compatible
