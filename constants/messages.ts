@@ -25,6 +25,8 @@ const ERROR_CONNECTING =
   "an error occured during connecting to the voice channel!";
 const ERROR_DB_CONN = "an error occured during database connection!";
 const ERROR_CLEAR_MESSAGES = "something went wrong deleting the messages.";
+const ERROR_PARSE_YAML =
+  "an error occured during parsing yaml file. Are you sure it is a correctly formatted yaml file?";
 
 const BOT_NOT_IN_CHANNEL = ":x: I am not active in a channel";
 const BOT_NOT_IN_SAME_CHANNEL = ":x: I am in another voice channel";
@@ -61,6 +63,7 @@ export {
   ERROR_DB_CONN,
   ERROR_CONNECTING,
   ERROR_CLEAR_MESSAGES,
+  ERROR_PARSE_YAML,
   BOT_NOT_IN_CHANNEL,
   BOT_NOT_IN_SAME_CHANNEL,
   DISCONNECTED,
