@@ -42,7 +42,7 @@
     "heroku-postbuild": "tsc"
   },
   "engines": {
-    "node": ">=14.16.1"
+    "node": "14.16.1"
   },
   "repository": {
     "type": "git",
