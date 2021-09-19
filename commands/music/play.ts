@@ -18,7 +18,9 @@ import { connectToVoiceChannel, fetchGuildData } from "../../util/guildActions";
 export = <Command>{
   name: "play",
   aliases: ["p", "paly"],
-  description: "Play a song with the given url or query from youtube.",
+  description:
+    "Play a song/playlist with the given URL or query from youtube (Playlists only work through links). Spotify links are accepted." +
+    "\nBeware! Spotify tracks are searched through Youtube. It may not work perfectly",
   usage: "[URL/query]",
   isGuildOnly: true,
   args: Args.flexible,
