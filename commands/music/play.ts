@@ -210,6 +210,8 @@ const fetchPlayable = async (
         const request = searchYoutube(searchQuery);
         requests.push(request);
       }
+      for (const request of requests) songs.push(await request);
+
       playlist = <Playlist>{
         title: "Spotify Playlist",
         url: commandContent,
