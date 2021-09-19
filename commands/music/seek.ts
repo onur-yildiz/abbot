@@ -35,7 +35,7 @@ export = <Command>{
     } catch (error) {
       message.reply(ERROR_EXECUTION_ERROR.toBold());
       message.react("❗");
-      logger.error(error);
+      logger.error(error.message);
     }
   },
 };

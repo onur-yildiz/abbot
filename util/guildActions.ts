@@ -70,7 +70,7 @@ export const fetchGuildData = async (
     guilds.set(guild.id, guildData);
     return guildData;
   } catch (error) {
-    logger.error(error);
+    logger.error(error.message);
     return;
   }
 };

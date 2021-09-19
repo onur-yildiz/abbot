@@ -51,7 +51,7 @@ export = <Command>{
             const parsedData: object = parse(data);
             horns = Object.entries(parsedData);
           } catch (error) {
-            logger.error(error);
+            logger.error(error.message);
             message.reply(ERROR_PARSE_YAML.toBold());
             return;
           }
@@ -117,14 +117,14 @@ export = <Command>{
               `${importedHornCount} horns imported. @${message.guild.name}<${message.guild.id}>`
             );
           } catch (error) {
-            logger.error(error);
+            logger.error(error.message);
             message.reply(ERROR_DB_CONN.toBold());
           }
         });
       });
 
       req.on("error", (error) => {
-        logger.error(error);
+        logger.error(error.message);
         message.reply(ERROR_COULD_NOT_DL_FILE.toBold());
       });
     } else {
