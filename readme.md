@@ -59,6 +59,16 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 3 second(s)
 
+#### seek
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `goto`
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Continues from given time.
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `prefix`seek `seconds`
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 3 second(s)
+
 ### Queue
 
 ---
@@ -69,7 +79,15 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Description**: Clears the queue.
 
-&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 3 second(s)
+&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 10 second(s)
+
+#### loop
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `lq`, `loopqueue`
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Toggles looping for the queue.
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 6 second(s)
 
 #### queue
 
@@ -78,6 +96,14 @@
 &nbsp;&nbsp;&nbsp;&nbsp; **Description**: Show the song queue.
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 3 second(s)
+
+#### shuffle
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `mix`, `shufflequeue`
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Shuffles the queue.
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 10 second(s)
 
 #### skip
 
@@ -127,7 +153,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Description**: Delete a saved alias.
 
-&nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `prefix`deletehorn `hornAlias`
+&nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `prefix`deletehorn `horn-alias`
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 5 second(s)
 
@@ -149,7 +175,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Description**: Set an alias for an audio url. ( "https://www.example.com/example.mp3" )
 
-&nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `prefix`sethorn `hornAlias` `url`
+&nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `prefix`sethorn `horn-alias` `url`
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 5 second(s)
 
@@ -159,7 +185,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Description**: Set your custom greeting theme from the saved horns.
 
-&nbsp;&nbsp;&nbsp;&nbsp; **Usage**: .theme [horn alias]
+&nbsp;&nbsp;&nbsp;&nbsp; **Usage**: .theme [horn-alias]
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; OR reset
 
@@ -213,7 +239,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Description**: Export the saved horns.
 
-&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 3 second(s)
+&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 15 second(s)
 
 #### help
 
