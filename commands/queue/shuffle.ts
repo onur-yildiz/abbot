@@ -12,6 +12,7 @@ export = <Command>{
   usage: "",
   args: Args.none,
   isGuildOnly: true,
+  cooldown: 10,
   async execute(message: Message) {
     const error = checkVoiceChannelAvailability(message);
     if (error) return message.channel.send(error.toBold());

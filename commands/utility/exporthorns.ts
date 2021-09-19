@@ -12,6 +12,7 @@ export = <Command>{
   usage: "",
   isGuildOnly: true,
   args: Args.none,
+  cooldown: 15,
   async execute(message: Message) {
     try {
       const guildSettings = await DBHelper.getGuildSettings(message.guild, {
