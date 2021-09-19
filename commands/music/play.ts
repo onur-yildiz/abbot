@@ -43,7 +43,8 @@ export = <Command>{
       const dispatcher = guildData.connection?.dispatcher;
       if (!args[1] && dispatcher?.paused) {
         dispatcher.resume();
-        return message.channel.send(RESUMING.toBold());
+        // return message.channel.send(RESUMING.toBold());
+        return message.react("⏯");
       }
 
       const commandContent = args[1];
