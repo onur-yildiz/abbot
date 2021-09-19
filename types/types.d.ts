@@ -50,6 +50,19 @@ declare type Song = {
   duration: string;
 };
 
+declare type Playlist = {
+  title: string;
+  url: string;
+  thumbnailUrl: string;
+  desc: string;
+  channel: string;
+};
+
+declare type Playable = {
+  songs: Song[];
+  playlist?: Playlist;
+};
+
 declare type AudioAlias = {
   name: string;
   url: string;

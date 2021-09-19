@@ -1,6 +1,7 @@
-import Discord, { Command, GuildData, Message } from "discord.js";
+import Discord, { Command, GuildData, Message, MessageEmbed } from "discord.js";
 import ytdl from "ytdl-core";
 import ytsr from "ytsr";
+import ytpl from "ytpl";
 import {
   RESUMING,
   ERROR_COMMAND_NOT_VALID,
@@ -46,37 +47,39 @@ export = <Command>{
       if (!commandContent && !guildData.isQueueActive)
         return message.reply(NOTHING_TO_PLAY.toBold());
 
-      const song = await fetchSong(commandContent);
-      if (!song) return message.channel.send("Nothing found.");
+      const playable: Playable = await fetchPlayable(commandContent);
+      if (!playable || playable.songs.length === 0)
+        return message.channel.send("Nothing found.");
 
       if (guildData.isQueueActive) {
         const estimatedTime = calculateEta(
           guildData.songs,
           guildData.lastTrackStart
         );
-        guildData.songs.push(song);
-        const embed = new Discord.MessageEmbed()
-          .setColor("#FFD700")
-          .setAuthor("Added to the Queue")
-          .setTitle(song.title)
-          .setThumbnail(song.thumbnailUrl)
-          .setDescription(
-            song.desc.length > 100 ? song.desc.slice(0, 100) + "..." : song.desc
-          )
-          .setURL(song.url)
-          .addField("Channel", song.channel, true)
-          .addField("Duration", song.duration, true)
-          .addField("ETA", estimatedTime, true)
-          .addField("Position in queue", guildData.songs.indexOf(song));
+        let embed: MessageEmbed;
+        guildData.songs.push(...playable.songs);
+        if (playable.songs.length === 1) {
+          const song = playable.songs[0];
+          embed = generateAddedToQueueEmbed(
+            song,
+            guildData.songs,
+            estimatedTime
+          );
+        } else {
+          embed = generatePlaylistEmbed(playable);
+        }
         return message.channel.send(embed);
       }
 
-      guildData.songs.push(song);
+      guildData.songs.push(...playable.songs);
+      if (playable.songs.length > 1)
+        message.channel.send(generatePlaylistEmbed(playable));
+
       guildData.isQueueActive = true;
       await connectToVoiceChannel(guildData);
       play(message, guildData);
     } catch (error) {
-      logger.error(error);
+      logger.error(error.message);
       message.reply(ERROR_COMMAND_NOT_VALID);
     }
   },
@@ -147,34 +150,56 @@ const play = async (
         if (guildData.songs.length === 0) guildData.isQueueActive = false;
         else play(message, guildData);
       })
-      .on("error", (error) => logger.error(error));
+      .on("error", (error) => logger.error(error.message));
     dispatcher.setVolumeLogarithmic(0.15);
     if (startPaused) dispatcher.pause();
   } catch (error) {
     responseMessage.delete();
-    logger.error(error);
+    logger.error(error.message);
   }
 };
 
-const fetchSong = async (commandContent: string): Promise<Song> => {
-  let song: Song;
+const fetchPlayable = async (
+  commandContent: string
+): Promise<Playable> | null => {
+  let songs: Song[] = [];
+  let playlist: Playlist;
   // const regexUrl = new RegExp(
   //   `(https?:\\/\\/)?(www\\.)?([-a-zA-Z0-9@:%._\\+~#=]{2,256})\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
   // );
 
-  if (
+  if (ytpl.validateID(commandContent)) {
+    const playlistData = await ytpl(commandContent);
+    playlist = <Playlist>{
+      title: playlistData.title,
+      url: playlistData.url,
+      thumbnailUrl: playlistData.bestThumbnail.url,
+      desc: playlistData.description,
+      channel: playlistData.author.name,
+    };
+    for (const item of playlistData.items) {
+      songs.push(<Song>{
+        title: item.title,
+        url: item.shortUrl,
+        thumbnailUrl: item.bestThumbnail.url,
+        desc: "",
+        channel: item.author.name,
+        duration: item.duration,
+      });
+    }
+  } else if (
     ytdl.validateURL(commandContent) &&
     !commandContent.includes("open.spotify")
   ) {
     const songInfo: ytdl.videoInfo = await ytdl.getInfo(commandContent);
-    song = {
+    songs.push(<Song>{
       title: songInfo.videoDetails.title,
       url: songInfo.videoDetails.video_url,
       thumbnailUrl: songInfo.videoDetails.thumbnails[0].url,
       desc: songInfo.videoDetails.description || "",
       channel: songInfo.videoDetails.author.name,
       duration: hhmmss(parseInt(songInfo.videoDetails.lengthSeconds)),
-    };
+    });
   } else {
     const searchQuery = commandContent;
     const filters = await ytsr.getFilters(searchQuery);
@@ -184,16 +209,17 @@ const fetchSong = async (commandContent: string): Promise<Song> => {
     const songInfo: ytsr.Result = await ytsr(filter.url, {
       limit: 1,
     });
-    song = {
+    songs.push(<Song>{
       title: (<ytsr.Video>songInfo.items[0]).title,
       url: (<ytsr.Video>songInfo.items[0]).url,
       thumbnailUrl: (<ytsr.Video>songInfo.items[0]).thumbnails[0].url,
       desc: (<ytsr.Video>songInfo.items[0]).description || "",
       channel: (<ytsr.Video>songInfo.items[0]).author.name,
       duration: (<ytsr.Video>songInfo.items[0]).duration,
-    };
+    });
   }
-  return song;
+  const playable: Playable = { songs: songs, playlist: playlist };
+  return playable;
 };
 
 // convert seconds to hh:mm:ss
@@ -231,4 +257,45 @@ const calculateEta = (songs: Song[], lastTrackStart: number): string => {
     } else etaInSeconds += hhmmssToSeconds(song.duration);
   });
   return hhmmss(etaInSeconds);
+};
+
+const generatePlaylistEmbed = (playable: Playable): MessageEmbed => {
+  let seconds = 0;
+  playable.songs.forEach(
+    (song) => (seconds = seconds + hhmmssToSeconds(song.duration))
+  );
+  const duration = hhmmss(seconds);
+  return new Discord.MessageEmbed()
+    .setColor("#FFD700")
+    .setAuthor(`Playlist of ${playable.songs.length} songs added to the Queue`)
+    .setTitle(playable.playlist.title)
+    .setURL(playable.playlist.url)
+    .setThumbnail(playable.playlist.thumbnailUrl)
+    .setDescription(
+      playable.playlist.desc.length > 100
+        ? playable.playlist.desc.slice(0, 100) + "..."
+        : playable.playlist.desc
+    )
+    .addField("Channel", playable.playlist.channel, true)
+    .addField("Duration", duration, true);
+};
+
+const generateAddedToQueueEmbed = (
+  song: Song,
+  songQueue: Song[],
+  estimatedTime: string
+): MessageEmbed => {
+  return new Discord.MessageEmbed()
+    .setColor("#FFD700")
+    .setAuthor("Added to the Queue")
+    .setTitle(song.title)
+    .setThumbnail(song.thumbnailUrl)
+    .setDescription(
+      song.desc.length > 100 ? song.desc.slice(0, 100) + "..." : song.desc
+    )
+    .setURL(song.url)
+    .addField("Channel", song.channel, true)
+    .addField("Duration", song.duration, true)
+    .addField("ETA", estimatedTime, true)
+    .addField("Position in queue", songQueue.indexOf(song));
 };
