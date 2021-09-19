@@ -2,10 +2,11 @@ import Discord, { Command, GuildData, Message, MessageEmbed } from "discord.js";
 import ytdl from "ytdl-core";
 import ytsr from "ytsr";
 import ytpl from "ytpl";
+import sptf from "spotify-url-info";
 import {
   RESUMING,
-  ERROR_COMMAND_NOT_VALID,
   NOTHING_TO_PLAY,
+  ERROR_EXECUTION_ERROR,
 } from "../../constants/messages";
 import { logger } from "../../global/globals";
 import {
@@ -80,7 +81,7 @@ export = <Command>{
       play(message, guildData);
     } catch (error) {
       logger.error(error.message);
-      message.reply(ERROR_COMMAND_NOT_VALID);
+      message.reply(ERROR_EXECUTION_ERROR);
     }
   },
 };
@@ -161,14 +162,15 @@ const play = async (
 
 const fetchPlayable = async (
   commandContent: string
-): Promise<Playable> | null => {
+): Promise<Playable | null> => {
   let songs: Song[] = [];
   let playlist: Playlist;
-  // const regexUrl = new RegExp(
-  //   `(https?:\\/\\/)?(www\\.)?([-a-zA-Z0-9@:%._\\+~#=]{2,256})\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
-  // );
+  const regexSpotifyUrl = new RegExp(
+    `(https?:\\/\\/)?(www\\.)?(open.spotify)\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)`
+  );
 
-  if (ytpl.validateID(commandContent)) {
+  // prevent adding whole playlist if a song from playlist is being added. Thus checking for 'watch?v='
+  if (ytpl.validateID(commandContent) && !commandContent.includes("watch?v=")) {
     const playlistData = await ytpl(commandContent);
     playlist = <Playlist>{
       title: playlistData.title,
@@ -187,10 +189,7 @@ const fetchPlayable = async (
         duration: item.duration,
       });
     }
-  } else if (
-    ytdl.validateURL(commandContent) &&
-    !commandContent.includes("open.spotify")
-  ) {
+  } else if (ytdl.validateURL(commandContent)) {
     const songInfo: ytdl.videoInfo = await ytdl.getInfo(commandContent);
     songs.push(<Song>{
       title: songInfo.videoDetails.title,
@@ -201,25 +200,31 @@ const fetchPlayable = async (
       duration: hhmmss(parseInt(songInfo.videoDetails.lengthSeconds)),
     });
   } else {
-    const searchQuery = commandContent;
-    const filters = await ytsr.getFilters(searchQuery);
-    const filter = filters.get("Type").get("Video");
-    if (!filter.url) return null;
-
-    const songInfo: ytsr.Result = await ytsr(filter.url, {
-      limit: 1,
-    });
-    songs.push(<Song>{
-      title: (<ytsr.Video>songInfo.items[0]).title,
-      url: (<ytsr.Video>songInfo.items[0]).url,
-      thumbnailUrl: (<ytsr.Video>songInfo.items[0]).thumbnails[0].url,
-      desc: (<ytsr.Video>songInfo.items[0]).description || "",
-      channel: (<ytsr.Video>songInfo.items[0]).author.name,
-      duration: (<ytsr.Video>songInfo.items[0]).duration,
-    });
+    if (regexSpotifyUrl.test(commandContent)) {
+      const tracks = await sptf.getTracks(commandContent);
+      let requests: Promise<Song>[] = [];
+      for (const track of tracks) {
+        const artists: string[] = [];
+        track.artists.forEach((artist) => artists.push(artist.name));
+        const searchQuery: string = `${track.name} ${artists.join(" ")}`;
+        const request = searchYoutube(searchQuery);
+        requests.push(request);
+      }
+      playlist = <Playlist>{
+        title: "Spotify Playlist",
+        url: commandContent,
+        thumbnailUrl:
+          "https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_CMYK_Green.png",
+        channel: "-",
+        desc: "-",
+      };
+    } else {
+      const song = await searchYoutube(commandContent);
+      if (song) songs.push(song);
+    }
   }
-  const playable: Playable = { songs: songs, playlist: playlist };
-  return playable;
+  if (songs.length === 0) return null;
+  return <Playable>{ songs: songs, playlist: playlist };
 };
 
 // convert seconds to hh:mm:ss
@@ -261,9 +266,7 @@ const calculateEta = (songs: Song[], lastTrackStart: number): string => {
 
 const generatePlaylistEmbed = (playable: Playable): MessageEmbed => {
   let seconds = 0;
-  playable.songs.forEach(
-    (song) => (seconds = seconds + hhmmssToSeconds(song.duration))
-  );
+  playable.songs.forEach((song) => (seconds += hhmmssToSeconds(song.duration)));
   const duration = hhmmss(seconds);
   return new Discord.MessageEmbed()
     .setColor("#FFD700")
@@ -298,4 +301,22 @@ const generateAddedToQueueEmbed = (
     .addField("Duration", song.duration, true)
     .addField("ETA", estimatedTime, true)
     .addField("Position in queue", songQueue.indexOf(song));
+};
+
+const searchYoutube = async (query: string): Promise<Song | null> => {
+  const filters = await ytsr.getFilters(query);
+  const filter = filters.get("Type").get("Video");
+  if (!filter.url) return null;
+
+  const songInfo: ytsr.Result = await ytsr(filter.url, {
+    limit: 1,
+  });
+  return <Song>{
+    title: (<ytsr.Video>songInfo.items[0]).title,
+    url: (<ytsr.Video>songInfo.items[0]).url,
+    thumbnailUrl: (<ytsr.Video>songInfo.items[0]).thumbnails[0].url,
+    desc: (<ytsr.Video>songInfo.items[0]).description || "",
+    channel: (<ytsr.Video>songInfo.items[0]).author.name,
+    duration: (<ytsr.Video>songInfo.items[0]).duration,
+  };
 };
