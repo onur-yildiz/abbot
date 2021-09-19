@@ -261,13 +261,3 @@
 &nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `prefix`prefix /`newPrefix`/ OR "reset"
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 5 second(s)
-
-#### reload
-
-&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `rl`
-
-&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Reloads and updates the command if it was changed by my developers.
-
-&nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `prefix`reload `command`
-
-&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 3 second(s)
