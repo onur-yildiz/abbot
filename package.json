@@ -21,7 +21,7 @@
     "winston": "^3.3.3",
     "winston-mongodb": "^5.0.7",
     "yaml": "^1.10.2",
-    "ytdl-core": "^4.5.0",
+    "ytdl-core": "^4.9.1",
     "ytpl": "^2.2.3",
     "ytsr": "^3.4.0"
   },
