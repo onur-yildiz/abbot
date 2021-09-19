@@ -48,7 +48,7 @@ export = <Command>{
       if (!commandContent && !guildData.isQueueActive)
         return message.reply(NOTHING_TO_PLAY.toBold());
 
-      const playable: Playable = await fetchPlayable(commandContent);
+      const playable: Playable = await fetchPlayable(commandContent, message);
       if (!playable || playable.songs.length === 0)
         return message.channel.send("Nothing found.");
 
@@ -161,7 +161,8 @@ const play = async (
 };
 
 const fetchPlayable = async (
-  commandContent: string
+  commandContent: string,
+  message: Message
 ): Promise<Playable | null> => {
   let songs: Song[] = [];
   let playlist: Playlist;
@@ -202,6 +203,10 @@ const fetchPlayable = async (
   } else {
     if (regexSpotifyUrl.test(commandContent)) {
       const tracks = await sptf.getTracks(commandContent);
+      let infoMessage: Message;
+      if (tracks.length > 15) {
+        infoMessage = await message.channel.send("This may take some time...");
+      }
       let requests: Promise<Song>[] = [];
       for (const track of tracks) {
         const artists: string[] = [];
@@ -211,6 +216,7 @@ const fetchPlayable = async (
         requests.push(request);
       }
       for (const request of requests) songs.push(await request);
+      if (infoMessage) await infoMessage.delete();
 
       playlist = <Playlist>{
         title: "Spotify Playlist",
