@@ -148,7 +148,7 @@ const play = async (
         }
       })
       .on("finish", () => {
-        responseMessage.delete();
+        responseMessage?.delete();
         if (guildData.isLoopActive) guildData.songs.push(guildData.songs[0]);
         guildData.songs.shift();
         if (guildData.songs.length === 0) guildData.isQueueActive = false;
