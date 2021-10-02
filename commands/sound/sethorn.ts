@@ -115,7 +115,7 @@ export = <Command>{
       } else {
         message.channel.send(`Audio is inaccessible or more than 15 seconds.`);
 
-        logger.info(`Inaccessible or long audio for sethorn ::: ${url}:`);
+        logger.info(`Inaccessible or long audio for sethorn ::: ${url}`);
       }
     } else {
       message.channel.send(
