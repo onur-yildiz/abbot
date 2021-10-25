@@ -25,7 +25,7 @@ export = <Command>{
       });
 
       message.channel.send(
-        `Greeting is ${
+        `Themes are ${
           guildData.greetingEnabled
             ? "enabled :white_check_mark: "
             : "disabled :x:"
