@@ -20,9 +20,12 @@ export = <Command>{
       );
 
       guildData.greetingEnabled = !guildData.greetingEnabled;
-      await DBHelper.saveGuildSettings(message.guild, {
-        greetingEnabled: guildData.greetingEnabled,
-      });
+      await DBHelper.saveGuildSettings(
+        { guildId: message.guild.id },
+        {
+          greetingEnabled: guildData.greetingEnabled,
+        }
+      );
 
       message.channel.send(
         `Themes are ${
