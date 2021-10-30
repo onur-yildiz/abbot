@@ -155,7 +155,7 @@ const play = async (
         else play(message, guildData);
       })
       .on("error", (error) => logger.error(error.message));
-    dispatcher.setVolumeLogarithmic(0.15);
+    dispatcher.setVolumeLogarithmic(0.65);
     if (startPaused) dispatcher.pause();
   } catch (error) {
     responseMessage.delete();
