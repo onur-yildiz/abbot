@@ -23,7 +23,7 @@
     "yaml": "^1.10.2",
     "ytdl-core": "^4.9.1",
     "ytpl": "^2.2.3",
-    "ytsr": "^3.4.0"
+    "ytsr": "^3.5.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.11",
