@@ -18,11 +18,14 @@ export = <Command>{
   async execute(message: Message, args: string[]) {
     let alias = args[1];
     if (args[1] === "reset") {
-      await DBHelper.saveGuildSettings(message.guild, {
-        $unset: {
-          [`themes.${message.member.id}`]: "",
-        },
-      });
+      await DBHelper.saveGuildSettings(
+        { guildId: message.guild.id },
+        {
+          $unset: {
+            [`themes.${message.member.id}`]: "",
+          },
+        }
+      );
       return message.react("✅");
     }
 

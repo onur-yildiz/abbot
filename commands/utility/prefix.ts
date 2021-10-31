@@ -39,7 +39,10 @@ export = <Command>{
 };
 
 const setPrefix = async (message: Message, prefix: string): Promise<void> => {
-  await DBHelper.saveGuildSettings(message.guild, { prefix: prefix });
+  await DBHelper.saveGuildSettings(
+    { guildId: message.guild.id },
+    { prefix: prefix }
+  );
   guilds.get(message.guild.id).prefix = prefix;
 };
 
