@@ -10,7 +10,7 @@ import {
 } from "../../constants/messages";
 import DBHelper from "../../db/DBHelper";
 import { logger } from "../../global/globals";
-import { isAudioOk } from "../../util/isAudioOk";
+// import { isAudioOk } from "../../util/isAudioOk";
 
 export = <Command>{
   name: "importhorn",
@@ -83,8 +83,8 @@ export = <Command>{
                 horn[0].length <= 25 &&
                 horn[0].toLowerCase() != "reset" &&
                 typeof horn[1] === "string" &&
-                regexUrl.test(horn[1]) &&
-                (await isAudioOk(horn[1]))
+                regexUrl.test(horn[1])
+                // && (await isAudioOk(horn[1]))
               ) {
                 updateArray.push(<AudioAlias>{ name: horn[0], url: horn[1] });
                 importedHornCount++;

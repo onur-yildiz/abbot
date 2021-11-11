@@ -3,7 +3,7 @@ import {
   HORN_PLAYING_MUSIC,
   ERROR_EXECUTION_ERROR,
 } from "../../constants/messages";
-import { isAudioOk } from "../../util/isAudioOk";
+// import { isAudioOk } from "../../util/isAudioOk";
 import DBHelper from "../../db/DBHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { checkUserInAChannel } from "../../util/checker";
@@ -59,12 +59,12 @@ export = <Command>{
             audioAlias = guildSettings.audioAliases.find(
               (element) => element.name == audioAlias.name
             );
-            if (!(await isAudioOk(audioAlias.url))) {
-              logger.info(
-                `Saved audio not OK anymore ::: ${audioAlias.name}: ${audioAlias.url} @${message.guild.name}<${message.guild.id}>`
-              );
-              return;
-            }
+            // if (!(await isAudioOk(audioAlias.url))) {
+            //   logger.info(
+            //     `Saved audio not OK anymore ::: ${audioAlias.name}: ${audioAlias.url} @${message.guild.name}<${message.guild.id}>`
+            //   );
+            //   return;
+            // }
           } else {
             return message.reply(
               "No audio named " +
