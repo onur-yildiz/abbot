@@ -118,6 +118,8 @@ const play = async (
         ytdl(currentSong.url, {
           filter: "audioonly",
           highWaterMark: 1 << 25,
+          dlChunkSize: 1 << 25,
+          quality: "highestaudio",
         }),
         { seek: seekedSecond }
       )
