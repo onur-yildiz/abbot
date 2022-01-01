@@ -1,6 +1,6 @@
 # Abbot
 
-**A discord music/soundhorn bot with the special Snyder Cut Wonder Woman theme greeting.** 🙂
+**A discord music/soundhorn bot.**
 
 ## Commands
 
