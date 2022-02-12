@@ -156,7 +156,14 @@ const play = async (
         if (guildData.songs.length === 0) guildData.isQueueActive = false;
         else play(message, guildData);
       })
-      .on("error", (error) => logger.error(error.message));
+      .on("error", (error) => {
+        responseMessage?.edit("Couldn't play the song. Skipping...");
+        if (guildData.isLoopActive) guildData.songs.push(guildData.songs[0]);
+        guildData.songs.shift();
+        if (guildData.songs.length === 0) guildData.isQueueActive = false;
+        else play(message, guildData);
+        logger.error(error.message);
+      });
     dispatcher.setVolumeLogarithmic(0.65);
     if (startPaused) dispatcher.pause();
   } catch (error) {
