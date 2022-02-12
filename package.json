@@ -19,9 +19,9 @@
     "winston": "^3.3.3",
     "winston-mongodb": "^5.0.7",
     "yaml": "^1.10.2",
-    "ytdl-core": "^4.9.2",
+    "ytdl-core": "^4.10.1",
     "ytpl": "^2.2.3",
-    "ytsr": "^3.5.3"
+    "ytsr": "^3.6.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
