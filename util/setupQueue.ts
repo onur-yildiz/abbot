@@ -20,7 +20,11 @@ export const setupQueue = (
     addSongsToQueue();
     if (playable.songs.length === 1) {
       const song = playable.songs[0];
-      embed = generateAddedToQueueEmbed(song, guildData.songs, estimatedTime);
+      // no need for a message if we're inserting just one track at the beginning.
+      // there will be a "now playing" message already.
+      embed = insertAtBeginning
+        ? null
+        : generateAddedToQueueEmbed(song, guildData.songs, estimatedTime);
     } else {
       embed = generatePlaylistEmbed(playable);
     }
