@@ -3,15 +3,21 @@ import { hhmmss, hhmmssToSeconds } from "./durationParser";
 
 export const setupQueue = (
   guildData: GuildData,
-  playable: Playable
+  playable: Playable,
+  { insertAtBeginning = false } = {}
 ): MessageEmbed | null => {
+  const addSongsToQueue = () => {
+    if (insertAtBeginning) guildData.songs.splice(1, 0, ...playable.songs);
+    else guildData.songs.push(...playable.songs);
+  };
+
   if (guildData.isQueueActive) {
     const estimatedTime = calculateEta(
       guildData.songs,
       guildData.lastTrackStart
     );
     let embed: MessageEmbed;
-    guildData.songs.push(...playable.songs);
+    addSongsToQueue();
     if (playable.songs.length === 1) {
       const song = playable.songs[0];
       embed = generateAddedToQueueEmbed(song, guildData.songs, estimatedTime);
@@ -21,7 +27,7 @@ export const setupQueue = (
     return embed;
   }
 
-  guildData.songs.push(...playable.songs);
+  addSongsToQueue();
   if (playable.songs.length > 1) return generatePlaylistEmbed(playable);
   return null;
 };
