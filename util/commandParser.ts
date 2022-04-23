@@ -2,7 +2,11 @@ export const getCommandArgs = (
   commandMessage: string,
   prefix: string
 ): string[] => {
-  return commandMessage.trim().slice(prefix.length).split(" ").slice(1);
+  return commandMessage
+    .slice(prefix.length)
+    .split(" ")
+    .slice(1)
+    .filter((item) => item !== "");
 };
 
 export const getCommandName = (
