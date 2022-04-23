@@ -43,6 +43,16 @@
 &nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `[prefix]`play `[URL/query]`\
 &nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 1 second(s)
 
+#### playnow
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `pn`\
+&nbsp;&nbsp;&nbsp;&nbsp; **Description**: Play a song/playlist with the given URL or query from youtube right away. Pushes existing queue items to the end. (Playlists only work through links). Spotify links are accepted.
+
+    Spotify tracks are searched through Youtube. It may not work perfectly.
+
+&nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `[prefix]`play `[URL/query]`\
+&nbsp;&nbsp;&nbsp;&nbsp; **Cooldown**: 1 second(s)
+
 #### resume
 
 &nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `pause`\
