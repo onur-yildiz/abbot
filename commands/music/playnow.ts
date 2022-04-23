@@ -41,8 +41,8 @@ export = <Command>{
       });
       embeddedMessage && message.channel.send(embeddedMessage);
 
-      const dispatcher = guildData.connection.dispatcher;
       if (guildData.isQueueActive) {
+        const dispatcher = guildData.connection.dispatcher;
         dispatcher.emit("skip");
         if (dispatcher.paused) dispatcher.emit("resume");
       } else {
