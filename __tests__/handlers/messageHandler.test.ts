@@ -16,12 +16,12 @@ Object.defineProperty(parser, "getCommandContent", {
 });
 
 describe("messageHandler", () => {
-  const client: Client = ({
+  const client: Client = {
     user: {
       id: "user-id",
     },
-  } as unknown) as Client;
-  const message: Message = ({
+  } as unknown as Client;
+  const message: Message = {
     author: {
       id: "author-id",
       bot: false,
@@ -35,12 +35,12 @@ describe("messageHandler", () => {
     },
     content: "!!togglegreeting",
     reply: jest.fn(),
-  } as unknown) as Message;
+  } as unknown as Message;
 
   beforeEach(() => {
     jest.clearAllMocks();
     jest.restoreAllMocks();
-    guilds.set(message.guild.id, ({ prefix: "!!" } as unknown) as GuildData);
+    guilds.set(message.guild.id, { prefix: "!!" } as unknown as GuildData);
     commands.set("test", {
       name: "test",
       description: "desc",
@@ -58,6 +58,16 @@ describe("messageHandler", () => {
       args: Args.flexible,
       isGuildOnly: false,
       usage: "usage2",
+      execute: jest.fn(),
+    });
+
+    commands.set("test3", {
+      name: "test3",
+      description: "desc3",
+      aliases: ["tst3", "t3"],
+      args: Args.flexible,
+      isGuildOnly: false,
+      usage: "usage3",
       execute: jest.fn(),
     });
 
@@ -87,7 +97,18 @@ describe("messageHandler", () => {
 
     const cmd = commands.get("test2");
     await messageHandler(client, message);
-    expect(cmd.execute).toBeCalledWith(message, ["test2", ""]);
+    expect(cmd.execute).toBeCalledWith(message, ["test2"]);
+  });
+
+  it("run command.execute 2 args and 1 arg for command", async () => {
+    Object.defineProperty(parser, "getCommandName", {
+      value: jest.fn().mockReturnValue("test3"),
+    });
+    message.content = "!!test3 test3arg";
+
+    const cmd = commands.get("test3");
+    await messageHandler(client, message);
+    expect(cmd.execute).toBeCalledWith(message, ["test3", "test3arg"]);
   });
 
   it("reply execution error msg", async () => {
@@ -102,10 +123,10 @@ describe("messageHandler", () => {
   });
 
   it("return if author bot", async () => {
-    const _message: Message = ({
+    const _message: Message = {
       ...message,
       author: { bot: true },
-    } as unknown) as Message;
+    } as unknown as Message;
     guilds.get = jest.fn();
 
     expect(await messageHandler(client, _message)).toBeUndefined();
@@ -113,10 +134,10 @@ describe("messageHandler", () => {
   });
 
   it("not get guild if channel type 'dm'", async () => {
-    const _message: Message = ({
+    const _message: Message = {
       ...message,
       channel: { type: "dm" },
-    } as unknown) as Message;
+    } as unknown as Message;
     guilds.get = jest.fn();
 
     expect(await messageHandler(client, _message)).toBeUndefined();

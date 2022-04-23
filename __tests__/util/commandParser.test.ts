@@ -2,13 +2,13 @@ import { defaultPrefix } from "../../global/globals";
 import { getCommandArgs, getCommandName } from "../../util/commandParser";
 
 describe("commandParser", () => {
-  describe("getCommandContent", () => {
+  describe("getCommandArgs", () => {
     describe("with default prefix", () => {
       it("return expectedly", () => {
         const commandMessage = ".play    Frank's choice    ";
-        const expectedValue = "Frank's choice";
+        const expectedValue = ["Frank's", "choice"];
 
-        expect(getCommandArgs(commandMessage, defaultPrefix)).toBe(
+        expect(getCommandArgs(commandMessage, defaultPrefix)).toStrictEqual(
           expectedValue
         );
       });
@@ -18,9 +18,9 @@ describe("commandParser", () => {
       const customPrefix = "tst ";
       it("return expectedly", () => {
         const commandMessage = "tst play    Frank's choice    ";
-        const expectedValue = "Frank's choice";
+        const expectedValue = ["Frank's", "choice"];
 
-        expect(getCommandArgs(commandMessage, customPrefix)).toBe(
+        expect(getCommandArgs(commandMessage, customPrefix)).toStrictEqual(
           expectedValue
         );
       });
