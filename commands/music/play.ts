@@ -58,8 +58,8 @@ export = <Command>{
       if (!guildData.isQueueActive) {
         await connectToVoiceChannel(guildData);
         guildData.isQueueActive = true;
+        play(message, guildData);
       }
-      play(message, guildData);
     } catch (error) {
       logger.error(error.message);
       message.reply(ERROR_EXECUTION_ERROR);
