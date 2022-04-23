@@ -10,7 +10,7 @@ export = <Command>{
   name: "theme",
   aliases: ["settheme", "mytheme"],
   description: "Set your custom greeting theme from the saved horns.",
-  usage: "[horn alias]\nOR reset",
+  usage: "[horn alias]\nOR reset (remove your theme)",
   args: Args.required,
   isGuildOnly: true,
   cooldown: 5,
