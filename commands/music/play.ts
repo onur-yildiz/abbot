@@ -45,11 +45,11 @@ export = <Command>{
         return message.react("⏯");
       }
 
-      const commandContent = args[1];
-      if (!commandContent && !guildData.isQueueActive)
+      const query = args.slice(1).join(" ");
+      if (!query && !guildData.isQueueActive)
         return message.reply(NOTHING_TO_PLAY.toBold());
 
-      const playable: Playable = await fetchPlayable(commandContent, message);
+      const playable: Playable = await fetchPlayable(query, message);
       if (!playable || playable.songs.length === 0)
         return message.channel.send("Nothing found.");
 
