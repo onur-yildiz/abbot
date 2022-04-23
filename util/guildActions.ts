@@ -10,8 +10,10 @@ import { guilds, logger } from "../global/globals";
 import DBHelper from "../db/DBHelper";
 
 export const connectToVoiceChannel = async (guildData: GuildData) => {
-  const connection = await guildData.voiceChannel.join();
-  guildData.connection = connection;
+  if (guildData.connection?.channel !== guildData.voiceChannel) {
+    const connection = await guildData.voiceChannel.join();
+    guildData.connection = connection;
+  }
   return guildData;
 };
 
