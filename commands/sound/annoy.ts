@@ -24,7 +24,7 @@ export = <Command>{
     const commandWords = args[1].split(" ");
 
     // <@!userId> alias
-    let userId = commandWords[0].slice(3, commandWords[0].length - 1);
+    let userId = extractMentionId(commandWords[0]);
     let alias = commandWords[1];
 
     try {
@@ -107,4 +107,15 @@ export = <Command>{
       logger.log(error);
     }
   },
+};
+
+const extractMentionId = (mention: string) => {
+  if (mention.startsWith("<@") && mention.endsWith(">")) {
+    mention = mention.slice(2, -1);
+
+    if (mention.startsWith("!")) {
+      mention = mention.slice(1);
+    }
+  }
+  return mention;
 };
