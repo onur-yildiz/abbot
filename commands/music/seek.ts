@@ -1,10 +1,12 @@
 import { Command, Message } from "discord.js";
 import {
   ERROR_EXECUTION_ERROR,
+  ERROR_INVALID_FORMAT,
   NOTHING_IS_PLAYING,
 } from "../../constants/messages";
 import { logger } from "../../global/globals";
 import { checkVoiceChannelAvailability } from "../../util/checker";
+import { hhmmssToSeconds } from "../../util/durationParser";
 import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
@@ -25,7 +27,13 @@ export = <Command>{
         message.member.voice.channel
       );
 
-      const seconds: number = parseInt(args[1]);
+      const regex = /^((\d+:\d{2}:\d{2})?|(\d{1,2}:\d{2})|\d{1,2})$/;
+
+      let seconds: number = Number(args[1]);
+      if (isNaN(seconds)) {
+        if (regex.test(args[1])) seconds = hhmmssToSeconds(args[1]);
+        else return message.reply(ERROR_INVALID_FORMAT.toBold());
+      }
       const dispatcher = guildData.connection.dispatcher;
 
       if (guildData.isQueueActive) {
