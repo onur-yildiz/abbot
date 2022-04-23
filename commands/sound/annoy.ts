@@ -10,11 +10,10 @@ export = <Command>{
   description: "Annoy someone whenever they speak.",
   usage:
     "[@user] [alias]\nOR " +
-    "[@user] reset\nOR " +
-    "toggle\nOR " +
-    "reset\nOR " +
-    "(un)block" +
-    "\n'toggle' to activate/deactivate, '(un)block' to change annoy permit for yourself or 'reset' to delete your annoy sound",
+    "[@user] reset (remove someone's annoy sound)\nOR " +
+    "toggle (activate/deactivate)\nOR " +
+    "reset (remove your annoy sound)\nOR " +
+    "(un)block (change annoy permit for yourself)",
   permissions: "MOVE_MEMBERS",
   args: Args.required,
   isGuildOnly: true,
