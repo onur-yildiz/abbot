@@ -1,3 +1,6 @@
+//? Error and Reply messages are for message.reply()
+//? Rest is message.channel.send()
+
 const JOIN_CHANNEL_GENERIC =
   ":x: You have to be in the voice channel to do that.";
 const JOIN_CHANNEL_PLAY = ":x: You have to be in a voice channel to do that.";
@@ -28,6 +31,7 @@ const ERROR_CLEAR_MESSAGES = "something went wrong deleting the messages.";
 const ERROR_PARSE_YAML =
   "an error occured during parsing yaml file. Are you sure it is a correctly formatted yaml file?";
 const ERROR_INVALID_FORMAT = "invalid format.";
+const ERROR_QUEUE_OUT_OF_BOUNDS = "argument is out of queue bounds.";
 
 const BOT_NOT_IN_CHANNEL = ":x: I am not active in a channel";
 const BOT_NOT_IN_SAME_CHANNEL = ":x: I am in another voice channel";
@@ -45,7 +49,7 @@ const NO_SAVED_ARGS = "There are no saved arguments for this command.";
 
 const REPLY_CANT_EXECUTE_DM = "I can't execute that command inside DMs!";
 const REPLY_NOT_ALLOWED = "you are not allowed to do this!";
-const REPLY_NO_ARGS = "you did not provide any arguments!";
+const REPLY_NO_ARGS = "you did not provide required arguments!";
 const REPLY_ATTACH_YAML = "please attach a yaml file when using this command!";
 
 export {
@@ -67,6 +71,7 @@ export {
   ERROR_CLEAR_MESSAGES,
   ERROR_PARSE_YAML,
   ERROR_INVALID_FORMAT,
+  ERROR_QUEUE_OUT_OF_BOUNDS,
   BOT_NOT_IN_CHANNEL,
   BOT_NOT_IN_SAME_CHANNEL,
   DISCONNECTED,
