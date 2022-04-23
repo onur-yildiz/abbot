@@ -14,7 +14,7 @@ export = <Command>{
   name: "horn",
   aliases: ["h", "say"],
   description: "Play a sound.",
-  usage: "[audio name]",
+  usage: "[horn alias]",
   isGuildOnly: true,
   args: Args.flexible,
   argList: getDefaultAudios(),
