@@ -22,7 +22,6 @@ export const setupQueue = (
   }
 
   guildData.songs.push(...playable.songs);
-  guildData.isQueueActive = true;
   if (playable.songs.length > 1) return generatePlaylistEmbed(playable);
   return null;
 };

@@ -55,7 +55,10 @@ export = <Command>{
 
       const embeddedMessage = setupQueue(guildData, playable);
       embeddedMessage && message.channel.send(embeddedMessage);
-      await connectToVoiceChannel(guildData);
+      if (!guildData.isQueueActive) {
+        await connectToVoiceChannel(guildData);
+        guildData.isQueueActive = true;
+      }
       play(message, guildData);
     } catch (error) {
       logger.error(error.message);
