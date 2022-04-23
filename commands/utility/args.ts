@@ -2,7 +2,6 @@ import { Command, Message } from "discord.js";
 import { ERROR_EXECUTION_ERROR, NO_SAVED_ARGS } from "../../constants/messages";
 import DBHelper from "../../db/DBHelper";
 import { commands, logger } from "../../global/globals";
-import getDefaultAudios from "../../util/getDefaultAudios";
 
 export = <Command>{
   name: "args",
