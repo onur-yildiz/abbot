@@ -7,7 +7,7 @@ import { fetchGuildData } from "../../util/guildActions";
 
 export = <Command>{
   name: "shuffle",
-  aliases: ["mix", "shufflequeue"],
+  aliases: ["mix"],
   description: "Shuffles the queue.",
   usage: "",
   args: Args.none,
