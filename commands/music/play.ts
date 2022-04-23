@@ -1,4 +1,4 @@
-import Discord, { Command, GuildData, Message, MessageEmbed } from "discord.js";
+import { Command, GuildData, Message, MessageEmbed } from "discord.js";
 import ytdl from "ytdl-core";
 import {
   NOTHING_TO_PLAY,
@@ -10,8 +10,8 @@ import {
   checkUserInAChannel,
 } from "../../util/checker";
 import { connectToVoiceChannel, fetchGuildData } from "../../util/guildActions";
-import { hhmmss, hhmmssToSeconds } from "../../util/durationParser";
 import { fetchPlayable } from "../../util/fetchPlayable";
+import { setupQueue } from "../../util/setupQueue";
 
 export = <Command>{
   name: "play",
@@ -53,31 +53,8 @@ export = <Command>{
       if (!playable || playable.songs.length === 0)
         return message.channel.send("Nothing found.");
 
-      if (guildData.isQueueActive) {
-        const estimatedTime = calculateEta(
-          guildData.songs,
-          guildData.lastTrackStart
-        );
-        let embed: MessageEmbed;
-        guildData.songs.push(...playable.songs);
-        if (playable.songs.length === 1) {
-          const song = playable.songs[0];
-          embed = generateAddedToQueueEmbed(
-            song,
-            guildData.songs,
-            estimatedTime
-          );
-        } else {
-          embed = generatePlaylistEmbed(playable);
-        }
-        return message.channel.send(embed);
-      }
-
-      guildData.songs.push(...playable.songs);
-      if (playable.songs.length > 1)
-        message.channel.send(generatePlaylistEmbed(playable));
-
-      guildData.isQueueActive = true;
+      const embeddedMessage = setupQueue(guildData, playable);
+      embeddedMessage && message.channel.send(embeddedMessage);
       await connectToVoiceChannel(guildData);
       play(message, guildData);
     } catch (error) {
@@ -94,7 +71,7 @@ const play = async (
   startPaused: boolean = false
 ) => {
   const currentSong = guildData.songs[0];
-  const embed = new Discord.MessageEmbed()
+  const embed = new MessageEmbed()
     .setColor("#FFD700")
     .setAuthor("Now Playing 🎶")
     .setTitle(currentSong.title)
@@ -168,54 +145,4 @@ const play = async (
     responseMessage.delete();
     logger.error(error.message);
   }
-};
-
-const calculateEta = (songs: Song[], lastTrackStart: number): string => {
-  let etaInSeconds = 0;
-  songs.forEach((song, index) => {
-    if (index === 0) {
-      const passedTime = Date.now() - lastTrackStart;
-      etaInSeconds += hhmmssToSeconds(song.duration) - passedTime / 1000;
-    } else etaInSeconds += hhmmssToSeconds(song.duration);
-  });
-  return hhmmss(etaInSeconds);
-};
-
-const generatePlaylistEmbed = (playable: Playable): MessageEmbed => {
-  let seconds = 0;
-  playable.songs.forEach((song) => (seconds += hhmmssToSeconds(song.duration)));
-  const duration = hhmmss(seconds);
-  return new Discord.MessageEmbed()
-    .setColor("#FFD700")
-    .setAuthor(`Playlist of ${playable.songs.length} songs added to the Queue`)
-    .setTitle(playable.playlist.title)
-    .setURL(playable.playlist.url)
-    .setThumbnail(playable.playlist.thumbnailUrl)
-    .setDescription(
-      playable.playlist.desc.length > 100
-        ? playable.playlist.desc.slice(0, 100) + "..."
-        : playable.playlist.desc
-    )
-    .addField("Channel", playable.playlist.channel, true)
-    .addField("Duration", duration, true);
-};
-
-const generateAddedToQueueEmbed = (
-  song: Song,
-  songQueue: Song[],
-  estimatedTime: string
-): MessageEmbed => {
-  return new Discord.MessageEmbed()
-    .setColor("#FFD700")
-    .setAuthor("Added to the Queue")
-    .setTitle(song.title)
-    .setThumbnail(song.thumbnailUrl)
-    .setDescription(
-      song.desc.length > 100 ? song.desc.slice(0, 100) + "..." : song.desc
-    )
-    .setURL(song.url)
-    .addField("Channel", song.channel, true)
-    .addField("Duration", song.duration, true)
-    .addField("ETA", estimatedTime, true)
-    .addField("Position in queue", songQueue.indexOf(song));
 };
