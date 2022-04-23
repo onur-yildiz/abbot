@@ -12,7 +12,7 @@ import {
   guilds,
   logger,
 } from "../global/globals";
-import { getCommandContent, getCommandName } from "../util/commandParser";
+import { getCommandArgs, getCommandName } from "../util/commandParser";
 import { fetchGuildData } from "../util/guildActions";
 import { sendDefaultHelpMessage } from "../util/messageUtil";
 
@@ -37,7 +37,7 @@ export const messageHandler = async (client: Client, message: Message) => {
   if (!message.content.startsWith(curPrefix)) return;
 
   const commandName = getCommandName(message.content, curPrefix);
-  const commandContent = getCommandContent(message.content, curPrefix);
+  const commandArgs = getCommandArgs(message.content, curPrefix);
 
   const command =
     commands.get(commandName) ||
@@ -59,7 +59,7 @@ export const messageHandler = async (client: Client, message: Message) => {
     }
   }
 
-  if (command.args === Args.required && commandContent == "")
+  if (command.args === Args.required && commandArgs.length == 0)
     return message.reply(REPLY_NO_ARGS);
 
   if (!cooldowns.has(command.name)) {
@@ -88,7 +88,7 @@ export const messageHandler = async (client: Client, message: Message) => {
 
   try {
     if (command.args === Args.none) await command.execute(message);
-    else await command.execute(message, [commandName, commandContent]);
+    else await command.execute(message, [commandName, ...commandArgs]);
   } catch (error) {
     logger.error(error);
     message.reply(ERROR_EXECUTION_ERROR.toBold());

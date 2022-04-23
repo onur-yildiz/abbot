@@ -1,5 +1,5 @@
 import { defaultPrefix } from "../../global/globals";
-import { getCommandContent, getCommandName } from "../../util/commandParser";
+import { getCommandArgs, getCommandName } from "../../util/commandParser";
 
 describe("commandParser", () => {
   describe("getCommandContent", () => {
@@ -8,7 +8,7 @@ describe("commandParser", () => {
         const commandMessage = ".play    Frank's choice    ";
         const expectedValue = "Frank's choice";
 
-        expect(getCommandContent(commandMessage, defaultPrefix)).toBe(
+        expect(getCommandArgs(commandMessage, defaultPrefix)).toBe(
           expectedValue
         );
       });
@@ -20,7 +20,7 @@ describe("commandParser", () => {
         const commandMessage = "tst play    Frank's choice    ";
         const expectedValue = "Frank's choice";
 
-        expect(getCommandContent(commandMessage, customPrefix)).toBe(
+        expect(getCommandArgs(commandMessage, customPrefix)).toBe(
           expectedValue
         );
       });

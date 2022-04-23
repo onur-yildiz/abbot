@@ -16,7 +16,7 @@ export = <Command>{
   args: Args.required,
   cooldown: 5,
   async execute(message: Message, args: string[]) {
-    const commandContent = args[1].split(" ");
+    const commandContent = args.slice(1);
     const alias = commandContent.shift().toLowerCase();
     if (alias.length > 25)
       message.channel.send("Alias can be maximum 25 characters long.".toBold());

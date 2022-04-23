@@ -13,13 +13,13 @@ export = <Command>{
   isGuildOnly: true,
   args: Args.required,
   async execute(message: Message, args: string[]) {
-    const commandContent = args[1];
+    const commandName = args[1];
 
     try {
       const data: string[] = [];
       const command =
-        commands.get(commandContent) ||
-        commands.find((cmd) => cmd.aliases.includes(commandContent));
+        commands.get(commandName) ||
+        commands.find((cmd) => cmd.aliases.includes(commandName));
 
       if (command.name === "horn") {
         const guildSettings = await DBHelper.getGuildSettings(message.guild, {

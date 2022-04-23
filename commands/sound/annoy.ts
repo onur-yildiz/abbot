@@ -21,7 +21,7 @@ export = <Command>{
   cooldown: 5,
   argList: ["toggle", "block", "unblock", "reset"],
   async execute(message: Message, args: string[]) {
-    const commandWords = args[1].split(" ");
+    const commandWords = args.slice(1);
 
     // <@!userId> alias
     let userId = extractMentionId(commandWords[0]);
