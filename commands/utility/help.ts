@@ -99,7 +99,7 @@ export = <Command>{
     });
 
     if (command.argList) {
-      let argList: string[] = command.argList;
+      let argList: string[] = [...command.argList];
 
       if (command.name === "horn" && message.channel.type !== "dm") {
         const guildSettings = await DBHelper.getGuildSettings(message.guild, {
