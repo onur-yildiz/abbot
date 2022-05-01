@@ -49,6 +49,9 @@ const setTimer = (guildMember: GuildMember, guildData: GuildData) => {
     }
 
     guildData.connection?.play(alias.url);
+    logger.info(
+      `Arbitrary ::: ${alias.name}@${alias.url} @${guildMember.guild.name}<${guildMember.guild.id}>`
+    );
     setTimer(guildMember, guildData);
   }, Math.trunc(Math.random() * (max - min) + min));
 };

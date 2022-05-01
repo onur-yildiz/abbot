@@ -20,8 +20,16 @@ export = <Command>{
         guildData.arbitrarySoundsTimer &&
           clearTimeout(guildData.arbitrarySoundsTimer);
         guildData.arbitrarySoundsTimer = null;
-        message.react("🛑");
-      } else message.react("⏱");
+        await message.react("🛑");
+        logger.info(
+          `Arbitrary Disabled ::: @${message.guild.name}<${message.guild.id}>`
+        );
+      } else {
+        await message.react("⏱");
+        logger.info(
+          `Arbitrary Enabled ::: @${message.guild.name}<${message.guild.id}>`
+        );
+      }
     } catch (error) {
       message.reply(`an error occured during arbitrary command!`);
       logger.log(error);
