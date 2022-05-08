@@ -3,6 +3,7 @@ import Discord, { Command, Message } from "discord.js";
 import { commands, defaultPrefix, guilds, logger } from "../../global/globals";
 import DBHelper from "../../db/DBHelper";
 import { awaitDone } from "../../util/messageUtil";
+import { ERROR_EXECUTION_ERROR } from "../../constants/messages";
 
 export = <Command>{
   name: "help",
@@ -32,11 +33,15 @@ export = <Command>{
 
     let embed: Discord.MessageEmbed;
     if (commandContent == "") {
+      let commandCount = 0;
       commandsByCat.forEach((commands, category) => {
-        const commandList = commands.map((cmd) => cmd.toInlineCodeBg());
+        commandCount += commands.length;
+        const commandList = commands.map((cmd) =>
+          cmd.toInlineCodeBg().toBold()
+        );
         const categorySection = {
-          name: `${category}:`,
-          value: commandList.join(" "),
+          name: `${category.toUpperCaseFirstLetter()} [${commandList.length}]:`,
+          value: commandList.join(", "),
         };
 
         data.push(categorySection);
@@ -50,26 +55,25 @@ export = <Command>{
           "https://onur-yildiz.github.io/abbot/"
         )
         .setColor("#FFD700")
-        .setTitle("Commands")
+        .setTitle(`Commands [${commandCount}]`)
+        .setDescription(
+          "For more information on a command, type " +
+            `${defaultPrefix}help [command]`.toInlineCodeBg().toBold() +
+            "\n\n" +
+            "Server prefix: ".toBold() +
+            prefix
+        )
         .addFields(...data)
-        .setFooter(
-          "You can type " +
-            `${defaultPrefix}help [command]`.toInlineCodeBg() +
-            " to get info on a specific command!"
-        );
+        .setTimestamp();
 
       try {
-        await message.author.send(embed);
-        if (message.channel.type === "dm") return;
-        return message.reply("I've sent you a DM with all my commands!");
+        return await message.channel.send(embed);
       } catch (error) {
         logger.error(
-          `Could not send help DM to ${message.author.tag}.\n`,
+          `Could not send help message @${message.guild.name}<${message.guild.id}>. `,
           error
         );
-        message.reply(
-          "it seems like I can't DM you! Do you have DMs disabled?"
-        );
+        return message.reply(ERROR_EXECUTION_ERROR);
       }
     }
 
