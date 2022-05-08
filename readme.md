@@ -116,7 +116,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp; **Aliases**: `annoy`\
 &nbsp;&nbsp;&nbsp;&nbsp; **Description**: Annoy someone whenever they speak.\
 &nbsp;&nbsp;&nbsp;&nbsp; **Usage**: `[prefix]`annoy `[@user]` `[alias]`\
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR `[@user]` reset *(remove someone's annoy sound)*\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR reset `[@user]` *(remove someone's annoy sound)*\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR toggle *(activate/deactivate)*\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR reset *(remove your annoy sound)*\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;OR (un)block *(change annoy permit for yourself)*\
