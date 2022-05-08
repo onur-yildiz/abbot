@@ -18,7 +18,7 @@ export = <Command>{
       prefix = guilds.get(message.guild.id).prefix;
 
     const data = [];
-    const commandContent = args ? args[1] : "";
+    const commandContent = args[1] ?? "";
 
     const commandsByCat = new Map<string, string[]>();
     const commandCategories = fs.readdirSync("./commands");
