@@ -16,6 +16,8 @@ const connectToDatabase = async () => {
     new winston.transports.MongoDB({
       db: uri,
       storeHost: true,
+      collection:
+        process.env.NODE_ENV !== "production" ? "development-log" : "log",
       options: { useNewUrlParser: true, useUnifiedTopology: true },
     })
   );
