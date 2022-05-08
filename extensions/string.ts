@@ -5,6 +5,7 @@ interface String {
   toCodeBg(): string;
   toCodeBgCs(): string;
   toSpoiler(): string;
+  toUpperCaseFirstLetter(): string;
 }
 
 Object.defineProperty(String.prototype, "toBold", {
@@ -50,6 +51,14 @@ Object.defineProperty(String.prototype, "toCodeBgCs", {
 Object.defineProperty(String.prototype, "toSpoiler", {
   value: function toSpoiler() {
     return `\|\|${this}\|\|`;
+  },
+  writable: true,
+  configurable: true,
+});
+
+Object.defineProperty(String.prototype, "toUpperCaseFirstLetter", {
+  value: function toSpoiler() {
+    return `${this.charAt(0).toUpperCase() + this.slice(1)}`;
   },
   writable: true,
   configurable: true,
