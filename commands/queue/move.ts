@@ -32,7 +32,11 @@ export = <Command>{
         return message.channel.send(QUEUE_EMPTY.toBold());
 
       const args = message.content.split(" ");
-      if (args.length < 3) return message.reply(REPLY_NO_ARGS.toBold());
+      if (args.length < 3)
+        return message.reply(
+          REPLY_NO_ARGS +
+            `\nUsage: ${guildData.prefix}${this.name} ${this.usage}`
+        );
       const oldPosition = Number(args[1]);
       const newPosition = Number(args[2]);
 

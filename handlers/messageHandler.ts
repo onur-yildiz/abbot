@@ -60,7 +60,9 @@ export const messageHandler = async (client: Client, message: Message) => {
   }
 
   if (command.args === Args.required && commandArgs.length == 0)
-    return message.reply(REPLY_NO_ARGS);
+    return message.reply(
+      REPLY_NO_ARGS + `\nUsage: ${curPrefix}${command.name} ${command.usage}`
+    );
 
   if (!cooldowns.has(command.name)) {
     cooldowns.set(command.name, new Discord.Collection());
