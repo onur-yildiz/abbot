@@ -10,7 +10,7 @@ export = <Command>{
   description: "Annoy someone whenever they speak.",
   usage:
     "[@user] [alias]\nOR " +
-    "[@user] reset (remove someone's annoy sound)\nOR " +
+    "reset [@user] (remove someone's annoy sound)\nOR " +
     "toggle (activate/deactivate)\nOR " +
     "reset (remove your annoy sound)\nOR " +
     "(un)block (change annoy permit for yourself)",
@@ -20,11 +20,8 @@ export = <Command>{
   cooldown: 5,
   argList: ["toggle", "block", "unblock", "reset"],
   async execute(message: Message, args: string[]) {
-    const commandWords = args.slice(1);
-
-    // <@!userId> alias
-    let userId = extractMentionId(commandWords[0]);
-    let alias = commandWords[1];
+    let userId = extractMentionId(args[1]);
+    let alias = args[2];
 
     try {
       const guildData = await fetchGuildData(message.guild, message.channel);
@@ -56,7 +53,10 @@ export = <Command>{
       }
 
       if (args[1] === "reset") {
-        guildData.annoyanceList.delete(message.member.id);
+        if (args[2]) {
+          userId = extractMentionId(args[2]);
+          guildData.annoyanceList.delete(userId);
+        } else guildData.annoyanceList.delete(message.member.id);
         return message.react("✅");
       }
 
@@ -69,11 +69,6 @@ export = <Command>{
         await message.guild.members.fetch(userId);
       } catch (_) {
         return message.reply(`user not valid or does not exist in the server.`);
-      }
-
-      if (alias === "reset") {
-        guildData.annoyanceList.delete(userId);
-        return message.react("✅");
       }
 
       const botAliases = getDefaultAudios();
@@ -108,6 +103,7 @@ export = <Command>{
   },
 };
 
+// <@!userId> alias
 const extractMentionId = (mention: string) => {
   if (mention.startsWith("<@") && mention.endsWith(">")) {
     mention = mention.slice(2, -1);
