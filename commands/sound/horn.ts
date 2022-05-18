@@ -7,7 +7,7 @@ import {
 import DBHelper from "../../db/DBHelper";
 import getDefaultAudios from "../../util/getDefaultAudios";
 import { checkUserInAChannel } from "../../util/checker";
-import { connectToVoiceChannel, fetchGuildData } from "../../util/guildActions";
+import { fetchGuildData } from "../../util/guildActions";
 import { logger } from "../../global/globals";
 
 export = <Command>{
@@ -80,7 +80,7 @@ export = <Command>{
       );
       guildData.connection?.dispatcher?.end();
       if (guildData.connection?.channel !== message.member.voice?.channel)
-        await connectToVoiceChannel(guildData);
+        await guildData.connectToVoiceChannel();
       const r = await message.react("📣");
       const dispatcher = guildData.connection
         ?.play(audioAlias.url)

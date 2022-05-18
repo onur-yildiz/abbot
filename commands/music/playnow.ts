@@ -6,7 +6,7 @@ import {
   checkVoiceChannelAvailability,
 } from "../../util/checker";
 import { fetchPlayable } from "../../util/fetchPlayable";
-import { connectToVoiceChannel, fetchGuildData } from "../../util/guildActions";
+import { fetchGuildData } from "../../util/guildActions";
 import { play } from "../../util/play";
 import { setupQueue } from "../../util/setupQueue";
 
@@ -46,7 +46,7 @@ export = <Command>{
         dispatcher.emit("skip");
         if (dispatcher.paused) dispatcher.emit("resume");
       } else {
-        await connectToVoiceChannel(guildData);
+        await guildData.connectToVoiceChannel();
         guildData.isQueueActive = true;
         play(message, guildData, 0);
       }

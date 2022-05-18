@@ -9,14 +9,6 @@ import {
 import { guilds, logger } from "../global/globals";
 import DBHelper from "../db/DBHelper";
 
-export const connectToVoiceChannel = async (guildData: GuildData) => {
-  if (guildData.connection?.channel !== guildData.voiceChannel) {
-    const connection = await guildData.voiceChannel.join();
-    guildData.connection = connection;
-  }
-  return guildData;
-};
-
 export const resetState = (guildData: GuildData) => {
   guildData.connection = null;
   guildData.voiceChannel = null;
@@ -65,6 +57,10 @@ export const fetchGuildData = async (
       lastTrackStart: null,
       isArbitrarySoundsEnabled: false,
       annoyanceList: new Map<string, string>(),
+      async connectToVoiceChannel() {
+        if (this.connection?.channel !== this.voiceChannel)
+          this.connection = await this.voiceChannel.join();
+      },
     };
 
     // TODO: make a better solution for memory saving.

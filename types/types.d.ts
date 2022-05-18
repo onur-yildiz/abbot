@@ -14,6 +14,7 @@ declare module "discord.js" {
     isArbitrarySoundsEnabled: boolean;
     arbitrarySoundsTimer?: NodeJS.Timeout;
     quitTimer?: NodeJS.Timeout;
+    connectToVoiceChannel: () => Promise<void>;
   };
 
   type Guilds = Map<string, GuildData>;

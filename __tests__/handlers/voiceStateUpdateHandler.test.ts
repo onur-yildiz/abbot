@@ -24,6 +24,7 @@ const voiceConnection: VoiceConnection = {
   }),
 } as unknown as VoiceConnection;
 
+const mockConnect = jest.fn();
 Object.defineProperty(ga, "fetchGuildData", {
   value: jest.fn().mockReturnValue(<GuildData>{
     textChannel: null,
@@ -39,6 +40,7 @@ Object.defineProperty(ga, "fetchGuildData", {
     lastTrackStart: null,
     isArbitrarySoundsEnabled: false,
     annoyanceList: new Map<string, string>(),
+    connectToVoiceChannel: mockConnect,
   }),
 });
 
@@ -102,11 +104,12 @@ describe("voiceStateUpdateHandler", () => {
     Object.defineProperty(DBHelper, "getGuildSettings", {
       value: jest.fn().mockReturnValue({
         themes: new Map(),
+        connectToVoiceChannel: mockConnect,
       }),
     });
 
     await voiceStateUpdateHandler(oldVoiceState, newVoiceState);
-    expect(ga.connectToVoiceChannel).toBeCalledTimes(0);
+    expect(mockConnect).toBeCalledTimes(0);
     expect(voiceConnection.play).toBeCalledTimes(0);
     expect(mockSetVolume).toBeCalledTimes(0);
   });
@@ -117,7 +120,7 @@ describe("voiceStateUpdateHandler", () => {
     });
 
     await voiceStateUpdateHandler(oldVoiceState, newVoiceState);
-    expect(ga.connectToVoiceChannel).toBeCalledTimes(0);
+    expect(mockConnect).toBeCalledTimes(0);
     expect(voiceConnection.play).toBeCalledTimes(0);
     expect(mockSetVolume).toBeCalledTimes(0);
   });

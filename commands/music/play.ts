@@ -8,7 +8,7 @@ import {
   checkVoiceChannelAvailability,
   checkUserInAChannel,
 } from "../../util/checker";
-import { connectToVoiceChannel, fetchGuildData } from "../../util/guildActions";
+import { fetchGuildData } from "../../util/guildActions";
 import { fetchPlayable } from "../../util/fetchPlayable";
 import { setupQueue } from "../../util/setupQueue";
 import { play } from "../../util/play";
@@ -56,7 +56,7 @@ export = <Command>{
       const embeddedMessage = setupQueue(guildData, playable);
       embeddedMessage && message.channel.send(embeddedMessage);
       if (!guildData.isQueueActive) {
-        await connectToVoiceChannel(guildData);
+        await guildData.connectToVoiceChannel();
         guildData.isQueueActive = true;
         play(message, guildData);
       }

@@ -2,11 +2,7 @@ import { VoiceState } from "discord.js";
 import DBHelper from "../db/DBHelper";
 import { logger } from "../global/globals";
 import { isPermitted } from "../util/checker";
-import {
-  connectToVoiceChannel,
-  fetchGuildData,
-  resetState,
-} from "../util/guildActions";
+import { fetchGuildData, resetState } from "../util/guildActions";
 
 export const voiceStateUpdateHandler = async (
   oldVoiceState: VoiceState,
@@ -70,7 +66,7 @@ export const voiceStateUpdateHandler = async (
     guildData.quitTimer && clearTimeout(guildData.quitTimer);
     const theme = await getTheme(newVoiceState);
     if (theme.length > 0) {
-      await connectToVoiceChannel(guildData);
+      await guildData.connectToVoiceChannel();
       const dispatcher = guildData.connection
         .play(theme)
         .on("finish", () => {})
