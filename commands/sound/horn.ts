@@ -5,10 +5,10 @@ import {
 } from "../../constants/messages";
 // import { isAudioOk } from "../../util/isAudioOk";
 import DBHelper from "../../db/DBHelper";
-import getDefaultAudios from "../../util/getDefaultAudios";
-import { checkUserInAChannel } from "../../util/checker";
-import { fetchGuildData } from "../../util/guildActions";
+import getDefaultAudios from "../../util/media/getDefaultAudios";
 import { logger } from "../../global/globals";
+import c from "../../util/checker";
+import fetchGuildData from "../../util/fetchGuildData";
 
 export = <Command>{
   name: "horn",
@@ -19,7 +19,7 @@ export = <Command>{
   args: Args.flexible,
   argList: getDefaultAudios(),
   async execute(message: Message, args: string[]) {
-    const error = checkUserInAChannel(message);
+    const error = c.isUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());
 
     try {
@@ -80,7 +80,7 @@ export = <Command>{
       );
       guildData.connection?.dispatcher?.end();
       if (guildData.connection?.channel !== message.member.voice?.channel)
-        await guildData.connectToVoiceChannel();
+        await guildData.connectToVoice();
       const r = await message.react("📣");
       const dispatcher = guildData.connection
         ?.play(audioAlias.url)

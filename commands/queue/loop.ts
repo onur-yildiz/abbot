@@ -2,8 +2,8 @@ import { Command, Message } from "discord.js";
 
 import { ERROR_EXECUTION_ERROR, QUEUE_EMPTY } from "../../constants/messages";
 import { logger } from "../../global/globals";
-import { checkVoiceChannelAvailability } from "../../util/checker";
-import { fetchGuildData } from "../../util/guildActions";
+import c from "../../util/checker";
+import fetchGuildData from "../../util/fetchGuildData";
 
 export = <Command>{
   name: "loop",
@@ -14,7 +14,7 @@ export = <Command>{
   isGuildOnly: true,
   cooldown: 6,
   async execute(message: Message) {
-    const error = checkVoiceChannelAvailability(message);
+    const error = c.isVoiceChannelAvailable(message);
     if (error) return message.channel.send(error.toBold());
 
     try {

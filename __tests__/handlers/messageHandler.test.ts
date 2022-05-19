@@ -1,11 +1,46 @@
-import { Client, GuildData, Message } from "discord.js";
+import { Client, GuildData, Message, VoiceConnection } from "discord.js";
 import { ERROR_EXECUTION_ERROR } from "../../constants/messages";
-import { commands, guilds, logger } from "../../global/globals";
-import { messageHandler } from "../../handlers/messageHandler";
-import * as parser from "../../util/commandParser";
+import { commands, defaultPrefix, guilds, logger } from "../../global/globals";
+import messageHandler from "../../handlers/messageHandler";
+import * as parser from "../../util/parser/commandParser";
 import "../../extensions/string";
-import * as ga from "../../util/guildActions";
-import { fetchGuildData } from "../../util/guildActions";
+import "../../util/fetchGuildData";
+
+const mockSetVolume = jest.fn();
+const voiceConnection: VoiceConnection = {
+  play: jest.fn().mockReturnValue({
+    setVolumeLogarithmic: null,
+    on: jest.fn().mockReturnValue({
+      setVolumeLogarithmic: null,
+      on: jest.fn().mockReturnValue({
+        setVolumeLogarithmic: mockSetVolume,
+        on: null,
+      }),
+    }),
+  }),
+} as unknown as VoiceConnection;
+
+const mockFetchGuildData = jest.fn(
+  () =>
+    <GuildData>{
+      textChannel: null,
+      voiceChannel: null,
+      connection: voiceConnection,
+      songs: [],
+      volume: 1,
+      isQueueActive: false,
+      isLoopActive: false,
+      greetingEnabled: true,
+      audioAliases: [],
+      prefix: defaultPrefix,
+      lastTrackStart: null,
+      isArbitrarySoundsEnabled: false,
+      annoyanceList: new Map<string, string>(),
+      connectToVoice: jest.fn(),
+      reset: jest.fn(),
+    }
+);
+jest.mock("../../util/fetchGuildData", () => () => mockFetchGuildData());
 
 Object.defineProperty(parser, "getCommandName", {
   value: jest.fn().mockReturnValue("test"),
@@ -146,9 +181,8 @@ describe("messageHandler", () => {
 
   it("call fetchGuildData if guild not in memory", async () => {
     guilds.clear();
-    Object.defineProperty(ga, "fetchGuildData", { value: jest.fn() });
 
     expect(await messageHandler(client, message)).toBeUndefined();
-    expect(fetchGuildData).toBeCalled();
+    expect(mockFetchGuildData).toBeCalled();
   });
 });

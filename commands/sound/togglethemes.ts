@@ -1,7 +1,7 @@
 import { Command, Message } from "discord.js";
 import DBHelper from "../../db/DBHelper";
 import { logger } from "../../global/globals";
-import { fetchGuildData } from "../../util/guildActions";
+import fetchGuildData from "../../util/fetchGuildData";
 
 export = <Command>{
   name: "togglethemes",

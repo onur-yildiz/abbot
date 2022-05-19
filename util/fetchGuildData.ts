@@ -1,30 +1,15 @@
 import {
   DMChannel,
   Guild,
-  NewsChannel,
   GuildData,
+  NewsChannel,
   TextChannel,
   VoiceChannel,
 } from "discord.js";
-import { guilds, logger } from "../global/globals";
 import DBHelper from "../db/DBHelper";
+import { guilds, logger } from "../global/globals";
 
-export const resetState = (guildData: GuildData) => {
-  guildData.connection = null;
-  guildData.voiceChannel = null;
-  if (guildData.connection && guildData.connection.dispatcher)
-    guildData.connection.dispatcher.destroy();
-  guildData.songs = [];
-  guildData.isQueueActive = false;
-  guildData.isLoopActive = false;
-  guildData.lastTrackStart = null;
-  guildData.quitTimer && clearTimeout(guildData.quitTimer);
-  guildData.isArbitrarySoundsEnabled = false;
-  guildData.arbitrarySoundsTimer &&
-    clearTimeout(guildData.arbitrarySoundsTimer);
-};
-
-export const fetchGuildData = async (
+const fetchGuildData = async (
   guild: Guild,
   newTextChannel?: TextChannel | DMChannel | NewsChannel,
   newVoiceChannel?: VoiceChannel
@@ -57,9 +42,23 @@ export const fetchGuildData = async (
       lastTrackStart: null,
       isArbitrarySoundsEnabled: false,
       annoyanceList: new Map<string, string>(),
-      async connectToVoiceChannel() {
+      async connectToVoice(this: GuildData) {
         if (this.connection?.channel !== this.voiceChannel)
           this.connection = await this.voiceChannel.join();
+      },
+      reset(this: GuildData) {
+        this.connection?.dispatcher?.destroy();
+        this.connection?.disconnect();
+        this.connection = null;
+        this.voiceChannel = null;
+        this.songs = [];
+        this.isQueueActive = false;
+        this.isLoopActive = false;
+        this.lastTrackStart = null;
+        this.quitTimer && clearTimeout(this.quitTimer);
+        this.isArbitrarySoundsEnabled = false;
+        this.arbitrarySoundsTimer &&
+          clearTimeout(guildData.arbitrarySoundsTimer);
       },
     };
 
@@ -72,3 +71,5 @@ export const fetchGuildData = async (
     return;
   }
 };
+
+export default fetchGuildData;

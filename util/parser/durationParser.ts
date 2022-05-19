@@ -1,5 +1,5 @@
 // convert seconds to hh:mm:ss
-export const hhmmss = (durationInSeconds: number): string => {
+const hhmmss = (durationInSeconds: number): string => {
   const hours = Math.trunc(durationInSeconds / 3600);
   const minutes = Math.trunc((durationInSeconds % 3600) / 60);
   const seconds = Math.trunc(durationInSeconds % 60);
@@ -13,7 +13,7 @@ export const hhmmss = (durationInSeconds: number): string => {
 };
 
 // convert hh:mm:ss to seconds
-export const hhmmssToSeconds = (durationString: string): number => {
+const hhmmssToSeconds = (durationString: string): number => {
   const sections: string[] = durationString.split(":").reverse();
   const parsedSections: number[] = sections.map((section) => parseInt(section));
 
@@ -23,3 +23,5 @@ export const hhmmssToSeconds = (durationString: string): number => {
   if (parsedSections[2]) eta += parsedSections[2] * 3600;
   return eta;
 };
+
+export default { hhmmss, hhmmssToSeconds };

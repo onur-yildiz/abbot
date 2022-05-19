@@ -1,8 +1,8 @@
 import { Command, Message } from "discord.js";
 import { ERROR_CONNECTING } from "../../constants/messages";
 import { logger } from "../../global/globals";
-import { checkUserInAChannel } from "../../util/checker";
-import { fetchGuildData } from "../../util/guildActions";
+import c from "../../util/checker";
+import fetchGuildData from "../../util/fetchGuildData";
 
 export = <Command>{
   name: "join",
@@ -12,7 +12,7 @@ export = <Command>{
   args: Args.none,
   isGuildOnly: true,
   async execute(message: Message) {
-    const error = checkUserInAChannel(message);
+    const error = c.isUserInAChannel(message);
     if (error) return message.channel.send(error.toBold());
 
     try {
@@ -21,7 +21,7 @@ export = <Command>{
         message.channel,
         message.member.voice.channel
       );
-      await guildData.connectToVoiceChannel();
+      await guildData.connectToVoice();
 
       // Hacky way to solve bot appearing always speaking after joining the voice channel.
       const dispatcher = guildData.connection.play("./assets/audio/ww.mp3");

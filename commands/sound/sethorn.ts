@@ -2,7 +2,7 @@ import { Command, Message } from "discord.js";
 import DBHelper from "../../db/DBHelper";
 // import { isAudioOk } from "../../util/isAudioOk";
 import { SETHORN_NOT_ALLOWED } from "../../constants/messages";
-import getDefaultAudios from "../../util/getDefaultAudios";
+import getDefaultAudios from "../../util/media/getDefaultAudios";
 import { logger } from "../../global/globals";
 
 export = <Command>{

@@ -5,9 +5,9 @@ import {
   NOTHING_IS_PLAYING,
 } from "../../constants/messages";
 import { logger } from "../../global/globals";
-import { checkVoiceChannelAvailability } from "../../util/checker";
-import { hhmmssToSeconds } from "../../util/durationParser";
-import { fetchGuildData } from "../../util/guildActions";
+import c from "../../util/checker";
+import fetchGuildData from "../../util/fetchGuildData";
+import dp from "../../util/parser/durationParser";
 
 export = <Command>{
   name: "seek",
@@ -17,7 +17,7 @@ export = <Command>{
   isGuildOnly: true,
   args: Args.required,
   async execute(message: Message, args?: string[]) {
-    const error = checkVoiceChannelAvailability(message);
+    const error = c.isVoiceChannelAvailable(message);
     if (error) return message.channel.send(error.toBold());
 
     try {
@@ -31,7 +31,7 @@ export = <Command>{
 
       let seconds: number = Number(args[1]);
       if (isNaN(seconds)) {
-        if (regex.test(args[1])) seconds = hhmmssToSeconds(args[1]);
+        if (regex.test(args[1])) seconds = dp.hhmmssToSeconds(args[1]);
         else return message.reply(ERROR_INVALID_FORMAT.toBold());
       }
       const dispatcher = guildData.connection.dispatcher;

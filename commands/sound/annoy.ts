@@ -1,8 +1,8 @@
 import { Command, Message } from "discord.js";
 import DBHelper from "../../db/DBHelper";
-import getDefaultAudios from "../../util/getDefaultAudios";
+import getDefaultAudios from "../../util/media/getDefaultAudios";
 import { logger } from "../../global/globals";
-import { fetchGuildData } from "../../util/guildActions";
+import fetchGuildData from "../../util/fetchGuildData";
 
 export = <Command>{
   name: "annoy",

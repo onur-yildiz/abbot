@@ -1,5 +1,5 @@
 import Discord, { Collection, Command, Cooldowns, Guilds } from "discord.js";
-import winston, { level } from "winston";
+import winston from "winston";
 import "winston-mongodb";
 
 require("dotenv").config();
@@ -17,8 +17,14 @@ export const cooldowns: Cooldowns = new Discord.Collection<
 export const logger = winston.createLogger({
   format: winston.format.json(),
   transports: [
-    new winston.transports.File({ filename: "combined.log", level: "info" }),
-    new winston.transports.File({ filename: "error.log", level: "error" }),
+    new winston.transports.File({
+      filename: "combined.log",
+      level: "info",
+    }),
+    new winston.transports.File({
+      filename: "error.log",
+      level: "error",
+    }),
   ],
 });
 

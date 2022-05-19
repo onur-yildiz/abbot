@@ -4,14 +4,12 @@ import {
   ERROR_EXECUTION_ERROR,
 } from "../../constants/messages";
 import { logger } from "../../global/globals";
-import {
-  checkVoiceChannelAvailability,
-  checkUserInAChannel,
-} from "../../util/checker";
-import { fetchGuildData } from "../../util/guildActions";
-import { fetchPlayable } from "../../util/fetchPlayable";
-import { setupQueue } from "../../util/setupQueue";
-import { play } from "../../util/play";
+import fetchPlayable from "../../util/media/fetchPlayable";
+import setupQueue from "../../util/media/setupQueue";
+import play from "../../util/media/play";
+
+import c from "../../util/checker";
+import fetchGuildData from "../../util/fetchGuildData";
 
 export = <Command>{
   name: "play",
@@ -32,8 +30,8 @@ export = <Command>{
       );
 
       const error = guildData.isQueueActive
-        ? checkVoiceChannelAvailability(message)
-        : checkUserInAChannel(message);
+        ? c.isVoiceChannelAvailable(message)
+        : c.isUserInAChannel(message);
       if (error) return message.channel.send(error.toBold());
 
       //resume if paused
@@ -56,7 +54,7 @@ export = <Command>{
       const embeddedMessage = setupQueue(guildData, playable);
       embeddedMessage && message.channel.send(embeddedMessage);
       if (!guildData.isQueueActive) {
-        await guildData.connectToVoiceChannel();
+        await guildData.connectToVoice();
         guildData.isQueueActive = true;
         play(message, guildData);
       }

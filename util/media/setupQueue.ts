@@ -1,7 +1,7 @@
 import { GuildData, MessageEmbed } from "discord.js";
-import { hhmmss, hhmmssToSeconds } from "./durationParser";
+import dp from "../parser/durationParser";
 
-export const setupQueue = (
+const setupQueue = (
   guildData: GuildData,
   playable: Playable,
   { insertAtBeginning = false } = {}
@@ -41,16 +41,18 @@ const calculateEta = (songs: Song[], lastTrackStart: number): string => {
   songs.forEach((song, index) => {
     if (index === 0) {
       const passedTime = Date.now() - lastTrackStart;
-      etaInSeconds += hhmmssToSeconds(song.duration) - passedTime / 1000;
-    } else etaInSeconds += hhmmssToSeconds(song.duration);
+      etaInSeconds += dp.hhmmssToSeconds(song.duration) - passedTime / 1000;
+    } else etaInSeconds += dp.hhmmssToSeconds(song.duration);
   });
-  return hhmmss(etaInSeconds);
+  return dp.hhmmss(etaInSeconds);
 };
 
 const generatePlaylistEmbed = (playable: Playable): MessageEmbed => {
   let seconds = 0;
-  playable.songs.forEach((song) => (seconds += hhmmssToSeconds(song.duration)));
-  const duration = hhmmss(seconds);
+  playable.songs.forEach(
+    (song) => (seconds += dp.hhmmssToSeconds(song.duration))
+  );
+  const duration = dp.hhmmss(seconds);
   return new MessageEmbed()
     .setColor("#FFD700")
     .setAuthor(`Playlist of ${playable.songs.length} songs added to the Queue`)
@@ -85,3 +87,5 @@ const generateAddedToQueueEmbed = (
     .addField("ETA", estimatedTime, true)
     .addField("Position in queue", songQueue.indexOf(song));
 };
+
+export default setupQueue;

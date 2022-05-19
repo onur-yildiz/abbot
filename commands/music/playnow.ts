@@ -1,14 +1,12 @@
 import { Command, Message } from "discord.js";
 import { ERROR_EXECUTION_ERROR } from "../../constants/messages";
 import { logger } from "../../global/globals";
-import {
-  checkUserInAChannel,
-  checkVoiceChannelAvailability,
-} from "../../util/checker";
-import { fetchPlayable } from "../../util/fetchPlayable";
-import { fetchGuildData } from "../../util/guildActions";
-import { play } from "../../util/play";
-import { setupQueue } from "../../util/setupQueue";
+
+import c from "../../util/checker";
+import fetchGuildData from "../../util/fetchGuildData";
+import fetchPlayable from "../../util/media/fetchPlayable";
+import play from "../../util/media/play";
+import setupQueue from "../../util/media/setupQueue";
 
 export = <Command>{
   name: "playnow",
@@ -27,8 +25,8 @@ export = <Command>{
       );
 
       const error = guildData.isQueueActive
-        ? checkVoiceChannelAvailability(message)
-        : checkUserInAChannel(message);
+        ? c.isVoiceChannelAvailable(message)
+        : c.isUserInAChannel(message);
       if (error) return message.channel.send(error.toBold());
 
       const query = args.slice(1).join(" ");
@@ -46,7 +44,7 @@ export = <Command>{
         dispatcher.emit("skip");
         if (dispatcher.paused) dispatcher.emit("resume");
       } else {
-        await guildData.connectToVoiceChannel();
+        await guildData.connectToVoice();
         guildData.isQueueActive = true;
         play(message, guildData, 0);
       }

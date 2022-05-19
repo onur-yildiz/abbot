@@ -1,6 +1,6 @@
 import { Command, Message } from "discord.js";
 import { logger } from "../../global/globals";
-import { fetchGuildData } from "../../util/guildActions";
+import fetchGuildData from "../../util/fetchGuildData";
 
 export = <Command>{
   name: "arbitrary",

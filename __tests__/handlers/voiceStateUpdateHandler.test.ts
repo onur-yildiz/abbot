@@ -1,11 +1,9 @@
 import { GuildData, VoiceConnection, VoiceState } from "discord.js";
 import DBHelper from "../../db/DBHelper";
 import { defaultPrefix } from "../../global/globals";
-import { voiceStateUpdateHandler } from "../../handlers/voiceStateUpdateHandler";
-import * as ga from "../../util/guildActions";
-import { resetState } from "../../util/guildActions";
+import voiceStateUpdateHandler from "../../handlers/voiceStateUpdateHandler";
+import "../../util/fetchGuildData";
 
-jest.mock("../../util/guildActions");
 jest.mock("discord.js");
 
 const { Permissions } = jest.requireActual("discord.js");
@@ -23,26 +21,29 @@ const voiceConnection: VoiceConnection = {
     }),
   }),
 } as unknown as VoiceConnection;
-
-const mockConnect = jest.fn();
-Object.defineProperty(ga, "fetchGuildData", {
-  value: jest.fn().mockReturnValue(<GuildData>{
-    textChannel: null,
-    voiceChannel: null,
-    connection: voiceConnection,
-    songs: [],
-    volume: 1,
-    isQueueActive: false,
-    isLoopActive: false,
-    greetingEnabled: true,
-    audioAliases: [],
-    prefix: defaultPrefix,
-    lastTrackStart: null,
-    isArbitrarySoundsEnabled: false,
-    annoyanceList: new Map<string, string>(),
-    connectToVoiceChannel: mockConnect,
-  }),
-});
+const mockConnectToVoiceChannel = jest.fn();
+const mockResetGuildData = jest.fn();
+const mockFetchGuildData = jest.fn(
+  () =>
+    <GuildData>{
+      textChannel: null,
+      voiceChannel: null,
+      connection: voiceConnection,
+      songs: [],
+      volume: 1,
+      isQueueActive: false,
+      isLoopActive: false,
+      greetingEnabled: true,
+      audioAliases: [],
+      prefix: defaultPrefix,
+      lastTrackStart: null,
+      isArbitrarySoundsEnabled: false,
+      annoyanceList: new Map<string, string>(),
+      connectToVoice: mockConnectToVoiceChannel,
+      reset: mockResetGuildData,
+    }
+);
+jest.mock("../../util/fetchGuildData", () => () => mockFetchGuildData());
 
 Object.defineProperty(DBHelper, "getGuildSettings", {
   value: jest.fn().mockReturnValue({
@@ -104,12 +105,12 @@ describe("voiceStateUpdateHandler", () => {
     Object.defineProperty(DBHelper, "getGuildSettings", {
       value: jest.fn().mockReturnValue({
         themes: new Map(),
-        connectToVoiceChannel: mockConnect,
+        connectToVoiceChannel: mockConnectToVoiceChannel,
       }),
     });
 
     await voiceStateUpdateHandler(oldVoiceState, newVoiceState);
-    expect(mockConnect).toBeCalledTimes(0);
+    expect(mockConnectToVoiceChannel).toBeCalledTimes(0);
     expect(voiceConnection.play).toBeCalledTimes(0);
     expect(mockSetVolume).toBeCalledTimes(0);
   });
@@ -120,7 +121,7 @@ describe("voiceStateUpdateHandler", () => {
     });
 
     await voiceStateUpdateHandler(oldVoiceState, newVoiceState);
-    expect(mockConnect).toBeCalledTimes(0);
+    expect(mockConnectToVoiceChannel).toBeCalledTimes(0);
     expect(voiceConnection.play).toBeCalledTimes(0);
     expect(mockSetVolume).toBeCalledTimes(0);
   });
@@ -144,7 +145,7 @@ describe("voiceStateUpdateHandler", () => {
       expect(
         await voiceStateUpdateHandler(oldVoiceState, _newVoiceState)
       ).toBeUndefined();
-      expect(resetState).toBeCalledTimes(1);
+      expect(mockResetGuildData).toBeCalledTimes(1);
       expect(voiceConnection.play).not.toBeCalled();
       expect(mockSetVolume).not.toBeCalled();
     });
@@ -188,12 +189,11 @@ describe("voiceStateUpdateHandler", () => {
 
   describe("isQueueActive and greetingEnabled check", () => {
     it("return if isQueueActive true", async () => {
-      Object.defineProperty(ga, "fetchGuildData", {
-        value: jest.fn().mockReturnValue(<GuildData>{
-          isQueueActive: true,
-          greetingEnabled: true,
-        }),
-      });
+      mockFetchGuildData.mockImplementationOnce(() => ({
+        ...mockFetchGuildData(),
+        greetingEnabled: true,
+        isQueueActive: true,
+      }));
 
       expect(
         await voiceStateUpdateHandler(oldVoiceState, newVoiceState)
@@ -203,12 +203,11 @@ describe("voiceStateUpdateHandler", () => {
     });
 
     it("return if greetingEnabled false", async () => {
-      Object.defineProperty(ga, "fetchGuildData", {
-        value: jest.fn().mockReturnValue(<GuildData>{
-          isQueueActive: false,
-          greetingEnabled: false,
-        }),
-      });
+      mockFetchGuildData.mockImplementationOnce(() => ({
+        ...mockFetchGuildData(),
+        isQueueActive: false,
+        greetingEnabled: false,
+      }));
 
       expect(
         await voiceStateUpdateHandler(oldVoiceState, newVoiceState)

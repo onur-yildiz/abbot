@@ -1,14 +1,6 @@
 import { Message, MessageReaction, User } from "discord.js";
 
-export const sendDefaultHelpMessage = (message: Message, prefix: string) => {
-  message.reply(
-    "Hi! You can type " +
-      ` ${prefix}help `.toInlineCodeBg() +
-      " to see my commands!"
-  );
-};
-
-export const awaitDone = async (botMessage: Message, userMessage: Message) => {
+const awaitDone = async (botMessage: Message, userMessage: Message) => {
   const r = await botMessage.react("✅");
 
   const filter = (reaction: MessageReaction, user: User) =>
@@ -24,3 +16,5 @@ export const awaitDone = async (botMessage: Message, userMessage: Message) => {
     if (!botMessage.deleted) r.remove();
   });
 };
+
+export default awaitDone;

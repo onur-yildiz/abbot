@@ -1,9 +1,9 @@
 import { GuildData, GuildMember, Speaking } from "discord.js";
 import DBHelper from "../db/DBHelper";
 import { logger } from "../global/globals";
-import { fetchGuildData } from "../util/guildActions";
+import fetchGuildData from "../util/fetchGuildData";
 
-export const guildMemberSpeakingHandler = async (
+const guildMemberSpeakingHandler = async (
   guildMember: GuildMember,
   speaking: Speaking
 ) => {
@@ -55,3 +55,5 @@ const setTimer = (guildMember: GuildMember, guildData: GuildData) => {
     setTimer(guildMember, guildData);
   }, Math.trunc(Math.random() * (max - min) + min));
 };
+
+export default guildMemberSpeakingHandler;

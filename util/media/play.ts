@@ -1,8 +1,8 @@
 import { GuildData, Message, MessageEmbed } from "discord.js";
 import ytdl from "ytdl-core";
-import { logger } from "../global/globals";
+import { logger } from "../../global/globals";
 
-export const play = async (
+const play = async (
   message: Message,
   guildData: GuildData,
   seekedSecond: number = 0,
@@ -84,3 +84,5 @@ export const play = async (
     logger.error(error.message);
   }
 };
+
+export default play;

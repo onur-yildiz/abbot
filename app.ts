@@ -3,12 +3,12 @@ import fs from "fs";
 import "ffmpeg";
 
 import { commands, logger, token } from "./global/globals";
-import { voiceStateUpdateHandler } from "./handlers/voiceStateUpdateHandler";
 import "./extensions/string";
-import { guildDeleteHandler } from "./handlers/guildDeleteHandler";
-import { messageHandler } from "./handlers/messageHandler";
 import DBHelper from "./db/DBHelper";
-import { guildMemberSpeakingHandler } from "./handlers/guildMemberSpeakingHandler";
+import voiceStateUpdateHandler from "./handlers/voiceStateUpdateHandler";
+import guildDeleteHandler from "./handlers/guildDeleteHandler";
+import messageHandler from "./handlers/messageHandler";
+import guildMemberSpeakingHandler from "./handlers/guildMemberSpeakingHandler";
 
 const commandFolders = fs.readdirSync("./commands");
 for (const folder of commandFolders) {

@@ -1,8 +1,8 @@
-import getDefaultAudios from "../../util/getDefaultAudios";
+import getDefaultAudios from "../../util/media/getDefaultAudios";
 
 jest.mock("fs");
 
-describe("getDefaultAudios", () => {
+describe("#getDefaultAudios", () => {
   const MOCK_FILE_INFO = {
     "./assets/audio/aot.mp3": null,
     "./assets/audio/inv.mp3": null,

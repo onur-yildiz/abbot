@@ -5,10 +5,8 @@ import {
   JOIN_CHANNEL_GENERIC,
   PERMISSIONS_PLAY,
 } from "../../constants/messages";
-import {
-  checkVoiceChannelAvailability,
-  checkUserInAChannel,
-} from "../../util/checker";
+import c from "../../util/checker";
+import fetchGuildData from "../../util/fetchGuildData";
 
 describe("checker", () => {
   let message: Message;
@@ -18,9 +16,9 @@ describe("checker", () => {
     message = null;
   });
 
-  describe("#checkVoiceChannelAvailability", () => {
+  describe("#isVoiceChannelAvailable", () => {
     it("return null if both in same channel and bot has perms", () => {
-      message = ({
+      message = {
         member: {
           voice: {
             channel: {
@@ -35,16 +33,15 @@ describe("checker", () => {
             },
           },
         },
-      } as unknown) as Message;
+      } as unknown as Message;
       const perms = new Permissions().add("CONNECT").add("SPEAK");
-      message.member.voice.channel.permissionsFor = mockPermissionsFor.mockReturnValue(
-        perms
-      );
-      expect(checkVoiceChannelAvailability(message)).toBeNull();
+      message.member.voice.channel.permissionsFor =
+        mockPermissionsFor.mockReturnValue(perms);
+      expect(c.isVoiceChannelAvailable(message)).toBeNull();
     });
 
     it("return BOT_NOT_IN_SAME_CHANNEL if in different channels", () => {
-      message = ({
+      message = {
         member: {
           voice: {
             channel: {
@@ -59,19 +56,16 @@ describe("checker", () => {
             },
           },
         },
-      } as unknown) as Message;
+      } as unknown as Message;
       const perms = new Permissions().add("CONNECT").add("SPEAK");
-      message.member.voice.channel.permissionsFor = mockPermissionsFor.mockReturnValue(
-        perms
-      );
-      expect(checkVoiceChannelAvailability(message)).toBe(
-        BOT_NOT_IN_SAME_CHANNEL
-      );
+      message.member.voice.channel.permissionsFor =
+        mockPermissionsFor.mockReturnValue(perms);
+      expect(c.isVoiceChannelAvailable(message)).toBe(BOT_NOT_IN_SAME_CHANNEL);
     });
 
     describe("user not in a channel", () => {
       test("if user voiceState is falsy", () => {
-        message = ({
+        message = {
           member: {},
           guild: {
             voice: {
@@ -80,15 +74,13 @@ describe("checker", () => {
               },
             },
           },
-        } as unknown) as Message;
+        } as unknown as Message;
         expect(message.member.voice).toBeFalsy();
-        expect(checkVoiceChannelAvailability(message)).toBe(
-          JOIN_CHANNEL_GENERIC
-        );
+        expect(c.isVoiceChannelAvailable(message)).toBe(JOIN_CHANNEL_GENERIC);
       });
 
       test("if user voice channel is falsy", () => {
-        message = ({
+        message = {
           member: {
             voice: {},
           },
@@ -99,16 +91,14 @@ describe("checker", () => {
               },
             },
           },
-        } as unknown) as Message;
-        expect(checkVoiceChannelAvailability(message)).toBe(
-          JOIN_CHANNEL_GENERIC
-        );
+        } as unknown as Message;
+        expect(c.isVoiceChannelAvailable(message)).toBe(JOIN_CHANNEL_GENERIC);
       });
     });
 
     describe("#isPermitted", () => {
       test("if no `CONNECT` perm", () => {
-        message = ({
+        message = {
           member: {
             voice: {
               channel: {
@@ -123,16 +113,15 @@ describe("checker", () => {
               },
             },
           },
-        } as unknown) as Message;
+        } as unknown as Message;
         const perms = new Permissions().add("VIEW_GUILD_INSIGHTS").add("SPEAK");
-        message.member.voice.channel.permissionsFor = mockPermissionsFor.mockReturnValue(
-          perms
-        );
-        expect(checkVoiceChannelAvailability(message)).toBe(PERMISSIONS_PLAY);
+        message.member.voice.channel.permissionsFor =
+          mockPermissionsFor.mockReturnValue(perms);
+        expect(c.isVoiceChannelAvailable(message)).toBe(PERMISSIONS_PLAY);
       });
 
       test("if no `SPEAK` perm", () => {
-        message = ({
+        message = {
           member: {
             voice: {
               channel: {
@@ -147,16 +136,15 @@ describe("checker", () => {
               },
             },
           },
-        } as unknown) as Message;
+        } as unknown as Message;
         const perms = new Permissions().add("CONNECT").add("VIEW_AUDIT_LOG");
-        message.member.voice.channel.permissionsFor = mockPermissionsFor.mockReturnValue(
-          perms
-        );
-        expect(checkVoiceChannelAvailability(message)).toBe(PERMISSIONS_PLAY);
+        message.member.voice.channel.permissionsFor =
+          mockPermissionsFor.mockReturnValue(perms);
+        expect(c.isVoiceChannelAvailable(message)).toBe(PERMISSIONS_PLAY);
       });
 
       test("if no `SPEAK` and `CONNECT` perm", () => {
-        message = ({
+        message = {
           member: {
             voice: {
               channel: {
@@ -171,18 +159,17 @@ describe("checker", () => {
               },
             },
           },
-        } as unknown) as Message;
+        } as unknown as Message;
         const perms = new Permissions().add("USE_VAD").add("VIEW_AUDIT_LOG");
-        message.member.voice.channel.permissionsFor = mockPermissionsFor.mockReturnValue(
-          perms
-        );
-        expect(checkVoiceChannelAvailability(message)).toBe(PERMISSIONS_PLAY);
+        message.member.voice.channel.permissionsFor =
+          mockPermissionsFor.mockReturnValue(perms);
+        expect(c.isVoiceChannelAvailable(message)).toBe(PERMISSIONS_PLAY);
       });
     });
 
     describe("bot not in a channel", () => {
       test("if bot voice state is falsy", () => {
-        message = ({
+        message = {
           member: {
             voice: {
               channel: {
@@ -191,16 +178,15 @@ describe("checker", () => {
             },
           },
           guild: {},
-        } as unknown) as Message;
+        } as unknown as Message;
         const perms = new Permissions().add("CONNECT").add("SPEAK");
-        message.member.voice.channel.permissionsFor = mockPermissionsFor.mockReturnValue(
-          perms
-        );
-        expect(checkVoiceChannelAvailability(message)).toBe(BOT_NOT_IN_CHANNEL);
+        message.member.voice.channel.permissionsFor =
+          mockPermissionsFor.mockReturnValue(perms);
+        expect(c.isVoiceChannelAvailable(message)).toBe(BOT_NOT_IN_CHANNEL);
       });
 
       test("if bot voice channel is falsy", () => {
-        message = ({
+        message = {
           member: {
             voice: {
               channel: {
@@ -209,39 +195,38 @@ describe("checker", () => {
             },
           },
           guild: { voice: {} },
-        } as unknown) as Message;
+        } as unknown as Message;
         const perms = new Permissions().add("CONNECT").add("SPEAK");
-        message.member.voice.channel.permissionsFor = mockPermissionsFor.mockReturnValue(
-          perms
-        );
-        expect(checkVoiceChannelAvailability(message)).toBe(BOT_NOT_IN_CHANNEL);
+        message.member.voice.channel.permissionsFor =
+          mockPermissionsFor.mockReturnValue(perms);
+        expect(c.isVoiceChannelAvailable(message)).toBe(BOT_NOT_IN_CHANNEL);
       });
     });
   });
 
-  describe("#checkUserInAChannel", () => {
+  describe("#isUserInAChannel", () => {
     it("return null if user in a channel", () => {
-      message = ({
+      message = {
         member: {
           voice: {
             channel: {},
           },
         },
-      } as unknown) as Message;
-      expect(checkUserInAChannel(message)).toBeNull();
+      } as unknown as Message;
+      expect(c.isUserInAChannel(message)).toBeNull();
     });
     describe("user not in a channel", () => {
       test("if user voice state is falsy", () => {
-        message = ({
+        message = {
           member: {},
-        } as unknown) as Message;
-        expect(checkUserInAChannel(message)).toBe(JOIN_CHANNEL_GENERIC);
+        } as unknown as Message;
+        expect(c.isUserInAChannel(message)).toBe(JOIN_CHANNEL_GENERIC);
       });
       test("if user voice channel is falsy", () => {
-        message = ({
+        message = {
           member: {},
-        } as unknown) as Message;
-        expect(checkUserInAChannel(message)).toBe(JOIN_CHANNEL_GENERIC);
+        } as unknown as Message;
+        expect(c.isUserInAChannel(message)).toBe(JOIN_CHANNEL_GENERIC);
       });
     });
   });

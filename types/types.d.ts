@@ -14,7 +14,8 @@ declare module "discord.js" {
     isArbitrarySoundsEnabled: boolean;
     arbitrarySoundsTimer?: NodeJS.Timeout;
     quitTimer?: NodeJS.Timeout;
-    connectToVoiceChannel: () => Promise<void>;
+    connectToVoice: () => Promise<void>;
+    reset: () => void;
   };
 
   type Guilds = Map<string, GuildData>;
@@ -35,14 +36,14 @@ declare module "discord.js" {
   type Cooldowns = Collection<string, Collection<string, number>>;
 }
 
-declare type GuildSettings = {
+type GuildSettings = {
   guildId: string;
   greetingEnabled: boolean;
   audioAliases: Map<string, string>;
   prefix: string;
 };
 
-declare type Song = {
+type Song = {
   title: string;
   url: string;
   thumbnailUrl: string;
@@ -51,7 +52,7 @@ declare type Song = {
   duration: string;
 };
 
-declare type Playlist = {
+type Playlist = {
   title: string;
   url: string;
   thumbnailUrl: string;
@@ -59,12 +60,12 @@ declare type Playlist = {
   channel: string;
 };
 
-declare type Playable = {
+type Playable = {
   songs: Song[];
   playlist?: Playlist;
 };
 
-declare type AudioAlias = {
+type AudioAlias = {
   name: string;
   url: string;
 };

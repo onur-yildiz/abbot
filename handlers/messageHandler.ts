@@ -12,11 +12,11 @@ import {
   guilds,
   logger,
 } from "../global/globals";
-import { getCommandArgs, getCommandName } from "../util/commandParser";
-import { fetchGuildData } from "../util/guildActions";
-import { sendDefaultHelpMessage } from "../util/messageUtil";
+import fetchGuildData from "../util/fetchGuildData";
+import sendDefaultHelpMessage from "../util/message/sendDefaultHelpMessage";
+import getCommandArgs, { getCommandName } from "../util/parser/commandParser";
 
-export const messageHandler = async (client: Client, message: Message) => {
+const messageHandler = async (client: Client, message: Message) => {
   if (message.author.bot) return;
 
   let curPrefix = defaultPrefix;
@@ -96,3 +96,5 @@ export const messageHandler = async (client: Client, message: Message) => {
     message.reply(ERROR_EXECUTION_ERROR.toBold());
   }
 };
+
+export default messageHandler;

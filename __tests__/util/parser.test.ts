@@ -1,5 +1,7 @@
 import { defaultPrefix } from "../../global/globals";
-import { getCommandArgs, getCommandName } from "../../util/commandParser";
+import getCommandArgs, {
+  getCommandName,
+} from "../../util/parser/commandParser";
 
 describe("commandParser", () => {
   describe("getCommandArgs", () => {

@@ -2,7 +2,7 @@ import { Guild } from "discord.js";
 import DBHelper from "../db/DBHelper";
 import { guilds, logger } from "../global/globals";
 
-export const guildDeleteHandler = async (guild: Guild) => {
+const guildDeleteHandler = async (guild: Guild) => {
   try {
     if (guilds.has(guild.id)) {
       guilds.delete(guild.id);
@@ -12,3 +12,5 @@ export const guildDeleteHandler = async (guild: Guild) => {
     logger.error(error);
   }
 };
+
+export default guildDeleteHandler;

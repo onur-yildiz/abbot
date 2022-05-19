@@ -1,7 +1,4 @@
-export const getCommandArgs = (
-  commandMessage: string,
-  prefix: string
-): string[] => {
+const getCommandArgs = (commandMessage: string, prefix: string): string[] => {
   return commandMessage
     .slice(prefix.length)
     .split(" ")
@@ -18,3 +15,5 @@ export const getCommandName = (
   }
   return "";
 };
+
+export default getCommandArgs;

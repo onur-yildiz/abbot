@@ -2,10 +2,10 @@ import { Message } from "discord.js";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";
 import sptf from "spotify-url-info";
-import { hhmmss } from "./durationParser";
 import ytsr from "ytsr";
+import dp from "../parser/durationParser";
 
-export const fetchPlayable = async (
+const fetchPlayable = async (
   commandContent: string,
   message: Message
 ): Promise<Playable | null> => {
@@ -43,7 +43,7 @@ export const fetchPlayable = async (
       thumbnailUrl: songInfo.videoDetails.thumbnails[0].url,
       desc: songInfo.videoDetails.description || "",
       channel: songInfo.videoDetails.author.name,
-      duration: hhmmss(parseInt(songInfo.videoDetails.lengthSeconds)),
+      duration: dp.hhmmss(parseInt(songInfo.videoDetails.lengthSeconds)),
     });
   } else {
     if (regexSpotifyUrl.test(commandContent)) {
@@ -97,3 +97,5 @@ const searchYoutube = async (query: string): Promise<Song | null> => {
     duration: (<ytsr.Video>songInfo.items[0]).duration,
   };
 };
+
+export default fetchPlayable;

@@ -1,15 +1,15 @@
 import { Guild } from "discord.js";
 import DBHelper from "../../db/DBHelper";
 import { guilds, logger } from "../../global/globals";
-import { guildDeleteHandler } from "../../handlers/guildDeleteHandler";
+import guildDeleteHandler from "../../handlers/guildDeleteHandler";
 
 describe("guildDeleteHandler", () => {
-  const guild: Guild = ({
+  const guild: Guild = {
     id: "1234",
-  } as unknown) as Guild;
-  const guild2: Guild = ({
+  } as unknown as Guild;
+  const guild2: Guild = {
     id: "12345",
-  } as unknown) as Guild;
+  } as unknown as Guild;
   guilds.set(guild.id, null);
 
   beforeAll(() => {

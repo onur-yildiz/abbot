@@ -1,9 +1,9 @@
 import https from "https";
 // import fetch from "node-fetch";
 // import createEstimator, { FetchDataReader } from "mp3-duration-estimate";
-import { logger } from "../global/globals";
+import { logger } from "../../global/globals";
 
-export const isAudioOk = async (url: string): Promise<boolean> => {
+const isAudioOk = async (url: string): Promise<boolean> => {
   try {
     // const estimator = createEstimator(new FetchDataReader(fetch));
     // const duration = await estimator(url);
@@ -29,3 +29,5 @@ export const isAudioOk = async (url: string): Promise<boolean> => {
     logger.error(error);
   }
 };
+
+export default isAudioOk;

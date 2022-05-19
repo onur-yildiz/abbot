@@ -1,10 +1,10 @@
 import { VoiceState } from "discord.js";
 import DBHelper from "../db/DBHelper";
 import { logger } from "../global/globals";
-import { isPermitted } from "../util/checker";
-import { fetchGuildData, resetState } from "../util/guildActions";
+import c from "../util/checker";
+import fetchGuildData from "../util/fetchGuildData";
 
-export const voiceStateUpdateHandler = async (
+const voiceStateUpdateHandler = async (
   oldVoiceState: VoiceState,
   newVoiceState: VoiceState
 ) => {
@@ -23,14 +23,17 @@ export const voiceStateUpdateHandler = async (
         newVoiceState.guild.me.id === newVoiceState.member.id &&
         !newVoiceState.channel
       )
-        resetState(guildData);
+        guildData.reset();
       return;
     }
 
     if (
       !guildData.greetingEnabled ||
       (newVoiceState.channel &&
-        !isPermitted(newVoiceState.channel, newVoiceState.guild))
+        !c.isPermittedToConnectAndSpeak(
+          newVoiceState.channel,
+          newVoiceState.guild
+        ))
     )
       return;
 
@@ -49,8 +52,7 @@ export const voiceStateUpdateHandler = async (
         if (!hasUsersInChannel) {
           guildData.quitTimer && clearTimeout(guildData.quitTimer);
           guildData.quitTimer = setTimeout(() => {
-            guildData.connection.disconnect();
-            resetState(guildData);
+            guildData.reset();
           }, 60000);
         }
       }
@@ -66,7 +68,7 @@ export const voiceStateUpdateHandler = async (
     guildData.quitTimer && clearTimeout(guildData.quitTimer);
     const theme = await getTheme(newVoiceState);
     if (theme.length > 0) {
-      await guildData.connectToVoiceChannel();
+      await guildData.connectToVoice();
       const dispatcher = guildData.connection
         .play(theme)
         .on("finish", () => {})
@@ -88,3 +90,5 @@ const getTheme = async (voiceState: VoiceState): Promise<string> => {
     return "";
   } else return guildSettings.themes.get(userId);
 };
+
+export default voiceStateUpdateHandler;

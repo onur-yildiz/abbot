@@ -3,7 +3,7 @@ import { UpdateQuery } from "mongoose";
 import { ERROR_SAVE_THEME } from "../../constants/messages";
 import { IGuildSettings } from "../../db/DBModels";
 import DBHelper from "../../db/DBHelper";
-import getDefaultAudios from "../../util/getDefaultAudios";
+import getDefaultAudios from "../../util/media/getDefaultAudios";
 import { logger } from "../../global/globals";
 
 export = <Command>{
