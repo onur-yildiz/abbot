@@ -54,13 +54,13 @@ const fetchPlayable = async (
       }
       let requests: Promise<Song>[] = [];
       for (const track of tracks) {
-        const artists: string[] = [];
-        track.artists.forEach((artist) => artists.push(artist.name));
-        const searchQuery: string = `${track.name} ${artists.join(" ")}`;
+        const searchQuery: string = `${track.name} ${track.artists
+          ?.map((a) => a.name)
+          .join(" ")}`;
         const request = searchYoutube(searchQuery);
         requests.push(request);
       }
-      for (const request of requests) songs.push(await request);
+      songs.push(...(await Promise.all(requests)));
       if (infoMessage) await infoMessage.delete();
 
       playlist = <Playlist>{
